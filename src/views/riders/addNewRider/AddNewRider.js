@@ -197,7 +197,8 @@ const AddNewRider = () => {
 
         setSelectedFile('');
         setSelectedEmiratesIDFile(null); // Reset the selected Emirates ID file
-        
+        setSelectedLicenseFile(null);
+        setSelectedPassportFile(null)
         setSelectValueCity(null);
         setSelectRider(null);
         setSelectIdentityType(null);
@@ -232,7 +233,7 @@ const AddNewRider = () => {
           identityType: formData.identityType,
           vehicle: formData.vehicle,
           zone: formData.zone,
-          emiratesID: formData.emiratesID,
+          emiratesID:formData?.emiratesID?.name ? URL.createObjectURL(formData?.emiratesID) : defaultUser,
           license: formData.license,
           passport: formData.passport,
         };
@@ -770,14 +771,11 @@ const AddNewRider = () => {
                   <Col lg="4">
                     <Form.Label>Driving License</Form.Label>
                     <div>
-                      <label htmlFor="emiratesIdInput">
+                      <label htmlFor="drivingLicense">
                         <div style={OwnerInfoImages}>
                           {selectedLicenseFile ? (
-                            <img
-                              src={formData.passport ? URL.createObjectURL(selectedLicenseFile) : defaultUser}
-                              alt="Selected"
-                              style={{ width: '100%', height: '100%' }}
-                            />
+                                                      <img src={URL.createObjectURL(selectedLicenseFile)} alt="Selected" style={{ width: '100%', height: '100%' }} />
+
                           ) : (
                             <div
                               style={{
@@ -798,7 +796,7 @@ const AddNewRider = () => {
                       </label>
                       <input
                         type="file"
-                        id="emiratesIdInput"
+                        id="drivingLicense"
                         accept="image/*"
                         className="form-control-file"
                         style={{ display: 'none' }}
@@ -808,37 +806,39 @@ const AddNewRider = () => {
                   </Col>
 
                   <Col lg="4">
-                    <Form.Label>Emergency Contact Number</Form.Label>
-                    <div className="mb-0">
-                      <text>Passport</text>
-                      {selectedPassportFile ? (
-                        <div className="container text-center mt-5">
-                          <div className="mb-2">
-                            <div>
-                              <img
-                                src={formData.passport ? URL.createObjectURL(formData.passport) : defaultUser}
-                                alt="Passport"
-                                className="rounded-circle img-fluid"
-                                style={imageStyle}
-                              />
+                    <Form.Label>Passport</Form.Label>
+                    <div>
+                      <label htmlFor="passport">
+                        <div style={OwnerInfoImages}>
+                          {selectedPassportFile ? (
+                                                      <img src={URL.createObjectURL(selectedPassportFile)} alt="Selected" style={{ width: '100%', height: '100%' }} />
+
+                          ) : (
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '100%',
+                                height: '100%',
+                                color: '#ced4da',
+                              }}
+                            >
+                              <div>{/* Icon or text for upload */}</div>
+                              <div style={{ textAlign: 'center' }}>Upload Image</div>
                             </div>
-                          </div>
+                          )}
                         </div>
-                      ) : (
-                        <div className="container text-center mt-5">
-                          <div className="mb-2">
-                            <div>
-                              <img src={defaultUser} alt="Passport" className="rounded-circle img-fluid" style={imageStyle} />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                      <div className="d-flex justify-content-center align-items-center flex-column mt-5">
-                        <Form.Control type="file" accept="image/*" onChange={handlePassportFileChange} style={{ display: 'none' }} id="passport-upload-input" />
-                        <Button variant="outline-primary" onClick={() => document.getElementById('passport-upload-input').click()}>
-                          Upload Passport
-                        </Button>
-                      </div>
+                      </label>
+                      <input
+                        type="file"
+                        id="passport"
+                        accept="image/*"
+                        className="form-control-file"
+                        style={{ display: 'none' }}
+                        onChange={handlePassportFileChange}
+                      />
                     </div>
                   </Col>
                 </Row>
