@@ -151,7 +151,7 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/vendors/list`,
-      label: 'vendors',
+      label: 'Vendors',
       icon: 'invoice',
       subs: [
         { path: '/vendor-dashboard', label: 'Dashboard',  icon: 'dashboard-1', component: VendorDashboard },
@@ -190,7 +190,7 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/orders/list`,
-      label: 'orders',
+      label: 'Orders',
       icon: 'cart',
       subs: [
         { path: '/list', label: 'List', component: orders.list },
@@ -204,18 +204,18 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/rewards/overview`,
-      label: 'rewards',
+      label: 'Rewards',
       icon: 'gift',
       subs: [
-        { path: '/overview', label: 'overview', component: rewards.overview },
-        { path: '/login-rewards', label: 'login', component: rewards.loginRewards },
-        { path: '/daily-rewards', label: 'daily', component: rewards.dailyRewards },
-        { path: '/purchased-rewards', label: 'purchased', component: rewards.purchasedRewards },
-        { path: '/list', label: 'list', component: rewards.list },
+        { path: '/overview', label: 'Overview', component: rewards.overview },
+        { path: '/login-rewards', label: 'Login', component: rewards.loginRewards },
+        { path: '/daily-rewards', label: 'Daily', component: rewards.dailyRewards },
+        { path: '/purchased-rewards', label: 'Purchased', component: rewards.purchasedRewards },
+        { path: '/list', label: 'List', component: rewards.list },
 
-        { path: '/addNew', label: 'add new', component: rewards.addNewReward },
+        { path: '/addNew', label: 'Add new', component: rewards.addNewReward },
     
-        { path: '/detail', label: 'detail', component: rewards.detail },
+        { path: '/detail', label: 'Detail', component: rewards.detail },
 
     
 
@@ -227,20 +227,20 @@ const routesAndMenuItems = {
     {
       path: `${appRoot}/spin`,
       component: spin,
-      label: 'spin wheel',
+      label: 'Spin wheel',
       icon: 'spinner',
     },
     
     {
       path: `${appRoot}/wishlist`,
       component: wishlist,
-      label: 'wishlist',
+      label: 'Wishlist',
       icon: 'heart',
     },
     {
       path: `${appRoot}/flashdeals`,
       component: flashDeals,
-      label: 'flash deals',
+      label: 'Flash deals',
       icon: 'flash',
     },
 
@@ -249,7 +249,7 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/payments/transaction`,
-      label: 'payment',
+      label: 'Payment',
       icon: 'money',
       subs: [
         { path: '/transactions', label: 'Transaction', component: payments.transaction,  subs: [
@@ -296,14 +296,14 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/support/feedbacks`,
-      label: 'support',
+      label: 'Support',
       icon: 'headset',
       subs: [
-        { path: '/feedbacks', label: 'feedbacks', component: feedbacks.feedbacks },
+        { path: '/feedbacks', label: 'Feedbacks', component: feedbacks.feedbacks },
       
-        { path: '/support', label: 'request', component: feedbacks.support },
+        { path: '/support', label: 'Request', component: feedbacks.support },
 
-        { path: '/resolution', label: 'resolution', component: feedbacks.resolution },
+        { path: '/resolution', label: 'Resolution', component: feedbacks.resolution },
       ],
     },
     {
@@ -311,7 +311,7 @@ const routesAndMenuItems = {
       exact: true,
       redirect: true,
       to: `${appRoot}/setting/admin`,
-      label: 'settings',
+      label: 'Settings',
       icon: 'gear',
       subs: [
         { path: '/admin', label: 'Admin Profile', component: setting.admin },

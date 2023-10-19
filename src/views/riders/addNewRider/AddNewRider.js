@@ -217,6 +217,8 @@ const AddNewRider = () => {
 
       if (riderToUpdateIndex !== -1) {
         // Create an updated rider object
+        console.log(formData);
+      
         const updatedRider = {
           id: formData.id,
           firstName: formData.firstName,
@@ -311,7 +313,8 @@ const AddNewRider = () => {
     setSelectedItems([item.id]);
 
     console.log('Selected Item:', item);
-
+    console.log('formData.image:', item.image);
+   
     setButtonText('Update Rider');
 
     setFormData({
@@ -329,7 +332,9 @@ const AddNewRider = () => {
       emergencyContactNumber: item.emergencyContactNumber,
       image: item.image,
       zone: item.zone,
+      emiratesID:item.emiratesID
     });
+    
   };
 
   const toggleCheckAll = (allSelect) => {

@@ -143,7 +143,7 @@ const AddNewReward = () => {
 
           {/* Shipment Start */}
 
-          <Card className="mb-5">
+          {/* <Card className="mb-5">
             <Card.Body>
               <Form.Label>Associate this reward with a set</Form.Label>
               <div className="d-flex flex-column">
@@ -162,7 +162,7 @@ const AddNewReward = () => {
                 </Row>
               </div>
             </Card.Body>
-          </Card>
+          </Card> */}
 
           {/* Shipment End */}
 
