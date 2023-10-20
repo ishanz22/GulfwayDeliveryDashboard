@@ -842,10 +842,7 @@ const AddNewRestaurant = ({ google }) => {
                   <div>
                     <label htmlFor="imageInput">
                       <div
-                        style={{
-                          ...OwnerInfoImages,
-                          borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
-                        }}
+                       
                       >
                         <label htmlFor="licenseInput">
                           <div style={OwnerInfoImages}>
