@@ -51,7 +51,7 @@ const AddNewRestaurant = ({ google }) => {
   const [selectedItem, setSelectedItem] = useState('');
   const [showDeleteSuccessToast, setShowDeleteSuccessToast] = useState(false);
   const [showAddedCuisine, setShowAddedCuisine] = useState(false);
-  const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false)
+  const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false);
   const [toast, setToast] = useState('');
   const [selectedCuisineIndex, setSelectedCuisineIndex] = useState('');
   const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
@@ -83,8 +83,37 @@ const AddNewRestaurant = ({ google }) => {
     firstName: '',
     lastName: '',
     ownerPhone: '',
-    
   });
+
+  const [buttonText, setButtonText] = useState('Add Cuisine');
+
+  const coverImageStyle = {
+    border: '1px dashed #ced4da',
+    backgroundImage:
+      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
+    backgroundSize: '10px 10px',
+    height: '120px',
+    width: '200px',
+    borderRadius: '10px',
+  };
+  const logoStyle = {
+    border: '1px dashed #ced4da',
+    backgroundImage:
+      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
+    backgroundSize: '10px 10px',
+    width: '120px',
+    height: '120px',
+    borderRadius: '10px',
+  };
+  const OwnerInfoImages = {
+    border: '1px dashed #ced4da',
+    backgroundImage:
+      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
+    backgroundSize: '10px 10px',
+    height: '120px',
+    width: '200px',
+    borderRadius: '10px',
+  };
   function handleAddRestaurantClick() {
     if (
       formData.restaurantName === '' ||
@@ -101,21 +130,18 @@ const AddNewRestaurant = ({ google }) => {
       !selectedImage ||
       !selectedCoverImage
     ) {
-      // At least one field is empty, you can display an error message or take other actions.
       setIsValid(false); // Form is invalid
       setToast('Please fill in all the required fields.');
       setShowErrorFieldsToast(true);
     } else if (cuisineList.length === 0) {
-      // If there are no cuisines added, do not succeed
       setIsValid(false); // Form is invalid
       setToast('Cannot add restaurant without at least one cuisine');
       setShowErrorFieldsToast(true);
     } else {
-      // All fields are filled, and there's at least one cuisine, so you can proceed.
       setIsValid(true); // Form is valid
-  
+
       console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, cuisineList });
-  
+
       setToast('Restaurant added successfully');
       setShowAddedCuisine(true);
 
@@ -128,17 +154,17 @@ const AddNewRestaurant = ({ google }) => {
         estimatedDeliveryTime: '',
         openTime: '',
         closeTime: '',
-    
+
         name: '',
         price: '',
         description: '',
         category: '',
-    
+
         city: '',
         zone: '',
         latitude: '',
         longitude: '',
-    
+
         firstName: '',
         lastName: '',
         ownerPhone: '',
@@ -150,43 +176,11 @@ const AddNewRestaurant = ({ google }) => {
       setSelectedCoverImage('');
       setSelectedLicensedImage('');
       setSelectedPassport('');
+      setCuisineList([]);
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
-  
-  
-  const [buttonText, setButtonText] = useState('Add Cuisine');
-
-
-  const coverImageStyle = {
-    border: '1px dashed #ced4da',
-    backgroundImage:
-      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
-    backgroundSize: '10px 10px',
-    height: '120px',
-    width: '200px',
-    borderRadius: '10px',
-  };
-  const logoStyle = {
-    border: '1px dashed #ced4da', // Adjust the border color and style as needed
-    backgroundImage:
-      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
-    backgroundSize: '10px 10px',
-    width: '120px',
-    height: '120px',
-    borderRadius: '10px',
-  };
-  const OwnerInfoImages = {
-    border: '1px dashed #ced4da', // Adjust the border color and style as needed
-    backgroundImage:
-      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
-    backgroundSize: '10px 10px',
-    height: '120px',
-    width: '200px',
-    borderRadius: '10px',
-  };
-
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -228,11 +222,6 @@ const AddNewRestaurant = ({ google }) => {
     { value: 'Downtown', label: 'Downtown' },
     { value: 'Jumeirah', label: 'Jumeirah' },
   ];
-
-  const [selectedFile, setSelectedFile] = useState('');
-  const [license, setLicense] = useState('');
-  const [emiratesID, setEmiratesID] = useState('');
-  const [passport, setPassport] = useState('');
 
   const handleLicenseUpload = (e) => {
     const file = e.target.files[0];
@@ -294,12 +283,12 @@ const AddNewRestaurant = ({ google }) => {
       const updatedList = [...cuisineList];
       updatedList[existingIndex] = cuisineObject;
       setCuisineList(updatedList);
-      setToast('Cuisine updated successfully'); // Update toast message for update action
+      setToast('Cuisine updated successfully');
       setButtonText('Add Cuisine');
     } else {
       // If the cuisine doesn't exist, add it to the list
       setCuisineList([...cuisineList, cuisineObject]);
-      setToast('Cuisine added successfully'); // Update toast message for add action
+      setToast('Cuisine added successfully');
     }
 
     // Reset the form data for the next entry
@@ -312,7 +301,7 @@ const AddNewRestaurant = ({ google }) => {
     setSelectValueCity(null);
     setIsFormEmpty(true);
 
-    setShowAddedCuisine(true); // Show the Snackbar
+    setShowAddedCuisine(true);
   };
 
   const handleDeleteCuisine = (indexToDelete) => {
@@ -333,19 +322,18 @@ const AddNewRestaurant = ({ google }) => {
       setCuisineList(updatedCuisineList);
 
       setToast('Cuisine removed');
-      setShowDeleteSuccessToast(true); // Show the Snackbar
+      setShowDeleteSuccessToast(true);
       setButtonText('Add Cuisine');
 
-
-    // Reset the form data for the next entry
-    setFormData({
-      name: '',
-      price: '',
-      description: '',
-      category: null,
-    });
-    setSelectValueCity(null);
-    setIsFormEmpty(true);
+      // Reset the form data for the next entry
+      setFormData({
+        name: '',
+        price: '',
+        description: '',
+        category: null,
+      });
+      setSelectValueCity(null);
+      setIsFormEmpty(true);
     }
 
     setIsDeleteDialogOpen(false);
@@ -360,13 +348,11 @@ const AddNewRestaurant = ({ google }) => {
     setSelectValueCity({ label: cuisine.selectedDropdownValue, value: cuisine.selectedDropdownValue });
     if (selectedItem === cuisine) {
       setSelectedItem(null);
-      setButtonText('Add Cuisine'); // Set button text to "Add Cuisine" when an item is deselected
+      setButtonText('Add Cuisine');
     } else {
-      // Otherwise, set the clicked item as the selected one.
       setSelectedItem(cuisine);
-      setButtonText('Update Cuisine'); // Set button text to "Update Cuisine" when an item is selected
+      setButtonText('Update Cuisine');
     }
-
     setFormData({
       name: cuisine.name,
       price: cuisine.price,
@@ -378,12 +364,12 @@ const AddNewRestaurant = ({ google }) => {
 
   const handleSelectCityChange = (selectedOption) => {
     setSelectCityMap(selectedOption);
-    setFormData({ ...formData, city: selectedOption ? selectedOption.value : '' }); // Update rider type in form data
+    setFormData({ ...formData, city: selectedOption ? selectedOption.value : '' });
   };
 
   const handleSelectZoneChange = (selectedOption) => {
     setSelectZoneMap(selectedOption);
-    setFormData({ ...formData, zone: selectedOption ? selectedOption.value : '' }); // Update rider type in form data
+    setFormData({ ...formData, zone: selectedOption ? selectedOption.value : '' });
   };
 
   return (
@@ -463,10 +449,12 @@ const AddNewRestaurant = ({ google }) => {
                   <Form.Label>Logo</Form.Label>
                   <div>
                     <label htmlFor="imageInput">
-                      <div  style={{
+                      <div
+                        style={{
                           ...logoStyle,
                           borderColor: !selectedImage && !isValid ? '#dc3545' : logoStyle.border,
-                        }}>
+                        }}
+                      >
                         {selectedImage ? (
                           <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
                         ) : (
@@ -501,17 +489,19 @@ const AddNewRestaurant = ({ google }) => {
                   <Form.Label>Cover Image</Form.Label>
                   <div>
                     <label htmlFor="coverImageInput">
-                      <div   style={{
+                      <div
+                        style={{
                           ...OwnerInfoImages,
                           borderColor: !selectedCoverImage && !isValid ? '#dc3545' : coverImageStyle.border,
-                        }}>
+                        }}
+                      >
                         {selectedCoverImage ? (
                           <img src={selectedCoverImage} alt="Selected Cover" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                         ) : (
                           <div
                             style={{
                               display: 'flex',
-                              flexDirection: 'column', // Display children in a column
+                              flexDirection: 'column',
                               justifyContent: 'center',
                               alignItems: 'center',
                               width: '100%',
@@ -809,7 +799,6 @@ const AddNewRestaurant = ({ google }) => {
           </Row>
         </Card.Body>
       </Card>
-      {/* Pagination End */}
 
       <div style={{ paddingTop: '40px' }}>
         <h2 className="small-title">Owner Info</h2>
@@ -853,10 +842,11 @@ const AddNewRestaurant = ({ google }) => {
                   <div>
                     <label htmlFor="imageInput">
                       <div
-                      style={{
-                        ...OwnerInfoImages,
-                        borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
-                      }}>
+                        style={{
+                          ...OwnerInfoImages,
+                          borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                        }}
+                      >
                         <label htmlFor="licenseInput">
                           <div style={OwnerInfoImages}>
                             {selectedLicensedImage ? (
@@ -945,10 +935,12 @@ const AddNewRestaurant = ({ google }) => {
                   <Form.Label>Passport</Form.Label>
                   <div>
                     <label htmlFor="passportInput">
-                      <div     style={{
+                      <div
+                        style={{
                           ...OwnerInfoImages,
                           borderColor: !selectedPassport && !isValid ? '#dc3545' : OwnerInfoImages.border,
-                        }}>
+                        }}
+                      >
                         {selectedPassport ? (
                           <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%' }} />
                         ) : (
@@ -1005,8 +997,6 @@ const AddNewRestaurant = ({ google }) => {
         anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
         <Alert variant="filled" severity="error" onClose={() => setShowDeleteSuccessToast(false)}>
-          {' '}
-          {/* Use "error" for danger color */}
           {toast}
         </Alert>
       </Snackbar>
@@ -1018,12 +1008,9 @@ const AddNewRestaurant = ({ google }) => {
         anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
         <Alert variant="filled" severity="success" onClose={() => setShowAddedCuisine(false)}>
-          {' '}
-          {/* Use "error" for danger color */}
           {toast}
         </Alert>
       </Snackbar>
-
 
       <Snackbar
         open={showErrorFieldsToast}
@@ -1032,8 +1019,6 @@ const AddNewRestaurant = ({ google }) => {
         anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
         <Alert variant="filled" severity="error" onClose={() => setShowErrorFieldsToast(false)}>
-          {' '}
-          {/* Use "error" for danger color */}
           {toast}
         </Alert>
       </Snackbar>
