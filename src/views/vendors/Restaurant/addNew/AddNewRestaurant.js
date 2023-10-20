@@ -48,17 +48,18 @@ const AddNewRestaurant = ({ google }) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isValid, setIsValid] = useState(true);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState('');
   const [showDeleteSuccessToast, setShowDeleteSuccessToast] = useState(false);
   const [showAddedCuisine, setShowAddedCuisine] = useState(false);
+  const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false)
   const [toast, setToast] = useState('');
-  const [selectedCuisineIndex, setSelectedCuisineIndex] = useState(null);
-  const [selectedEmiratesID, setSelectedEmiratesID] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedCoverImage, setSelectedCoverImage] = useState(null);
-  const [selectedLicensedImage, setSelectedLicensedImage] = useState(null);
-
-  const [selectedPassport, setSelectedPassport] = useState(null);
+  const [selectedCuisineIndex, setSelectedCuisineIndex] = useState('');
+  const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedCoverImage, setSelectedCoverImage] = useState('');
+  const [selectedLicensedImage, setSelectedLicensedImage] = useState('');
+  const [cuisineList, setCuisineList] = useState([]);
+  const [selectedPassport, setSelectedPassport] = useState('');
   const [formData, setFormData] = useState({
     restaurantName: '',
     restaurantAddress: '',
@@ -72,7 +73,7 @@ const AddNewRestaurant = ({ google }) => {
     name: '',
     price: '',
     description: '',
-    category: null,
+    category: 'null',
 
     city: '',
     zone: '',
@@ -82,6 +83,7 @@ const AddNewRestaurant = ({ google }) => {
     firstName: '',
     lastName: '',
     ownerPhone: '',
+    
   });
   function handleAddRestaurantClick() {
     if (
@@ -94,19 +96,67 @@ const AddNewRestaurant = ({ google }) => {
       formData.openTime === '' ||
       formData.closeTime === '' ||
       !selectedEmiratesID ||
-      !selectedLicensedImage 
+      !selectedLicensedImage ||
+      !selectedPassport ||
+      !selectedImage ||
+      !selectedCoverImage
     ) {
       // At least one field is empty, you can display an error message or take other actions.
       setIsValid(false); // Form is invalid
-      alert('Please fill in all the required fields.');
+      setToast('Please fill in all the required fields.');
+      setShowErrorFieldsToast(true);
+    } else if (cuisineList.length === 0) {
+      // If there are no cuisines added, do not succeed
+      setIsValid(false); // Form is invalid
+      setToast('Cannot add restaurant without at least one cuisine');
+      setShowErrorFieldsToast(true);
     } else {
-      // All fields are filled, you can proceed with the form submission or other actions.
+      // All fields are filled, and there's at least one cuisine, so you can proceed.
       setIsValid(true); // Form is valid
-      // Perform the desired action here, e.g., submitting the form or navigating to the next step.
+  
+      console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, cuisineList });
+  
+      setToast('Restaurant added successfully');
+      setShowAddedCuisine(true);
+
+      setFormData({
+        restaurantName: '',
+        restaurantAddress: '',
+        phone: '',
+        email: '',
+        vatTax: '',
+        estimatedDeliveryTime: '',
+        openTime: '',
+        closeTime: '',
+    
+        name: '',
+        price: '',
+        description: '',
+        category: '',
+    
+        city: '',
+        zone: '',
+        latitude: '',
+        longitude: '',
+    
+        firstName: '',
+        lastName: '',
+        ownerPhone: '',
+      });
+      setSelectValueCity('');
+      setSelectedEmiratesID('');
+      setSelectedImage('');
+      setSelectedImage('');
+      setSelectedCoverImage('');
+      setSelectedLicensedImage('');
+      setSelectedPassport('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
+  
+  
   const [buttonText, setButtonText] = useState('Add Cuisine');
-  const [cuisineList, setCuisineList] = useState([]);
+
 
   const coverImageStyle = {
     border: '1px dashed #ced4da',
@@ -136,15 +186,6 @@ const AddNewRestaurant = ({ google }) => {
     borderRadius: '10px',
   };
 
-
-
-  // const handleOpenToast = (message) => {
-  //   setToast(message);
-  //   setOpenToast(true);
-  //   setTimeout(() => {
-  //     setOpenToast(false);
-  //   }, 3000);
-  // };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -188,10 +229,10 @@ const AddNewRestaurant = ({ google }) => {
     { value: 'Jumeirah', label: 'Jumeirah' },
   ];
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [license, setLicense] = useState(null);
-  const [emiratesID, setEmiratesID] = useState(null);
-  const [passport, setPassport] = useState(null);
+  const [selectedFile, setSelectedFile] = useState('');
+  const [license, setLicense] = useState('');
+  const [emiratesID, setEmiratesID] = useState('');
+  const [passport, setPassport] = useState('');
 
   const handleLicenseUpload = (e) => {
     const file = e.target.files[0];
@@ -293,6 +334,18 @@ const AddNewRestaurant = ({ google }) => {
 
       setToast('Cuisine removed');
       setShowDeleteSuccessToast(true); // Show the Snackbar
+      setButtonText('Add Cuisine');
+
+
+    // Reset the form data for the next entry
+    setFormData({
+      name: '',
+      price: '',
+      description: '',
+      category: null,
+    });
+    setSelectValueCity(null);
+    setIsFormEmpty(true);
     }
 
     setIsDeleteDialogOpen(false);
@@ -411,8 +464,8 @@ const AddNewRestaurant = ({ google }) => {
                   <div>
                     <label htmlFor="imageInput">
                       <div  style={{
-                          ...OwnerInfoImages,
-                          borderColor: !selectedImage && !isValid ? '#dc3545' : coverImageStyle.border,
+                          ...logoStyle,
+                          borderColor: !selectedImage && !isValid ? '#dc3545' : logoStyle.border,
                         }}>
                         {selectedImage ? (
                           <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
@@ -949,9 +1002,9 @@ const AddNewRestaurant = ({ google }) => {
         open={showDeleteSuccessToast}
         autoHideDuration={3000}
         onClose={() => setShowDeleteSuccessToast(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
-        <Alert severity="error" onClose={() => setShowDeleteSuccessToast(false)}>
+        <Alert variant="filled" severity="error" onClose={() => setShowDeleteSuccessToast(false)}>
           {' '}
           {/* Use "error" for danger color */}
           {toast}
@@ -962,9 +1015,23 @@ const AddNewRestaurant = ({ google }) => {
         open={showAddedCuisine}
         autoHideDuration={3000}
         onClose={() => setShowAddedCuisine(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
-        <Alert severity="success" onClose={() => setShowAddedCuisine(false)}>
+        <Alert variant="filled" severity="success" onClose={() => setShowAddedCuisine(false)}>
+          {' '}
+          {/* Use "error" for danger color */}
+          {toast}
+        </Alert>
+      </Snackbar>
+
+
+      <Snackbar
+        open={showErrorFieldsToast}
+        autoHideDuration={3000}
+        onClose={() => setShowAddedCuisine(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
+      >
+        <Alert variant="filled" severity="error" onClose={() => setShowErrorFieldsToast(false)}>
           {' '}
           {/* Use "error" for danger color */}
           {toast}
