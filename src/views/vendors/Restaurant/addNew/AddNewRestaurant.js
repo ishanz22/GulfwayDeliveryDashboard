@@ -356,6 +356,7 @@ const AddNewRestaurant = ({ google }) => {
 
     setIsDeleteDialogOpen(false);
     setSelectedItemIndex(null);
+    setSelectedItemImage('')
   };
 
   const checkItem = (Item) => {
@@ -377,8 +378,11 @@ const AddNewRestaurant = ({ google }) => {
       description: Item.description,
       category: Item.selectedDropdownValue,
       discount: Item.discount,
+      selectedItemImage: Item.selectedItemImage,
     });
     setIsFormEmpty(false);
+
+    setSelectedItemImage(Item.selectedItemImage);
   };
 
   const handleSelectCityChange = (selectedOption) => {
@@ -475,7 +479,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedImage ? (
-                          <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                          <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
                         ) : (
                           <div
                             style={{
@@ -679,7 +683,7 @@ const AddNewRestaurant = ({ google }) => {
                             }}
                           >
                             {selectedItemImage ? (
-                              <img src={selectedItemImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                              <img src={selectedItemImage} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
                             ) : (
                               <div
                                 style={{
@@ -721,11 +725,7 @@ const AddNewRestaurant = ({ google }) => {
                     className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold"
                     onClick={handleAddItem}
                     disabled={
-                      isFormEmpty ||
-                      formData.name === '' ||
-                      formData.price === '' ||
-                      formData.discount === '' ||
-                      selectedItemImage === '' // Check if selectedItemImage is null
+                      isFormEmpty || formData.name === '' || formData.price === '' || formData.discount === '' || selectedItemImage === '' // Check if selectedItemImage is null
                     }
                   >
                     {buttonText}
@@ -735,49 +735,85 @@ const AddNewRestaurant = ({ google }) => {
             </Form>
 
             <div>
-              {ItemList.map((Item, index) => (
-                <Card key={index} className={`mb-2 ${Item === selectedItem ? 'selected' : ''}`}>
-                  <Card.Body style={{ borderRadius: '10px' }} className="p-3">
-                    <Row className="g-1" onClick={() => checkItem(Item)}>
-                      <Col lg="2">
-                        <div className="text-muted text-small d-lg-none">Name</div>
-                        <div className="text-alternate">{Item.name}</div>
-                      </Col>
-                      <Col lg="2">
-                        <div className="text-muted text-small d-lg-none">Price</div>
-                        <div className="text-alternate">{Item.price}</div>
-                      </Col>
-                      <Col lg="2">
-                        <div className="text-muted text-small d-lg-none">Description</div>
-                        <div className="text-alternate">{Item.description}</div>
-                      </Col>
-                      <Col lg="2">
-                        <div className="text-muted text-small d-lg-none">Description</div>
-                        <div className="text-alternate">{Item.discount}</div>
-                      </Col>
-                      <Col lg="2">
-                        <Col className="d-flex flex-column justify-content-center  order-lg-2">
-                          <div className="text-muted text-small d-lg-none">Category</div>
-                          <div className="text-alternate">&nbsp;&nbsp;&nbsp;&nbsp;{Item.selectedDropdownValue}</div>
-                        </Col>
-                      </Col>
-                      <Col lg="2">
-                        <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
-                          <div className="text-muted text-small d-md-none">Select</div>
-                          <div onClick={() => handleDeleteItem(index)}>
-                            <CsLineIcons
-                              // Pass the index to identify the object
+            {ItemList.length > 0 && (
+  <Row className="g-1 p-3">
+    <Col lg="1">
+      <div className="text-muted text-small d-lg-none">Name</div>
+      <div className="text-muted text-small cursor-pointer sort">NAME</div>
+    </Col>
+    <Col lg="2">
+      <div className="text-muted text-small d-lg-none">Price</div>
+      <div className="text-muted text-small cursor-pointer sort">PRICE</div>
+    </Col>
+    <Col lg="2">
+      <div className="text-muted text-small d-lg-none">Description</div>
+      <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
+    </Col>
+    <Col lg="2">
+      <div className="text-muted text-small d-lg-none">Discount</div>
+      <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
+    </Col>
+    <Col lg="2">
+      <div className="text-muted text-small d-lg-none">Category</div>
+      <div className="text-muted text-small cursor-pointer sort">CATEGORY</div>
+    </Col>
+    <Col lg="1">
+      <div className="text-muted text-small d-lg-none">Image</div>
+      <div className="text-muted text-small cursor-pointer sort">IMAGE</div>
+    </Col>
+    <Col lg="2">
+      <div className="text-muted text-small d-md-none">Actions</div>
+    </Col>
+  </Row>
+)}
 
-                              icon="bin"
-                              className="text-danger cursor-pointer"
-                              style={{ fontSize: '14px' }}
-                            />
-                          </div>
+              {ItemList.map((Item, index) => (
+                <>
+                  <Card key={index} className={`mb-2 ${Item === selectedItem ? 'selected' : ''}`}>
+                    <Card.Body style={{ borderRadius: '10px' }} className="p-3">
+                      <Row className="g-1" onClick={() => checkItem(Item)}>
+                        <Col lg="1">
+                          <div className="text-muted text-small d-lg-none">Name</div>
+                          <div className="text-alternate">{Item.name}</div>
                         </Col>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
+
+                        <Col lg="2">
+                          <div className="text-muted text-small d-lg-none">Price</div>
+                          <div className="text-alternate">{Item.price}</div>
+                        </Col>
+                        <Col lg="2">
+                          <div className="text-muted text-small d-lg-none">Description</div>
+                          <div className="text-alternate">{Item.description}</div>
+                        </Col>
+                        <Col lg="2">
+                          <div className="text-muted text-small d-lg-none">Description</div>
+                          <div className="text-alternate">{Item.discount}</div>
+                        </Col>
+                        <Col lg="2">
+                          <div className="text-muted text-small d-lg-none">Category</div>
+                          <div className="text-alternate">{Item.selectedDropdownValue}</div>
+                        </Col>
+                        <Col lg="1">
+                          <img style={{ width: 35, height: 20,borderRadius:'4px' }} src={Item.selectedItemImage} alt={Item.selectedItemImage} />
+                        </Col>
+                        <Col lg="2">
+                          <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
+                            <div className="text-muted text-small d-md-none">Select</div>
+                            <div onClick={() => handleDeleteItem(index)}>
+                              <CsLineIcons
+                                // Pass the index to identify the object
+
+                                icon="bin"
+                                className="text-danger cursor-pointer"
+                                style={{ fontSize: '14px' }}
+                              />
+                            </div>
+                          </Col>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </>
               ))}
             </div>
           </Card.Body>
@@ -909,9 +945,14 @@ const AddNewRestaurant = ({ google }) => {
                     <label htmlFor="imageInput">
                       <div>
                         <label htmlFor="licenseInput">
-                          <div style={OwnerInfoImages}>
+                          <div
+                            style={{
+                              ...OwnerInfoImages,
+                              borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                            }}
+                          >
                             {selectedLicensedImage ? (
-                              <img src={URL.createObjectURL(selectedLicensedImage)} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                              <img src={URL.createObjectURL(selectedLicensedImage)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
                             ) : (
                               <div
                                 style={{
@@ -962,7 +1003,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedEmiratesID ? (
-                          <img src={URL.createObjectURL(selectedEmiratesID)} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                          <img src={URL.createObjectURL(selectedEmiratesID)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
                         ) : (
                           <div
                             style={{
@@ -1003,7 +1044,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedPassport ? (
-                          <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                          <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
                         ) : (
                           <div
                             style={{
