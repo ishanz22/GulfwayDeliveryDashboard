@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -161,6 +161,7 @@ const WishList = () => {
             </h1>
           </Col>
 
+
           {/* Title End */}
 
           {/* Top Buttons Start */}
@@ -254,17 +255,23 @@ const WishList = () => {
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">USER DETAILS</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">USER ID</div>
         </Col>
         <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DISCOUNTED AMOUNT</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">POINTS</div>
+          <div className="text-muted text-small cursor-pointer sort">PRODUCT ID</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">RECEIVED</div>
+          <div className="text-muted text-small cursor-pointer sort">COUNT</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">TIME</div>
+        </Col>
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">DATE </div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">MODULE</div>
         </Col>
       
       </Row>
@@ -294,30 +301,47 @@ const WishList = () => {
               </Col>
               
 
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Touch Points</div>
+              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                <div className="text-muted text-small d-md-none">User ID</div>
                 <div className="text-truncate">
    
-                  <div className="text-truncate h-100 d-flex align-items-center">AED {item.transactionAmount}</div>
+                  <div className="text-truncate h-100 d-flex align-items-center"> {item.userId}</div>
                 </div>
               </Col>
 
               <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Point</div>
-                <div className="text-alternate">
-                  <span>{item.points}</span>
+                <div className="text-muted text-small d-md-none">Product ID</div>
+                <div className="text-truncate">
+   
+                  <div className="text-truncate h-100 d-flex align-items-center"> {item.productId}</div>
                 </div>
               </Col>
 
+              
+
+              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                <div className="text-muted text-small d-md-none">Count</div>
+                <div className="text-alternate">
+                  <span>{item.count}</span>
+                </div>
+              </Col>
+       
+
+              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                <div className="text-muted text-small d-md-none">Time</div>
+                <div className="text-alternate">
+                  <span>{item.time}</span>
+                </div>
+              </Col>
               <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">TOUCHPOINTS</div>
-                <div className="text-alternate">{item.points}</div>
+                <div className="text-muted text-small d-md-none">Date</div>
+                <div className="text-alternate">{item.date}</div>
               </Col>
 
               <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">RECEIVED</div>
+                <div className="text-muted text-small d-md-none">Module</div>
                 <div>
-                  <div className="text-alternate"> {item.received}</div>
+                  <div className="text-alternate"> {item.module}</div>
                 </div>
               </Col>
           

@@ -11,10 +11,16 @@ const RewardListData = [
     email: 'joisse@example.com',
     touchPoints: 1,
     event: 'Earned daily points',
-    date: '17 hours ago',
+
     discountedAmount: 80,
     received: 10,
-    wishList:5252
+    wishList:5252,
+    userId:2981,
+    productId:59593,
+    date: '2023-10-20',
+    time:' 08:00:00',
+    count:10,
+    module:'Restaurant'
   },
   {
     id: 1002,
@@ -29,10 +35,16 @@ const RewardListData = [
     email: 'joisse.kaycee@example.com',
     touchPoints: 2,
     event: 'Earned daily points',
-    date: '18 hours ago',
+   
     discountedAmount: 400,
     received: 5,
-    wishList:5253
+    wishList:5253,
+    userId:2982,
+    productId:59594,
+    date: '2023-10-21',
+    time:'14:30:00',
+    count:5,
+    module:'Grocery'
   },
   {
     id: 1003,
@@ -46,10 +58,17 @@ const RewardListData = [
     email: 'john.doe@example.com',
     touchPoints: 5,
     event: 'Earned daily points',
-    date: '19 hours ago',
+   
     discountedAmount: 350,
     received: 8,
-    wishList:5254
+    wishList:5254,
+    userId:2983,
+    productId:59594,
+    
+    date: '2023-10-21',
+    time:'14:30:00',
+    count:15,
+    module:'Grocery'
   },
   {
     id: 1004,
@@ -63,10 +82,16 @@ const RewardListData = [
     email: 'jane.smith@example.com',
     touchPoints: 5,
     event: 'Earned daily points',
-    date: '20 hours ago',
+    
     discountedAmount: 200,
     received: 6,
-    wishList:5255
+    wishList:5255,
+    userId:2984,
+    productId:59595,
+    date: '2023-10-22 ',
+    time:"09:45:00",
+    count:20,
+    module:'Restaurant'
   },
   {
     id: 1005,
@@ -80,10 +105,16 @@ const RewardListData = [
     email: 'sarah.jones@example.com',
     touchPoints: 6,
     event: 'Earned daily points',
-    date: '20 hours ago',
+
     discountedAmount: 200,
     received: 5,
-    wishList:5256
+    wishList:5256,
+    userId:2985,
+    productId:59596,
+    time: ' 14:30:00',
+    date: '2023-10-21',
+    count:25,
+    module:'Grocery'
   },
   {
     id: 1006,
@@ -97,10 +128,16 @@ const RewardListData = [
     email: 'mike.wilson@example.com',
     touchPoints: 10,
     event: 'Earned daily points',
-    date: '22 hours ago',
+
     discountedAmount: 280,
     received: 10,
-    wishList:5257
+    wishList:5257,
+    userId:2986,
+    productId:59597,
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:30,
+    module:'Restaurant'
   },
   {
     id: 1007,
@@ -114,10 +151,17 @@ const RewardListData = [
     email: 'emily.martin@example.com',
     touchPoints: 2,
     event: 'Earned daily points',
-    date: '24 hours ago',
+   
     discountedAmount: 200,
     received: 15,
-    wishList:5258
+    wishList:5258,
+    userId:2987,
+    productId:59598,
+   
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:35,
+    module:'Grocery'
   },
   {
     id: 1008,
@@ -131,10 +175,17 @@ const RewardListData = [
     email: 'emily.martin@example.com',
     touchPoints: 5,
     event: 'Earned daily points',
-    date: '2 days ago',
+
     discountedAmount: 100,
     received: 20,
-    wishList:5259
+    wishList:5259,
+    userId:2988,
+    productId:59599,
+  
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:40,
+    module:'Restaurant'
   },
   {
     id: 1009,
@@ -148,11 +199,17 @@ const RewardListData = [
     email: 'emily.martin@example.com',
     touchPoints: 16,
     event: 'Earned daily points',
-    date: '4 days ago',
+
     discountedAmount: 300,
     received: 18,
-    wishList:5260
-    
+    wishList:5260,
+    userId:2989,
+    productId:59600,
+ 
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:45,
+    module:'Grocery'
   },
   {
     id: 1010,
@@ -166,10 +223,17 @@ const RewardListData = [
     email: 'emily.martin@example.com',
     touchPoints: 9,
     event: 'Earned daily points',
-    date: '1 month ago',
+
     discountedAmount: 290,
     received: 25,
-    wishList:5261
+    wishList:5261,
+    userId:2990,
+    productId:59601,
+
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:50,
+    module:'Restaurant'
   },
   {
     id: 1011,
@@ -183,10 +247,19 @@ const RewardListData = [
     email: 'emily.martin@example.com',
     touchPoints: 12,
     event: 'Earned daily points',
-    date: '2 month ago',
+
     discountedAmount: 120,
     received: 30,
-    wishList:5262
+    wishList:5262,
+    userId:2991,
+    productId:59602,
+  
+    
+    time: ' 14:30:00',
+    date:'2023-10-21',
+    count:56,
+    module:'Grocery'
+
   },
 ];
 export default RewardListData;

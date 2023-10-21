@@ -17,7 +17,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 
-const AddCuisineOption = { value: 'AddCategory', label: 'Add Category' };
+const AddItemOption = { value: 'AddCategory', label: 'Add Category' };
 
 const initialOptionsCity = [
   { value: 'Italian', label: 'Italian' },
@@ -43,26 +43,27 @@ const AddNewRestaurant = ({ google }) => {
   const [selectValueCity, setSelectValueCity] = useState('');
   const [selectCityMap, setSelectCityMap] = useState('');
   const [selectZoneMap, setSelectZoneMap] = useState();
-  const [newCuisineName, setNewCuisineName] = useState('');
+  const [newItemName, setNewItemName] = useState('');
   const [isFormEmpty, setIsFormEmpty] = useState(true);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [isValid, setIsValid] = useState(true);
   const [selectedItem, setSelectedItem] = useState('');
   const [showDeleteSuccessToast, setShowDeleteSuccessToast] = useState(false);
-  const [showAddedCuisine, setShowAddedCuisine] = useState(false);
+  const [showAddedItem, setShowAddedItem] = useState(false);
   const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false);
   const [toast, setToast] = useState('');
-  const [selectedCuisineIndex, setSelectedCuisineIndex] = useState('');
+  const [selectedItemIndex, setSelectedItemIndex] = useState('');
   const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
+  const [selectedItemImage, setSelectedItemImage] = useState('');
   const [selectedCoverImage, setSelectedCoverImage] = useState('');
   const [selectedLicensedImage, setSelectedLicensedImage] = useState('');
-  const [cuisineList, setCuisineList] = useState([]);
+  const [ItemList, setItemList] = useState([]);
   const [selectedPassport, setSelectedPassport] = useState('');
   const [formData, setFormData] = useState({
-    restaurantName: '',
-    restaurantAddress: '',
+    RestaurantName: '',
+    RestaurantAddress: '',
     phone: '',
     email: '',
     vatTax: '',
@@ -83,9 +84,11 @@ const AddNewRestaurant = ({ google }) => {
     firstName: '',
     lastName: '',
     ownerPhone: '',
+
+    discount: '',
   });
 
-  const [buttonText, setButtonText] = useState('Add Cuisine');
+  const [buttonText, setButtonText] = useState('Add Item');
 
   const coverImageStyle = {
     border: '1px dashed #ced4da',
@@ -114,10 +117,10 @@ const AddNewRestaurant = ({ google }) => {
     width: '200px',
     borderRadius: '10px',
   };
-  function handleAddRestaurantClick() {
+  function handleAddRestaurant() {
     if (
-      formData.restaurantName === '' ||
-      formData.restaurantAddress === '' ||
+      formData.RestaurantName === '' ||
+      formData.RestaurantAddress === '' ||
       formData.phone === '' ||
       formData.email === '' ||
       formData.vatTax === '' ||
@@ -133,21 +136,21 @@ const AddNewRestaurant = ({ google }) => {
       setIsValid(false); // Form is invalid
       setToast('Please fill in all the required fields.');
       setShowErrorFieldsToast(true);
-    } else if (cuisineList.length === 0) {
+    } else if (ItemList.length === 0) {
       setIsValid(false); // Form is invalid
-      setToast('Cannot add restaurant without at least one cuisine');
+      setToast('Cannot add Restaurant without at least one Item');
       setShowErrorFieldsToast(true);
     } else {
       setIsValid(true); // Form is valid
 
-      console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, cuisineList });
+      console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, ItemList });
 
       setToast('Restaurant added successfully');
-      setShowAddedCuisine(true);
+      setShowAddedItem(true);
 
       setFormData({
-        restaurantName: '',
-        restaurantAddress: '',
+        RestaurantName: '',
+        RestaurantAddress: '',
         phone: '',
         email: '',
         vatTax: '',
@@ -168,6 +171,8 @@ const AddNewRestaurant = ({ google }) => {
         firstName: '',
         lastName: '',
         ownerPhone: '',
+
+        discount: '',
       });
       setSelectValueCity('');
       setSelectedEmiratesID('');
@@ -176,7 +181,7 @@ const AddNewRestaurant = ({ google }) => {
       setSelectedCoverImage('');
       setSelectedLicensedImage('');
       setSelectedPassport('');
-      setCuisineList([]);
+      setItemList([]);
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -191,7 +196,16 @@ const AddNewRestaurant = ({ google }) => {
       reader.readAsDataURL(file);
     }
   };
-
+  const handleImageItem = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedItemImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -257,38 +271,40 @@ const AddNewRestaurant = ({ google }) => {
   };
 
   const handleAddCategory = () => {
-    const newOption = { value: newCuisineName, label: newCuisineName };
+    const newOption = { value: newItemName, label: newItemName };
     setOptionsCity([...optionsCity, newOption]);
     setSelectValueCity(newOption);
     setShowModal(false);
-    setNewCuisineName('');
+    setNewItemName('');
   };
-  const handleAddCuisine = () => {
+  const handleAddItem = () => {
     console.log(selectValueCity);
-
+    console.log(selectedItemImage);
     // Create an object to store the values
-    const cuisineObject = {
+    const ItemObject = {
       name: formData.name,
       price: formData.price,
       description: formData.description,
       category: formData.category,
       selectedDropdownValue: selectValueCity.label,
+      discount: formData.discount,
+      selectedItemImage, // Add the selectedItemImage to the object
     };
 
-    // Check if the cuisine already exists in the list
-    const existingIndex = cuisineList.findIndex((cuisine) => cuisine.name === formData.name);
+    // Check if the Item already exists in the list
+    const existingIndex = ItemList.findIndex((Item) => Item.name === formData.name);
 
     if (existingIndex !== -1) {
-      // If the cuisine already exists, update it
-      const updatedList = [...cuisineList];
-      updatedList[existingIndex] = cuisineObject;
-      setCuisineList(updatedList);
-      setToast('Cuisine updated successfully');
-      setButtonText('Add Cuisine');
+      // If the Item already exists, update it
+      const updatedList = [...ItemList];
+      updatedList[existingIndex] = ItemObject;
+      setItemList(updatedList);
+      setToast('Item updated successfully');
+      setButtonText('Add Item');
     } else {
-      // If the cuisine doesn't exist, add it to the list
-      setCuisineList([...cuisineList, cuisineObject]);
-      setToast('Cuisine added successfully');
+      // If the Item doesn't exist, add it to the list
+      setItemList([...ItemList, ItemObject]);
+      setToast('Item added successfully');
     }
 
     // Reset the form data for the next entry
@@ -297,33 +313,34 @@ const AddNewRestaurant = ({ google }) => {
       price: '',
       description: '',
       category: null,
+      discount: '',
     });
     setSelectValueCity(null);
     setIsFormEmpty(true);
-
-    setShowAddedCuisine(true);
+    setSelectedItemImage(null);
+    setShowAddedItem(true);
   };
 
-  const handleDeleteCuisine = (indexToDelete) => {
-    setSelectedCuisineIndex(indexToDelete);
+  const handleDeleteItem = (indexToDelete) => {
+    setSelectedItemIndex(indexToDelete);
 
     setIsDeleteDialogOpen(true);
   };
 
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
-    setSelectedCuisineIndex(null);
+    setSelectedItemIndex(null);
   };
 
   const handleDeleteConfirmed = () => {
-    if (selectedCuisineIndex !== null) {
-      const updatedCuisineList = cuisineList.filter((_, index) => index !== selectedCuisineIndex);
+    if (selectedItemIndex !== null) {
+      const updatedItemList = ItemList.filter((_, index) => index !== selectedItemIndex);
 
-      setCuisineList(updatedCuisineList);
+      setItemList(updatedItemList);
 
-      setToast('Cuisine removed');
+      setToast('Item removed');
       setShowDeleteSuccessToast(true);
-      setButtonText('Add Cuisine');
+      setButtonText('Add Item');
 
       // Reset the form data for the next entry
       setFormData({
@@ -331,33 +348,35 @@ const AddNewRestaurant = ({ google }) => {
         price: '',
         description: '',
         category: null,
+        discount: '',
       });
       setSelectValueCity(null);
       setIsFormEmpty(true);
     }
 
     setIsDeleteDialogOpen(false);
-    setSelectedCuisineIndex(null);
+    setSelectedItemIndex(null);
   };
 
-  const checkItem = (cuisine) => {
-    setSelectedItems([cuisine.name]);
+  const checkItem = (Item) => {
+    setSelectedItems([Item.name]);
 
-    console.log('Selected Item:', cuisine);
-    console.log('Selected Dropdown Value:', cuisine.selectedDropdownValue);
-    setSelectValueCity({ label: cuisine.selectedDropdownValue, value: cuisine.selectedDropdownValue });
-    if (selectedItem === cuisine) {
+    console.log('Selected Item:', Item);
+    console.log('Selected Dropdown Value:', Item.selectedDropdownValue);
+    setSelectValueCity({ label: Item.selectedDropdownValue, value: Item.selectedDropdownValue });
+    if (selectedItem === Item) {
       setSelectedItem(null);
-      setButtonText('Add Cuisine');
+      setButtonText('Add Item');
     } else {
-      setSelectedItem(cuisine);
-      setButtonText('Update Cuisine');
+      setSelectedItem(Item);
+      setButtonText('Update Item');
     }
     setFormData({
-      name: cuisine.name,
-      price: cuisine.price,
-      description: cuisine.description,
-      category: cuisine.selectedDropdownValue,
+      name: Item.name,
+      price: Item.price,
+      description: Item.description,
+      category: Item.selectedDropdownValue,
+      discount: Item.discount,
     });
     setIsFormEmpty(false);
   };
@@ -399,21 +418,21 @@ const AddNewRestaurant = ({ google }) => {
                 <div className="mb-3">
                   <Form.Label>Restaurant Name</Form.Label>
                   <Form.Control
-                    name="restaurantName"
+                    name="RestaurantName"
                     type="text"
-                    className={`mb-3 ${!formData.restaurantName && !isValid ? 'is-invalid' : ''}`}
+                    className={`mb-3 ${!formData.RestaurantName && !isValid ? 'is-invalid' : ''}`}
                     onChange={handleInputChange}
-                    value={formData.restaurantName}
+                    value={formData.RestaurantName}
                   />
                 </div>
                 <div className="mb-3">
                   <Form.Label>Restaurant Address</Form.Label>
                   <Form.Control
-                    name="restaurantAddress"
+                    name="RestaurantAddress"
                     type="text"
-                    className={`mb-3 ${!formData.restaurantAddress && !isValid ? 'is-invalid' : ''}`}
+                    className={`mb-3 ${!formData.RestaurantAddress && !isValid ? 'is-invalid' : ''}`}
                     onChange={handleInputChange}
-                    value={formData.restaurantAddress}
+                    value={formData.RestaurantAddress}
                   />
                 </div>
                 <div className="mb-3">
@@ -585,86 +604,129 @@ const AddNewRestaurant = ({ google }) => {
       </div>
 
       <div style={{ paddingTop: '60px' }}>
-        <h2 className="small-title">Cuisine</h2>
+        <h2 className="small-title">Item</h2>
         <Card className="mb-5">
           <Card.Body>
             <Form className="mb-5">
+              <div style={{ display: 'flex' }}>
+                <div style={{ width: '100%' }}>
+                  <Row className="g-9">
+                    <Col lg="3" className="mb-4">
+                      <Form.Label>Name</Form.Label>
+                      <Form.Control type="text" name="name" value={formData.name} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Label>Price</Form.Label>
+                      <Form.Control type="number" name="price" value={formData.price} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="4">
+                      <Form.Label>Description (Optional)</Form.Label>
+                      <Form.Control type="text" name="description" value={formData.description} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Label>Discount</Form.Label>
+                      <Form.Control type="number" name="discount" value={formData.discount} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Group>
+                        <Form.Label>Category</Form.Label>
+                        <Select
+                          classNamePrefix="react-select"
+                          options={[...optionsCity, AddItemOption]}
+                          value={selectValueCity}
+                          onChange={handleSelectChange}
+                          placeholder=""
+                        />
+                      </Form.Group>
+
+                      <Modal show={showModal} onHide={() => setShowModal(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Add New Category</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter the new category name"
+                            value={newItemName}
+                            onChange={(e) => setNewItemName(e.target.value)}
+                          />
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Cancel
+                          </Button>
+                          <Button variant="primary" onClick={handleAddCategory}>
+                            Add
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+                    </Col>
+                    {/*  */}
+
+                    {/*  */}
+                  </Row>
+                </div>
+                <div>
+                  <Row>
+                    <Col>
+                      <Form.Label>Image</Form.Label>
+                      <div className="mb-5">
+                        <label htmlFor="imageInputItem">
+                          <div
+                            style={{
+                              ...coverImageStyle,
+                              borderColor: !selectedImage && !isValid ? '#dc3545' : coverImageStyle.border,
+                            }}
+                          >
+                            {selectedItemImage ? (
+                              <img src={selectedItemImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                            ) : (
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  height: '100%',
+                                  color: '#ced4da',
+                                }}
+                              >
+                                <CsLineIcons icon="cloud-upload" size={30} />
+                                <div style={{ textAlign: 'center' }}>Upload Image</div>
+                              </div>
+                            )}
+                          </div>
+                        </label>
+                        <input
+                          type="file"
+                          id="imageInputItem"
+                          accept="image/*"
+                          className="form-control-file"
+                          style={{ display: 'none' }}
+                          onChange={handleImageItem}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+
               <Row className="g-4">
-                <Col lg="2">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    // className={`mb-3 ${!formData.name && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-                <Col lg="2">
-                  <Form.Label>Price</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    // className={`mb-3 ${!formData.price && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-
-                <Col lg="3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    // className={`mb-3 ${!formData.description && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-
-                <Col lg={2}>
-                  <Form.Group>
-                    <Form.Label>Category</Form.Label>
-                    <Select
-                      classNamePrefix="react-select"
-                      options={[...optionsCity, AddCuisineOption]}
-                      value={selectValueCity}
-                      onChange={handleSelectChange}
-                      placeholder=""
-                    />
-                  </Form.Group>
-
-                  <Modal show={showModal} onHide={() => setShowModal(false)}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Add New Category</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter the new category name"
-                        value={newCuisineName}
-                        onChange={(e) => setNewCuisineName(e.target.value)}
-                      />
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" onClick={handleAddCategory}>
-                        Add
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                </Col>
-
-                <Col lg="2">
+                <Col className="w-100 d-flex justify-content-end">
                   <Form.Label>&nbsp;</Form.Label>
                   <br />
                   <button
                     type="button"
-                    className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold "
-                    onClick={handleAddCuisine}
-                    disabled={isFormEmpty || formData.name === '' || formData.price === '' || formData.description === ''}
+                    className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold"
+                    onClick={handleAddItem}
+                    disabled={
+                      isFormEmpty ||
+                      formData.name === '' ||
+                      formData.price === '' ||
+                      formData.discount === '' ||
+                      selectedItemImage === '' // Check if selectedItemImage is null
+                    }
                   >
                     {buttonText}
                   </button>
@@ -673,32 +735,36 @@ const AddNewRestaurant = ({ google }) => {
             </Form>
 
             <div>
-              {cuisineList.map((cuisine, index) => (
-                <Card key={index} className={`mb-2 ${cuisine === selectedItem ? 'selected' : ''}`}>
+              {ItemList.map((Item, index) => (
+                <Card key={index} className={`mb-2 ${Item === selectedItem ? 'selected' : ''}`}>
                   <Card.Body style={{ borderRadius: '10px' }} className="p-3">
-                    <Row className="g-1" onClick={() => checkItem(cuisine)}>
+                    <Row className="g-1" onClick={() => checkItem(Item)}>
                       <Col lg="2">
                         <div className="text-muted text-small d-lg-none">Name</div>
-                        <div className="text-alternate">{cuisine.name}</div>
+                        <div className="text-alternate">{Item.name}</div>
                       </Col>
                       <Col lg="2">
                         <div className="text-muted text-small d-lg-none">Price</div>
-                        <div className="text-alternate">{cuisine.price}</div>
+                        <div className="text-alternate">{Item.price}</div>
                       </Col>
-                      <Col lg="3">
+                      <Col lg="2">
                         <div className="text-muted text-small d-lg-none">Description</div>
-                        <div className="text-alternate">{cuisine.description}</div>
+                        <div className="text-alternate">{Item.description}</div>
                       </Col>
-                      <Col lg={2}>
+                      <Col lg="2">
+                        <div className="text-muted text-small d-lg-none">Description</div>
+                        <div className="text-alternate">{Item.discount}</div>
+                      </Col>
+                      <Col lg="2">
                         <Col className="d-flex flex-column justify-content-center  order-lg-2">
                           <div className="text-muted text-small d-lg-none">Category</div>
-                          <div className="text-alternate">&nbsp;&nbsp;&nbsp;&nbsp;{cuisine.selectedDropdownValue}</div>
+                          <div className="text-alternate">&nbsp;&nbsp;&nbsp;&nbsp;{Item.selectedDropdownValue}</div>
                         </Col>
                       </Col>
-                      <Col lg={3}>
+                      <Col lg="2">
                         <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
                           <div className="text-muted text-small d-md-none">Select</div>
-                          <div onClick={() => handleDeleteCuisine(index)}>
+                          <div onClick={() => handleDeleteItem(index)}>
                             <CsLineIcons
                               // Pass the index to identify the object
 
@@ -841,9 +907,7 @@ const AddNewRestaurant = ({ google }) => {
                   <Form.Label>license</Form.Label>
                   <div>
                     <label htmlFor="imageInput">
-                      <div
-                       
-                      >
+                      <div>
                         <label htmlFor="licenseInput">
                           <div style={OwnerInfoImages}>
                             {selectedLicensedImage ? (
@@ -982,7 +1046,7 @@ const AddNewRestaurant = ({ google }) => {
           style={{ marginLeft: '15px', backgroundColor: '#5A94C8', fontWeight: 'bold' }}
           type="button"
           className="btn btn-icon btn-icon-start btn-primary"
-          onClick={handleAddRestaurantClick}
+          onClick={handleAddRestaurant}
         >
           Add Restaurant
         </button>
@@ -998,13 +1062,8 @@ const AddNewRestaurant = ({ google }) => {
         </Alert>
       </Snackbar>
 
-      <Snackbar
-        open={showAddedCuisine}
-        autoHideDuration={3000}
-        onClose={() => setShowAddedCuisine(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
-      >
-        <Alert variant="filled" severity="success" onClose={() => setShowAddedCuisine(false)}>
+      <Snackbar open={showAddedItem} autoHideDuration={3000} onClose={() => setShowAddedItem(false)} anchorOrigin={{ vertical: 'top', horizontal: 'top' }}>
+        <Alert variant="filled" severity="success" onClose={() => setShowAddedItem(false)}>
           {toast}
         </Alert>
       </Snackbar>
@@ -1012,7 +1071,7 @@ const AddNewRestaurant = ({ google }) => {
       <Snackbar
         open={showErrorFieldsToast}
         autoHideDuration={3000}
-        onClose={() => setShowAddedCuisine(false)}
+        onClose={() => setShowAddedItem(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
       >
         <Alert variant="filled" severity="error" onClose={() => setShowErrorFieldsToast(false)}>

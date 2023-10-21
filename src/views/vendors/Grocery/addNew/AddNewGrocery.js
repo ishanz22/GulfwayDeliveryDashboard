@@ -20,11 +20,11 @@ import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 const AddItemOption = { value: 'AddCategory', label: 'Add Category' };
 
 const initialOptionsCity = [
-  { value: 'Italian', label: 'Italian' },
-  { value: 'French', label: 'French' },
-  { value: 'Mexican', label: 'Mexican' },
-  { value: 'Chinese', label: 'Chinese' },
-  { value: 'American', label: 'American' },
+  { value: 'Fresh Produce', label: 'Fresh Produce' },
+  { value: 'Bakery', label: 'Bakery' },
+  { value: 'Dairy', label: 'Dairy' },
+  { value: 'Beverages', label: 'Beverages' },
+  { value: 'Snacks', label: 'Snacks' },
 ];
 const initialCity = [
   { value: 'Bur Dubai', label: 'Bur Dubai' },
@@ -56,6 +56,7 @@ const AddNewGrocery = ({ google }) => {
   const [selectedItemIndex, setSelectedItemIndex] = useState('');
   const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
+  const [selectedItemImage, setSelectedItemImage] = useState('');
   const [selectedCoverImage, setSelectedCoverImage] = useState('');
   const [selectedLicensedImage, setSelectedLicensedImage] = useState('');
   const [ItemList, setItemList] = useState([]);
@@ -83,6 +84,8 @@ const AddNewGrocery = ({ google }) => {
     firstName: '',
     lastName: '',
     ownerPhone: '',
+
+    discount: '',
   });
 
   const [buttonText, setButtonText] = useState('Add Item');
@@ -168,6 +171,8 @@ const AddNewGrocery = ({ google }) => {
         firstName: '',
         lastName: '',
         ownerPhone: '',
+
+        discount: '',
       });
       setSelectValueCity('');
       setSelectedEmiratesID('');
@@ -191,7 +196,16 @@ const AddNewGrocery = ({ google }) => {
       reader.readAsDataURL(file);
     }
   };
-
+  const handleImageItem = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setSelectedItemImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -265,7 +279,7 @@ const AddNewGrocery = ({ google }) => {
   };
   const handleAddItem = () => {
     console.log(selectValueCity);
-
+    console.log(selectedItemImage);
     // Create an object to store the values
     const ItemObject = {
       name: formData.name,
@@ -273,6 +287,8 @@ const AddNewGrocery = ({ google }) => {
       description: formData.description,
       category: formData.category,
       selectedDropdownValue: selectValueCity.label,
+      discount: formData.discount,
+      selectedItemImage, // Add the selectedItemImage to the object
     };
 
     // Check if the Item already exists in the list
@@ -297,10 +313,11 @@ const AddNewGrocery = ({ google }) => {
       price: '',
       description: '',
       category: null,
+      discount: '',
     });
     setSelectValueCity(null);
     setIsFormEmpty(true);
-
+    setSelectedItemImage(null);
     setShowAddedItem(true);
   };
 
@@ -331,6 +348,7 @@ const AddNewGrocery = ({ google }) => {
         price: '',
         description: '',
         category: null,
+        discount: '',
       });
       setSelectValueCity(null);
       setIsFormEmpty(true);
@@ -358,6 +376,7 @@ const AddNewGrocery = ({ google }) => {
       price: Item.price,
       description: Item.description,
       category: Item.selectedDropdownValue,
+      discount: Item.discount,
     });
     setIsFormEmpty(false);
   };
@@ -589,82 +608,125 @@ const AddNewGrocery = ({ google }) => {
         <Card className="mb-5">
           <Card.Body>
             <Form className="mb-5">
+              <div style={{ display: 'flex' }}>
+                <div style={{ width: '100%' }}>
+                  <Row className="g-9">
+                    <Col lg="3" className="mb-4">
+                      <Form.Label>Name</Form.Label>
+                      <Form.Control type="text" name="name" value={formData.name} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Label>Price</Form.Label>
+                      <Form.Control type="number" name="price" value={formData.price} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="4">
+                      <Form.Label>Description (Optional)</Form.Label>
+                      <Form.Control type="text" name="description" value={formData.description} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Label>Discount</Form.Label>
+                      <Form.Control type="number" name="discount" value={formData.discount} onChange={handleInputChange} />
+                    </Col>
+                    <Col lg="3">
+                      <Form.Group>
+                        <Form.Label>Category</Form.Label>
+                        <Select
+                          classNamePrefix="react-select"
+                          options={[...optionsCity, AddItemOption]}
+                          value={selectValueCity}
+                          onChange={handleSelectChange}
+                          placeholder=""
+                        />
+                      </Form.Group>
+
+                      <Modal show={showModal} onHide={() => setShowModal(false)}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Add New Category</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter the new category name"
+                            value={newItemName}
+                            onChange={(e) => setNewItemName(e.target.value)}
+                          />
+                        </Modal.Body>
+                        <Modal.Footer>
+                          <Button variant="secondary" onClick={() => setShowModal(false)}>
+                            Cancel
+                          </Button>
+                          <Button variant="primary" onClick={handleAddCategory}>
+                            Add
+                          </Button>
+                        </Modal.Footer>
+                      </Modal>
+                    </Col>
+                    {/*  */}
+
+                    {/*  */}
+                  </Row>
+                </div>
+                <div>
+                  <Row>
+                    <Col>
+                      <Form.Label>Image</Form.Label>
+                      <div className="mb-5">
+                        <label htmlFor="imageInputItem">
+                          <div
+                            style={{
+                              ...coverImageStyle,
+                              borderColor: !selectedImage && !isValid ? '#dc3545' : coverImageStyle.border,
+                            }}
+                          >
+                            {selectedItemImage ? (
+                              <img src={selectedItemImage} alt="Selected" style={{ width: '100%', height: '100%' }} />
+                            ) : (
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  height: '100%',
+                                  color: '#ced4da',
+                                }}
+                              >
+                                <CsLineIcons icon="cloud-upload" size={30} />
+                                <div style={{ textAlign: 'center' }}>Upload Image</div>
+                              </div>
+                            )}
+                          </div>
+                        </label>
+                        <input
+                          type="file"
+                          id="imageInputItem"
+                          accept="image/*"
+                          className="form-control-file"
+                          style={{ display: 'none' }}
+                          onChange={handleImageItem}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+
               <Row className="g-4">
-                <Col lg="2">
-                  <Form.Label>Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    // className={`mb-3 ${!formData.name && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-                <Col lg="2">
-                  <Form.Label>Price</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    // className={`mb-3 ${!formData.price && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-
-                <Col lg="3">
-                  <Form.Label>Description</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="description"
-                    value={formData.description}
-                    // className={`mb-3 ${!formData.description && !isValid ? 'is-invalid' : ''}`}
-                    onChange={handleInputChange}
-                  />
-                </Col>
-
-                <Col lg={2}>
-                  <Form.Group>
-                    <Form.Label>Category</Form.Label>
-                    <Select
-                      classNamePrefix="react-select"
-                      options={[...optionsCity, AddItemOption]}
-                      value={selectValueCity}
-                      onChange={handleSelectChange}
-                      placeholder=""
-                    />
-                  </Form.Group>
-
-                  <Modal show={showModal} onHide={() => setShowModal(false)}>
-                    <Modal.Header closeButton>
-                      <Modal.Title>Add New Category</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter the new category name"
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
-                      />
-                    </Modal.Body>
-                    <Modal.Footer>
-                      <Button variant="secondary" onClick={() => setShowModal(false)}>
-                        Cancel
-                      </Button>
-                      <Button variant="primary" onClick={handleAddCategory}>
-                        Add
-                      </Button>
-                    </Modal.Footer>
-                  </Modal>
-                </Col>
-
-                <Col lg="2">
+                <Col className="w-100 d-flex justify-content-end">
                   <Form.Label>&nbsp;</Form.Label>
                   <br />
                   <button
                     type="button"
-                    className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold "
+                    className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold"
                     onClick={handleAddItem}
-                    disabled={isFormEmpty || formData.name === '' || formData.price === '' || formData.description === ''}
+                    disabled={
+                      isFormEmpty ||
+                      formData.name === '' ||
+                      formData.price === '' ||
+                      formData.discount === '' ||
+                      selectedItemImage === '' // Check if selectedItemImage is null
+                    }
                   >
                     {buttonText}
                   </button>
@@ -685,17 +747,21 @@ const AddNewGrocery = ({ google }) => {
                         <div className="text-muted text-small d-lg-none">Price</div>
                         <div className="text-alternate">{Item.price}</div>
                       </Col>
-                      <Col lg="3">
+                      <Col lg="2">
                         <div className="text-muted text-small d-lg-none">Description</div>
                         <div className="text-alternate">{Item.description}</div>
                       </Col>
-                      <Col lg={2}>
+                      <Col lg="2">
+                        <div className="text-muted text-small d-lg-none">Description</div>
+                        <div className="text-alternate">{Item.discount}</div>
+                      </Col>
+                      <Col lg="2">
                         <Col className="d-flex flex-column justify-content-center  order-lg-2">
                           <div className="text-muted text-small d-lg-none">Category</div>
                           <div className="text-alternate">&nbsp;&nbsp;&nbsp;&nbsp;{Item.selectedDropdownValue}</div>
                         </Col>
                       </Col>
-                      <Col lg={3}>
+                      <Col lg="2">
                         <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
                           <div className="text-muted text-small d-md-none">Select</div>
                           <div onClick={() => handleDeleteItem(index)}>
@@ -841,9 +907,7 @@ const AddNewGrocery = ({ google }) => {
                   <Form.Label>license</Form.Label>
                   <div>
                     <label htmlFor="imageInput">
-                      <div
-                       
-                      >
+                      <div>
                         <label htmlFor="licenseInput">
                           <div style={OwnerInfoImages}>
                             {selectedLicensedImage ? (
@@ -998,12 +1062,7 @@ const AddNewGrocery = ({ google }) => {
         </Alert>
       </Snackbar>
 
-      <Snackbar
-        open={showAddedItem}
-        autoHideDuration={3000}
-        onClose={() => setShowAddedItem(false)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'top' }}
-      >
+      <Snackbar open={showAddedItem} autoHideDuration={3000} onClose={() => setShowAddedItem(false)} anchorOrigin={{ vertical: 'top', horizontal: 'top' }}>
         <Alert variant="filled" severity="success" onClose={() => setShowAddedItem(false)}>
           {toast}
         </Alert>

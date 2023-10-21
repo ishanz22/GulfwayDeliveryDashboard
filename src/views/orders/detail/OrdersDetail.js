@@ -8,12 +8,22 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import OrderDetailsData from 'data/OrderDetailsData';
-
+import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import AllRidersDataMap from 'data/AllRidersDataMap';
+import RiderList from 'views/riders/list/RiderList';
 
 const OrdersDetail = () => {
   const title = 'Order Number #3848484';
   const description = 'Ecommerce Order Detail Page';
+  const [showModal, setShowModal] = useState(false); // State to control the visibility of the modal
 
+  const handleShowModal = () => {
+    setShowModal(true); // Function to show the modal
+  }
+
+  const handleCloseModal = () => {
+    setShowModal(false); // Function to close the modal
+  }
   const allItems = [1, 2, 3, 4];
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
@@ -31,17 +41,8 @@ const OrdersDetail = () => {
     }
   };
 
-  const [discountModal, setDiscountModal] = useState(false);
 
-  const [discountType, setDiscountType] = useState({ value: 'Fixed Amount', label: 'Fixed Amount' });
-  const options = [
-    { value: 'Fixed Amount', label: 'Fixed Amount' },
-    { value: 'Free Shipping', label: 'Free Shipping' },
-    { value: 'Percentage', label: 'Percentage' },
-  ];
 
-  const [startDate, setStartDate] = useState(Date.parse('04 Dec 2021 00:12:00 GMT'));
-  const [endDate, setEndDate] = useState(Date.parse('11 Dec 2021 00:12:00 GMT'));
 
 
 
@@ -65,29 +66,35 @@ const OrdersDetail = () => {
           {/* Title End */}
 
           {/* Top Buttons Start */}
-          {/* <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-            <Dropdown className="w-100 w-md-auto">
-              <Dropdown.Toggle className="w-100 w-md-auto" variant="outline-primary">
-                Status: Delivered
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item>Status: Pending</Dropdown.Item>
-                <Dropdown.Item>Status: Shipped</Dropdown.Item>
-                <Dropdown.Item>Status: Delivered</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Dropdown className="ms-1">
-              <Dropdown.Toggle className="btn-icon btn-icon-only dropdown-toggle-no-arrow" variant="outline-primary">
-                <CsLineIcons icon="more-horizontal" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item>Edit</Dropdown.Item>
-                <Dropdown.Item>View Invoice</Dropdown.Item>
-                <Dropdown.Item>Track Package</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </Col> */}
+      <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
+            <Button variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto" onClick={handleShowModal}>
+              <CsLineIcons icon="destination" /> <span>Change Rider</span>
+            </Button>
+            <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
+              <CsLineIcons icon="sort" />
+            </Button>
+         
+          </Col>
           {/* Top Buttons End */}
+          <Modal show={showModal} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Change Rider</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Content for your modal */}
+          {/* You can add any form or content here */}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Cancel
+          </Button>
+          {/* You can add additional functionality when the modal closes */}
+          {/* <Button variant="primary" onClick={handleSomeAction}>
+            Save
+          </Button> */}
+        </Modal.Footer>
+      </Modal>
+          
         </Row>
       </div>
 
@@ -360,8 +367,12 @@ const OrdersDetail = () => {
           </Card>
         </Col>
       </Row>
+
+      
     </>
   );
 };
 
-export default OrdersDetail;
+export default GoogleApiWrapper({
+  apiKey: 'AIzaSyDrI53GlC5-ymZmPKzJq11U36dheMGfeLU',
+})(OrdersDetail);
