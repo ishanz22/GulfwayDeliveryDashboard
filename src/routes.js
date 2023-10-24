@@ -54,9 +54,10 @@ const payments= {
 // };
 
 const feedbacks = {
-    feedbacks: lazy(() => import('views/feebacks/Feedbacks')),
-    support: lazy(() => import('views/feebacks/Support')),
-    resolution: lazy(() => import('views/feebacks/Resolution')),
+    feedbacks: lazy(() => import('views/feedbacks/list/Feedbacks')),
+    support: lazy(() => import('views/feedbacks/Support')),
+    resolution: lazy(() => import('views/feedbacks/Resolution')),
+    detail: lazy(() => import('views/feedbacks/detail/FeedbackDetail')),
   };
 
 const storefront = {
@@ -295,12 +296,14 @@ const routesAndMenuItems = {
       path: `${appRoot}/support`,
       exact: true,
       redirect: true,
-      to: `${appRoot}/support/feedbacks`,
+      to: `${appRoot}/feedbacks`,
       label: 'Support',
       icon: 'headset',
       subs: [
         { path: '/feedbacks', label: 'Feedbacks', component: feedbacks.feedbacks },
-      
+
+        
+        { path: '/detail', label: 'detail', component: feedbacks.detail },
         { path: '/support', label: 'Request', component: feedbacks.support },
 
         { path: '/resolution', label: 'Resolution', component: feedbacks.resolution },
