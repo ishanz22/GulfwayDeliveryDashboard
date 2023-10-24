@@ -12,16 +12,16 @@ const OrderList = [
       points:500,
     }
   },
-  {
-    id: 1002,
-    name: 'Esperanza Lodge',
-    purchase: 5900.00,
-    date: '14.09.2021',
-    status: 'PENDING',
-    image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
-    email: 'jane@gmail.com',
+    {
+      id: 1002,
+      name: 'Esperanza Lodge',
+      purchase: 5900.00,
+      date: '14.09.2021',
+      status: 'PENDING',
+      image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email: 'jane@gmail.com',
 
-  },
+    },
   {
     id: 1003,
     name: 'Esperanza Lodge',

@@ -5,16 +5,17 @@ import DeliveryLogo from '../../assets/Delivery.png'; // Import your DeliveryLog
 
 const NavLogo = () => {
   const logoStyle = {
-    height: '66px', // To maintain the aspect ratio
-    position: 'absolute', // Set the position to absolute
-    top: '10px', // Adjust the top position as needed
-    left: '0px', // Adjust the left position as needed
-    width:"150px",
-  
+    height: '66px',
+    position: 'absolute', 
+    top: '10px',
+    width: '150px',
+    marginLeft: 'auto', 
+    marginRight: 'auto', 
+    display: 'block',
   };
 
   return (
-    <div className="logo position-relative" style={{paddingBottom:"50px"}}>
+    <div className="logo position-relative" style={{ paddingBottom: '50px', textAlign: 'center',marginRight:'30px' }}>
       <Link to={DEFAULT_PATHS.APP}>
         <img src={DeliveryLogo} alt="Delivery Logo" style={logoStyle} />
       </Link>
