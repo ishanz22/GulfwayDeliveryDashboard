@@ -229,13 +229,16 @@ const displayedData = filteredData.slice(startIndex, endIndex);
         <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
         </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">CONTENT</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PURCHASE</div>
         </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">DATE</div>
         </Col>
         <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
@@ -259,7 +262,7 @@ const displayedData = filteredData.slice(startIndex, endIndex);
                   {item.userId}
                 </NavLink>
               </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
                 <div className="text-muted text-small d-md-none">Name</div>
                 <div className="d-flex align-items-center">
                   <div className="round-image">
@@ -268,7 +271,17 @@ const displayedData = filteredData.slice(startIndex, endIndex);
                   <div className="text-alternate ms-2">{item.userName}</div>
                 </div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <div className="text-muted text-small d-md-none">Content</div>
+              <div className="text-alternate">
+                  <span>
+                
+                    {item.feedback}
+                  </span>
+                </div>
+              </Col>
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
                 <div className="text-muted text-small d-md-none">typeName</div>
                 <div className="text-alternate">
                   <span>
@@ -277,12 +290,12 @@ const displayedData = filteredData.slice(startIndex, endIndex);
                   </span>
                 </div>
               </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
                 <div className="text-muted text-small d-md-none">Date</div>
                 <div className="text-alternate">{item.date}</div>
               </Col>
               <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
+                <div className="text-muted text-small d-md-none">Purchase</div>
                 <div>
                   <Badge bg="outline-primary">{item.type}</Badge>
                 </div>
