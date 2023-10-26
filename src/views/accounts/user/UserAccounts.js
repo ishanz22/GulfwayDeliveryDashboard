@@ -2,23 +2,32 @@ import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Modal, OverlayTrigger } from 'react-bootstrap';
 import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
-import VendorListData from 'data/VendorListData';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import UserAccountsData from 'data/UserAccountsData';
 
-const GroceryList = () => {
-  const title = 'Grocery List';
+const UserAccounts = () => {
+  const title = 'User Accounts';
   const description = 'Ecommerce Customer List Page';
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(VendorListData);
+  const [filteredData, setFilteredData] = useState(UserAccountsData);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [showModal, setShowModal] = useState(false);
+  const [showModalNewUser, setShowModalNewUser] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -37,7 +46,7 @@ const GroceryList = () => {
     setSelectedStatus(status);
 
     // Filter data by status
-    const filteredItems = VendorListData.filter((item) => item.status === status);
+    const filteredItems = UserAccountsData.filter((item) => item.status === status);
     setFilteredData(filteredItems);
   };
 
@@ -58,7 +67,7 @@ const GroceryList = () => {
   };
 
   const exportToExcel = () => {
-    const dataToExport = VendorListData.map((item) => ({
+    const dataToExport = UserAccountsData.map((item) => ({
       ID: item.id,
       Name: item.name,
       Location: item.location,
@@ -105,7 +114,7 @@ const GroceryList = () => {
   const exportToPDF = () => {
     const doc = new JsPDF();
 
-    const tableData = VendorListData.map((item) => ({
+    const tableData = UserAccountsData.map((item) => ({
       ID: item.id,
       Name: item.name,
       Location: item.location,
@@ -114,7 +123,7 @@ const GroceryList = () => {
       Status: item.status
         .filter((statusItem) => !statusItem.disabled)
         .map((statusItem) => statusItem.name)
-        .join(', '), // Join status names
+        .join(', '),
     }));
 
     const columns = ['ID', 'Name', 'Location', 'Earnings', 'LastOrder', 'Status'];
@@ -132,8 +141,27 @@ const GroceryList = () => {
     doc.save('RefundList.pdf');
   };
 
-  // Rest of your code remains unchanged
+  function handleModifyUserClick(id) {
+    console.log('Item ID clicked:', id);
+    // You can add additional logic here
+  }
 
+  function handleDeleteUserClick() {
+    console.log('Delete user clicked');
+    setIsDeleteDialogOpen(true);
+  }
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const handleSelectChange = () => {
+    setShowModal(true);
+  };
+  const createUser = () => {
+    setShowModalNewUser(true);
+  };
+  //
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -156,7 +184,7 @@ const GroceryList = () => {
             <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
               <CsLineIcons icon="sort" />
             </Button>
-            <div className="btn-group ms-1 check-all-container">
+            {/* <div className="btn-group ms-1 check-all-container">
               <CheckAll
                 allItems={allItems}
                 selectedItems={selectedItems}
@@ -172,7 +200,16 @@ const GroceryList = () => {
                   <Dropdown.Item>Delete</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
-            </div>
+            </div> */}
+
+            <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
+              <Button onClick={createUser} variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto">
+                <CsLineIcons icon="plus" /> <span>Assign User</span>
+              </Button>
+              <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
+                <CsLineIcons icon="sort" />
+              </Button>
+            </Col>
           </Col>
           {/* Top Buttons End */}
         </Row>
@@ -235,23 +272,22 @@ const GroceryList = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
+        <Col lg="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
         </Col>
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EARNINGS</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LAST ORDER</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+        </Col>
+
+        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">USER ROLE</div>
+        </Col>
+
+        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
       </Row>
       {/* List Header End */}
@@ -263,7 +299,7 @@ const GroceryList = () => {
           {/* You can use 'item' to access data properties */}
           <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
             <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
+              <Col xs="11" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
                 <div className="text-muted text-small d-lg-none">Id</div>
                 <NavLink to="/vendors/SuperMarket/detail/" className="text-truncate h-100 d-flex align-items-center">
                   {item.id}
@@ -273,41 +309,58 @@ const GroceryList = () => {
                 <div className="text-muted text-small d-lg-none">Name</div>
                 <div className="text-alternate">{item.name}</div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-                <div className="text-muted text-small d-lg-none">Location</div>
-                <div className="text-alternate">{item.location}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Earnings</div>
-                <div className="text-alternate">
-                  <span>
-                    <span className="text-medium">AED</span> {item.earnings}
-                  </span>
+              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
+                <div className="text-muted text-small d-lg-none">isActive</div>
+                <div>
+                  <div style={{ color: item.status === 'Not Logged in' ? '#F6CA5F' : '#B3B95A' }}>{item.status}</div>
                 </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Last Order</div>
-                <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                  {item.lastOrder}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Status</div>
+
+              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+                <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
-                  {item.status.map((status, index) => (
-                    <OverlayTrigger key={index} placement="top" overlay={<Tooltip id={`tooltip-${index}`}>{status.name}</Tooltip>}>
-                      <div className={`d-inline-block me-2 ${status.disabled ? 'text-muted' : ''}`}>
-                        {status.name === 'Restaurant' && <CsLineIcons icon="shop" className={`text-${status.disabled ? 'muted' : 'warning'}`} size="17" />}
-                        {status.name === 'Purchased' && <CsLineIcons icon="boxes" className={`text-${status.disabled ? 'muted' : 'info'}`} size="17" />}
-                        {status.name === 'Trusted' && <CsLineIcons icon="check-square" className={`text-${status.disabled ? 'muted' : 'success'}`} size="17" />}
-                        {status.name === 'Phone' && <CsLineIcons icon="phone" className={`text-${status.disabled ? 'muted' : 'danger'}`} size="17" />}
-                      </div>
-                    </OverlayTrigger>
+                  {item.userRole.map((role, index) => (
+                    <Badge key={index} bg="outline-primary" className="me-2">
+                      {role}
+                    </Badge>
                   ))}
                 </div>
               </Col>
+              <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
+                <div className="text-muted text-small d-lg-none mb-1">Action</div>
+                <div className="text-primary d-flex">
+                  <div
+                    className="d-flex"
+                    style={{ cursor: 'pointer' }}
+                    // onClick={() => {
+                    //   console.log(item.id);
+                    //   handleModifyUserClick(item.id);
+                    // }}
+                    onClick={handleSelectChange}
+                  >
+                    <CsLineIcons icon="gear" />
+                    &nbsp;
+                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
+                      Modify User
+                    </div>
+                  </div>
+                  <div className="d-flex" style={{ marginLeft: '25px', cursor: 'pointer' }} onClick={handleDeleteUserClick}>
+                    {/* Add margin to create space */}
+                    <CsLineIcons icon="bin" />
+                    &nbsp;
+                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
+                      Delete User
+                    </div>
+                  </div>
+                </div>
+              </Col>
+
               <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
+                <div className="d-flex">
+                  <div>
+                    <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
+                  </div>
+                </div>
               </Col>
             </Row>
           </Card.Body>
@@ -333,8 +386,61 @@ const GroceryList = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this User ?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button color="primary">Yes</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* modify user modal */}
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        centered // Add this prop to center the modal
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modify User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control type="text" placeholder="Enter the new category name" />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary">Add</Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* create new user modal */}
+      <Modal
+        show={showModalNewUser}
+        onHide={() => setShowModalNewUser(false)}
+        centered // Add this prop to center the modal
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Add User</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control type="text" placeholder="Enter the new category name" />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModalNewUser(false)}>
+            Cancel
+          </Button>
+          <Button variant="primary">Add</Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
 
-export default GroceryList  ;
+export default UserAccounts;

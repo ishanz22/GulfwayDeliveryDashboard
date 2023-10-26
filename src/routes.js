@@ -116,6 +116,15 @@ const wishlist = lazy(() => import('views/wishlist/WishList'));
 const flashDeals = lazy(() => import('views/flashdeals/FlashDealsList'));
 
 
+
+//  Account & Permissions 🩸 
+const accounts= {
+  role: lazy(() => import('views/accounts/role/RoleManagement')), 
+  user: lazy(() => import('views/accounts/user/UserAccounts')),
+  permission: lazy(() => import('views/accounts/permission/PermissionManagement')),
+ 
+};
+
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
 
 const routesAndMenuItems = {
@@ -132,21 +141,7 @@ const routesAndMenuItems = {
       label: 'Dashboard',
       icon: 'shop',
     },
-    {
-      path: `${appRoot}/users`,
-      exact: true,
-      redirect: true,
-      to: `${appRoot}/users/list`,
-      label: 'Users',
-      icon: 'user',
-      subs: [
-        { path: '/list', label: 'List', component: users.list },
-      
-        { path: '/detail', label: 'Detail', component: users.detail },
-        { path: '/logs', label: 'Activity', component: users.logs },
-        { path: '/permission', label: 'Permissions', component: users.Permission },
-      ],
-    },
+   
     {
       path: `${appRoot}/vendors`,
       exact: true,
@@ -309,6 +304,7 @@ const routesAndMenuItems = {
         { path: '/resolution', label: 'Resolution', component: feedbacks.resolution },
       ],
     },
+ 
     {
       path: `${appRoot}/setting`,
       exact: true,
@@ -322,6 +318,20 @@ const routesAndMenuItems = {
         { path: '/notification', label: 'Notifications', component: setting.notification },
 
         { path: '/resolution', label: 'Configuration', component: setting.configuration },
+      ],
+    },
+    {
+      path: `${appRoot}/accounts`,
+      exact: true,
+      redirect: true,
+      to: `${appRoot}/accounts/user`,
+      label: 'Accounts',
+      icon: 'user',
+      subs: [
+        { path: '/user', label: 'User', component: accounts.user },
+        { path: '/role', label: 'Role', component: accounts.role },
+        { path: '/permission', label: 'Permission', component: accounts.permission },
+
       ],
     },
     {
@@ -360,6 +370,7 @@ const routesAndMenuItems = {
       icon: 'gear',
       subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
     },
+ 
   ],
   sidebarItems: [],
 };

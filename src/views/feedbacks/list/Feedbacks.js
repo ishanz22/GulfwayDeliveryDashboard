@@ -1,24 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { utils, write } from 'xlsx';
+import { Row, Col, Button, Dropdown, Form, Card,Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
-import VendorListData from 'data/VendorListData';
+// import UserFeedbackData from 'data/UserFeedbackData';
+// import UserFeedbackData from 'data/UserFeedbackData';
+import UserFeedbackData from 'data/UserFeedbackData';
 
-const GroceryList = () => {
-  const title = 'Grocery List';
+const FeedbackManagement = () => {
+  const title = 'User Feedback';
   const description = 'Ecommerce Customer List Page';
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(VendorListData);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -33,17 +31,24 @@ const GroceryList = () => {
       setSelectedItems([]);
     }
   };
-  const filterDataByStatus = (status) => {
-    setSelectedStatus(status);
 
-    // Filter data by status
-    const filteredItems = VendorListData.filter((item) => item.status === status);
-    setFilteredData(filteredItems);
+
+  const [selectedStatus, setSelectedStatus] = useState('Total Orders');
+  const [filteredData, setFilteredData] = useState(UserFeedbackData);
+
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+ // Track the selected section
+
+  const smallImageStyle = {
+    width: '30px', // Adjust the width as needed
+    height: '30px', // Adjust the height as needed
+    borderRadius: '50%', // Makes the image round
+    overflow: 'hidden', // Ensures the image stays within the round shape
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
 
   const nextPage = () => {
     if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
@@ -57,35 +62,39 @@ const GroceryList = () => {
     }
   };
 
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = startIndex + itemsPerPage;
+const displayedData = filteredData.slice(startIndex, endIndex);
+
+
+  // making K,M,B Format
+  const formatNumberToKMB = (number) => {
+    if (number < 1e3) {
+      return number.toString();
+    }
+
+    if (number < 1e6) {
+      return `${(number / 1e3).toFixed(1)}k`;
+    }
+
+    if (number < 1e9) {
+      return `${(number / 1e6).toFixed(1)}M`;
+    }
+
+    return `${(number / 1e9).toFixed(1)}B`;
+  };
+
   const exportToExcel = () => {
-    const dataToExport = VendorListData.map((item) => ({
+    const dataToExport = UserFeedbackData.map((item) => ({
       ID: item.id,
       Name: item.name,
-      Location: item.location,
-      Earnings: `$${item.earnings}`,
-      LastOrder: item.lastOrder,
-      Status: item.status
-        .filter((statusItem) => !statusItem.disabled)
-        .map((statusItem) => statusItem.name)
-        .join(', '), // Join status names
+      Purchase: `$${item.purchase}`,
+      Date: item.date,
+      Status: item.status,
     }));
 
     const ws = utils.json_to_sheet(dataToExport);
-
-    // Set header row style with blue background color
-    ws['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 30 }]; // Set column widths as needed
-    ws['!header'] = [];
-    ws['!header'][0] = {
-      style: {
-        fill: {
-          fgColor: { rgb: '0000FF' },
-        },
-        font: {
-          color: { rgb: 'FFFFFF' },
-        },
-      },
-    };
-
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Orders');
     const excelBuffer = write(wb, { bookType: 'xlsx', type: 'array' });
@@ -97,42 +106,23 @@ const GroceryList = () => {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'RefundList.xlsx';
+    a.download = 'FeedbackList.xlsx';
     a.click();
     URL.revokeObjectURL(url);
   };
-
   const exportToPDF = () => {
     const doc = new JsPDF();
-
-    const tableData = VendorListData.map((item) => ({
-      ID: item.id,
-      Name: item.name,
-      Location: item.location,
-      Earnings: `$${item.earnings}`,
-      LastOrder: item.lastOrder,
-      Status: item.status
-        .filter((statusItem) => !statusItem.disabled)
-        .map((statusItem) => statusItem.name)
-        .join(', '), // Join status names
-    }));
-
-    const columns = ['ID', 'Name', 'Location', 'Earnings', 'LastOrder', 'Status'];
-
-    // Create a header row
-    const headerRow = columns.map((col) => ({ title: col, dataKey: col }));
+    const tableData = UserFeedbackData.map((item) => [item.id, item.name, `$${item.purchase}`, item.date, item.status]);
+    const columns = ['ID', 'Name', 'Purchase', 'Date', 'Status'];
 
     doc.autoTable({
-      head: [headerRow],
-      body: tableData.map((row) => Object.values(row)),
+      head: [columns],
+      body: tableData,
       theme: 'striped',
-      margin: { top: 15 },
     });
 
-    doc.save('RefundList.pdf');
+    doc.save('FeedbackList.pdf');
   };
-
-  // Rest of your code remains unchanged
 
   return (
     <>
@@ -194,11 +184,11 @@ const GroceryList = () => {
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
+          {/* <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
             <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
               <CsLineIcons icon="print" />
             </Button>
-          </OverlayTrigger>
+          </OverlayTrigger> */}
           {/* Print Button End */}
 
           {/* Export Dropdown Start */}
@@ -218,95 +208,104 @@ const GroceryList = () => {
 
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+  <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+    <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+      {itemsPerPage} Items
+    </Dropdown.Toggle>
+  </OverlayTrigger>
+  <Dropdown.Menu className="shadow dropdown-menu-end">
+    <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
+    <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
+    <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
+
           {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
+        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
+        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">CONTENT</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EARNINGS</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">PURCHASE</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LAST ORDER</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">DATE</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">TYPE</div>
+        </Col>
+        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">RATINGS</div>
         </Col>
       </Row>
       {/* List Header End */}
 
       {/* List Items Start */}
+      {/* List Items Start */}
       {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
-          <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-            <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-                <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/vendors/SuperMarket/detail/" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
+        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.userId) && 'selected'}`}>
+          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
+            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.userId)}>
+              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
+                <div className="text-muted text-small d-md-none">Id</div>
+                <NavLink to="/support/detail" className="text-truncate h-100 d-flex align-items-center">
+                  {item.userId}
                 </NavLink>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+                <div className="text-muted text-small d-md-none">Name</div>
+                <div className="d-flex align-items-center">
+                  <div className="round-image">
+                    <img style={smallImageStyle} src={item.userImage} alt={item.userName} />
+                  </div>
+                  <div className="text-alternate ms-2">{item.userName}</div>
+                </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-                <div className="text-muted text-small d-lg-none">Location</div>
-                <div className="text-alternate">{item.location}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Earnings</div>
-                <div className="text-alternate">
+
+              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+              <div className="text-muted text-small d-md-none">Content</div>
+              <div className="text-alternate">
                   <span>
-                    <span className="text-medium">AED</span> {item.earnings}
+                
+                    {item.feedback}
                   </span>
                 </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Last Order</div>
-                <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                  {item.lastOrder}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Status</div>
-                <div>
-                  {item.status.map((status, index) => (
-                    <OverlayTrigger key={index} placement="top" overlay={<Tooltip id={`tooltip-${index}`}>{status.name}</Tooltip>}>
-                      <div className={`d-inline-block me-2 ${status.disabled ? 'text-muted' : ''}`}>
-                        {status.name === 'Restaurant' && <CsLineIcons icon="shop" className={`text-${status.disabled ? 'muted' : 'warning'}`} size="17" />}
-                        {status.name === 'Purchased' && <CsLineIcons icon="boxes" className={`text-${status.disabled ? 'muted' : 'info'}`} size="17" />}
-                        {status.name === 'Trusted' && <CsLineIcons icon="check-square" className={`text-${status.disabled ? 'muted' : 'success'}`} size="17" />}
-                        {status.name === 'Phone' && <CsLineIcons icon="phone" className={`text-${status.disabled ? 'muted' : 'danger'}`} size="17" />}
-                      </div>
-                    </OverlayTrigger>
-                  ))}
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
+                <div className="text-muted text-small d-md-none">typeName</div>
+                <div className="text-alternate">
+                  <span>
+                
+                    {item.typeName}
+                  </span>
                 </div>
               </Col>
-              <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
+              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
+                <div className="text-muted text-small d-md-none">Date</div>
+                <div className="text-alternate">{item.date}</div>
+              </Col>
+              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+                <div className="text-muted text-small d-md-none">Purchase</div>
+                <div>
+                  <Badge bg="outline-primary">{item.type}</Badge>
+                </div>
+              </Col>
+
+              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
+              <div className="text-muted text-small d-md-none">Date</div>
+                <div className="text-alternate">{item.starRating  }</div>
+              </Col>
+              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
                 <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
               </Col>
             </Row>
@@ -337,4 +336,4 @@ const GroceryList = () => {
   );
 };
 
-export default GroceryList  ;
+export default FeedbackManagement;
