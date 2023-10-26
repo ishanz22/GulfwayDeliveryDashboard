@@ -3,16 +3,17 @@ import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Modal, OverlayTrigger } from 'react-bootstrap';
+import { FormControl, Radio, RadioGroup, FormControlLabel, FormLabel, MenuItem } from '@mui/material';
 import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import CheckAll from 'components/check-all/CheckAll';
+import Select from 'react-select';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import UserAccountsData from 'data/UserAccountsData';
+import UserAccountsData from 'data/EmployeeAccountsData';
 import userRoles from 'data/UserRoles';
 
 const RoleManagement = () => {
@@ -162,7 +163,29 @@ const RoleManagement = () => {
   const createUser = () => {
     setShowModalNewUser(true);
   };
-  //
+
+  const [selectValueState, setSelectValueState] = useState();
+  // const userRoleOptions = [
+  //   { value: 'ADMIN', label: 'Admin' },
+  //   { value: 'MANAGER', label: 'Manager' },
+  //   { value: 'AUDITOR', label: 'Auditor' },
+  // ];
+  const [newStateName, setNewStateName] = useState(null);
+
+  const userRoleOptions = Array.from(
+    new Set(
+      userRoles.map((role) => role.permissions).flat() // Flatten the nested arrays
+    )
+  ).map((permission, index) => ({
+    label: permission,
+    value: index,
+  }));
+
+  const [radioValue, setRadioValue] = useState('active');
+
+  const handleRadioChange = (event) => {
+    setRadioValue(event.target.value);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -205,7 +228,7 @@ const RoleManagement = () => {
 
             <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
               <Button onClick={createUser} variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto">
-                <CsLineIcons icon="plus" /> <span>Add Role</span>
+                <CsLineIcons icon="plus" /> <span>Assign Role</span>
               </Button>
               <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
                 <CsLineIcons icon="sort" />
@@ -283,8 +306,11 @@ const RoleManagement = () => {
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
 
-        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">PERMISSIONS</div>
+        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+        </Col>
+        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">PERMISSION MODULES</div>
         </Col>
 
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
@@ -311,24 +337,20 @@ const RoleManagement = () => {
                 <div className="text-alternate">{item.name}</div>
               </Col>
               <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-  <div className="text-muted text-small d-lg-none">Status</div>
-  <div>
-    <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>
-      {item.isActive ? 'Active' : 'Inactive'}
-    </div>
-  </div>
-</Col>
-
+                <div className="text-muted text-small d-lg-none">Status</div>
+                <div>
+                  <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>{item.isActive ? 'Active' : 'Inactive'}</div>
+                </div>
+              </Col>
 
               {/* #D5DA6D */}
               <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
-                  {item.permissions.map((role, index) => (
-                    <Badge key={index} bg="outline-primary" className="me-2">
-                      {role}
-                    </Badge>
-                  ))}
+                  <div className="text-alternate">
+                    {item.permissions.slice(0, 3).join(', ')}
+                    {item.permissions.length > 3 ? <span className="text-success"> + {item.permissions.length - 3} more</span> : ''}
+                  </div>
                 </div>
               </Col>
               <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
@@ -343,19 +365,16 @@ const RoleManagement = () => {
                     // }}
                     onClick={handleSelectChange}
                   >
-                    <CsLineIcons icon="gear" />
+                    <CsLineIcons icon="edit" />
                     &nbsp;
-                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
-                      Modify Role
-                    </div>
+               
                   </div>
-                  <div className="d-flex" style={{ marginLeft: '25px', cursor: 'pointer' }} onClick={handleDeleteUserClick}>
+                  &nbsp; &nbsp;
+                  <div className="d-flex" style={{  cursor: 'pointer' }} onClick={handleDeleteUserClick}>
                     {/* Add margin to create space */}
                     <CsLineIcons icon="bin" />
                     &nbsp;
-                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
-                      Delete Role
-                    </div>
+                 
                   </div>
                 </div>
               </Col>
@@ -415,13 +434,31 @@ const RoleManagement = () => {
           <Modal.Title>Modify role</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" placeholder="Enter the new category name" />
+          <Row className="g-3">
+            <Col lg="12">
+              <Form.Label>Name</Form.Label>
+              <Form.Control type="text" defaultValue="Admin" />
+
+              <Col lg="12" className="mt-5">
+                <Form.Label>Permission Modules</Form.Label>
+                <Select classNamePrefix="react-select" options={userRoleOptions} value={userRoleOptions} onChange={setNewStateName} placeholder="" isMulti />
+              </Col>
+            </Col>
+
+            <Col lg="12" className="mt-5">
+              <Form.Label>Status</Form.Label>
+              <RadioGroup aria-label="status" name="status" value={radioValue} onChange={handleRadioChange}>
+                <FormControlLabel value="active" control={<Radio />} label="Active" />
+                <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+              </RadioGroup>
+            </Col>
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary">Add</Button>
+          <Button variant="primary">Modify</Button>
         </Modal.Footer>
       </Modal>
 
@@ -435,13 +472,33 @@ const RoleManagement = () => {
           <Modal.Title>Add Role</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" placeholder="Enter the new category name" />
+          <Modal.Body>
+            <Row className="g-3">
+              <Col lg="12">
+                <Form.Label>Name</Form.Label>
+                <Form.Control type="text" />
+
+                <Col lg="12" className="mt-5">
+                  <Form.Label>Permission Modules</Form.Label>
+                  <Select classNamePrefix="react-select" options={userRoleOptions} onChange={setNewStateName} placeholder="" isMulti />
+                </Col>
+              </Col>
+
+              <Col lg="12" className="mt-5">
+                <Form.Label>Status</Form.Label>
+                <RadioGroup aria-label="status" name="status" value={radioValue} onChange={handleRadioChange}>
+                  <FormControlLabel value="active" control={<Radio />} label="Active" />
+                  <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
+                </RadioGroup>
+              </Col>
+            </Row>
+          </Modal.Body>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModalNewUser(false)}>
             Cancel
           </Button>
-          <Button variant="primary">Add</Button>
+          <Button variant="primary">Add Role</Button>
         </Modal.Footer>
       </Modal>
     </>

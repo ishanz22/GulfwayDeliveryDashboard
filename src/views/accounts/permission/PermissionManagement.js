@@ -12,7 +12,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import UserAccountsData from 'data/UserAccountsData';
+import UserAccountsData from 'data/EmployeeAccountsData';
 import userRoles from 'data/UserRoles';
 import userPermissionData from 'data/PermissionData';
 
@@ -163,7 +163,12 @@ const PermissionManagement = () => {
   const createUser = () => {
     setShowModalNewUser(true);
   };
-  //
+  const smallImageStyle = {
+    width: '30px', // Adjust the width as needed
+    height: '30px', // Adjust the height as needed
+    borderRadius: '50%', // Makes the image round
+    overflow: 'hidden', // Ensures the image stays within the round shape
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -274,21 +279,30 @@ const PermissionManagement = () => {
 
       {/* List Header Start */}
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
+        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
         </Col>
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">EMAIL</div>
+        </Col>
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
-
-        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">PERMISSION COUNT</div>
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">ROLE</div>
         </Col>
 
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">PERMISSION ALLOWED</div>
+        </Col>
+
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">CREATED DATE</div>
+        </Col>
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
       </Row>
@@ -301,39 +315,67 @@ const PermissionManagement = () => {
           {/* You can use 'item' to access data properties */}
           <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
             <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
+              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
                 <div className="text-muted text-small d-lg-none">Id</div>
                 <NavLink to="/vendors/SuperMarket/detail/" className="text-truncate h-100 d-flex align-items-center">
                   {item.id}
                 </NavLink>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
+              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
+                <div className="text-muted text-small d-md-none">Name</div>
+                <div className="d-flex align-items-center">
+                  <div className="round-image">
+                    <img style={smallImageStyle} src={item.userImage} alt={item.name} />
+                  </div>
+                  <div className="text-alternate ms-2">{item.name}</div>
+                </div>
               </Col>
               <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-  <div className="text-muted text-small d-lg-none">Status</div>
-  <div>
-    <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>
-      {item.isActive ? 'allowed' : 'not set'}
-    </div>
-  </div>
-</Col>
-
+                <div className="text-muted text-small d-lg-none">isActive</div>
+                <div>
+                  <div>{item.email}</div>
+                </div>
+              </Col>
+              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
+                <div className="text-muted text-small d-lg-none">Status</div>
+                <div>
+                  <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>{item.isActive ? 'allowed' : 'not set'}</div>
+                </div>
+              </Col>
+              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+                <div className="text-muted text-small d-lg-none">User Role</div>
+                <div>
+                  {item.userRole.some((role) => role !== '') ? (
+                    item.userRole.slice(0, 2).map((role, index) => (
+                      <Badge key={index} bg="outline-primary" className="me-2">
+                        {role}
+                      </Badge>
+                    ))
+                  ) : (
+                    <Badge bg="outline-warning">Not Assigned</Badge>
+                  )}
+                  {item.userRole.length > 2 && <span className="ms-2 text-small text-danger">+ {item.userRole.length - 2} </span>}
+                </div>
+              </Col>
 
               {/* #D5DA6D */}
-              <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Permission</div>
-                {/* <div>
-                  {item.permissions.map((role, index) => (
-                    <Badge key={index} bg="outline-primary" className="me-2">
-                      {role}
-                    </Badge>
-                  ))}
-                </div> */}
-                     <div className="text-alternate">{item.permissionCount}</div>
+              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+                <div className="text-muted text-small d-lg-none">User Role</div>
+                <div>
+                  <div className="text-alternate">
+                    {item.permissions.slice(0, 3).join(', ')}
+                    {item.permissions.length > 3 ? <span className="text-danger text-small"> + {item.permissions.length - 3} </span> : ''}
+                  </div>
+                </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
+              {/* #D5DA6D */}
+              <Col xs="3" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+                <div className="text-muted text-small d-lg-none">User Permission</div>
+
+                <div className="text-alternate">{item.date}</div>
+              </Col>
+
+              <Col xs="3" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
                 <div className="text-muted text-small d-lg-none mb-1">Action</div>
                 <div className="text-primary d-flex">
                   <div
@@ -345,19 +387,14 @@ const PermissionManagement = () => {
                     // }}
                     onClick={handleSelectChange}
                   >
-                    <CsLineIcons icon="gear" />
+                    <CsLineIcons icon="edit" />
                     &nbsp;
-                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
-                      Modify Role
-                    </div>
                   </div>
-                  <div className="d-flex" style={{ marginLeft: '25px', cursor: 'pointer' }} onClick={handleDeleteUserClick}>
+                  &nbsp; &nbsp;
+                  <div className="d-flex" style={{ cursor: 'pointer' }} onClick={handleDeleteUserClick}>
                     {/* Add margin to create space */}
                     <CsLineIcons icon="bin" />
                     &nbsp;
-                    <div className="text-primary text-medium" style={{ paddingTop: '1px' }}>
-                      Delete Role
-                    </div>
                   </div>
                 </div>
               </Col>

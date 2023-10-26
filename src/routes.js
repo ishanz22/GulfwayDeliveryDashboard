@@ -120,7 +120,7 @@ const flashDeals = lazy(() => import('views/flashdeals/FlashDealsList'));
 //  Account & Permissions 🩸 
 const accounts= {
   role: lazy(() => import('views/accounts/role/RoleManagement')), 
-  user: lazy(() => import('views/accounts/user/UserAccounts')),
+  employees: lazy(() => import('views/accounts/employees/EmployeeAccounts')),
   permission: lazy(() => import('views/accounts/permission/PermissionManagement')),
  
 };
@@ -328,7 +328,7 @@ const routesAndMenuItems = {
       label: 'Accounts',
       icon: 'user',
       subs: [
-        { path: '/user', label: 'User', component: accounts.user },
+        { path: '/user', label: 'Employees', component: accounts.employees },
         { path: '/role', label: 'Role', component: accounts.role },
         { path: '/permission', label: 'Permission', component: accounts.permission },
 
