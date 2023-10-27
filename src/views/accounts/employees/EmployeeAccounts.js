@@ -225,9 +225,6 @@ const EmployeeAccounts = () => {
                 <CsLineIcons icon="plus" /> <span>Assign User</span>
               </Button>
 
-              <Button onClick={createUser} variant="primary" className="btn-icon btn-icon-start w-100 w-md-auto " style={{ marginLeft: '10px' }}>
-                <span>Add User</span>
-              </Button>
               <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
                 <CsLineIcons icon="sort" />
               </Button>

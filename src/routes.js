@@ -122,6 +122,7 @@ const accounts= {
   role: lazy(() => import('views/accounts/role/RoleManagement')), 
   employees: lazy(() => import('views/accounts/employees/EmployeeAccounts')),
   permission: lazy(() => import('views/accounts/permission/PermissionManagement')),
+  addEmployee : lazy(() => import('views/accounts/addEmployee/AddEmployee')),
  
 };
 
@@ -328,10 +329,11 @@ const routesAndMenuItems = {
       label: 'Accounts',
       icon: 'user',
       subs: [
-        { path: '/user', label: 'Employees', component: accounts.employees },
+        { path: '/add', label: 'Add new', component: accounts.addEmployee },
+        { path: '/employee', label: 'Employees', component: accounts.employees, },
         { path: '/role', label: 'Role', component: accounts.role },
         { path: '/permission', label: 'Permission', component: accounts.permission },
-
+      
       ],
     },
     {

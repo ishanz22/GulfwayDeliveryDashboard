@@ -302,14 +302,14 @@ const RoleManagement = () => {
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">CREATED</div>
+        </Col>
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">UPDATED</div>
         </Col>
 
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PERMISSION MODULES</div>
         </Col>
 
@@ -334,22 +334,27 @@ const RoleManagement = () => {
               </Col>
               <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
                 <div className="text-muted text-small d-lg-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
+                <div className="text-primary ">{item.name}</div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
+              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
                 <div className="text-muted text-small d-lg-none">Status</div>
                 <div>
-                  <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>{item.isActive ? 'Active' : 'Inactive'}</div>
+                  <div className="text-alternate ">{item.date}</div>
                 </div>
               </Col>
-
+              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
+                <div className="text-muted text-small d-lg-none">Status</div>
+                <div>
+                <div className="text-alternate ">{item.updatedDate}</div>
+                </div>
+              </Col>
               {/* #D5DA6D */}
               <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
                   <div className="text-alternate">
                     {item.permissions.slice(0, 3).join(', ')}
-                    {item.permissions.length > 3 ? <span className="text-success"> + {item.permissions.length - 3} more</span> : ''}
+                    {item.permissions.length > 3 ? <span className="text-danger text-small"> + {item.permissions.length - 3} more</span> : ''}
                   </div>
                 </div>
               </Col>

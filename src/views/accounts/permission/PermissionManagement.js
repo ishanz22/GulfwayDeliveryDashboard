@@ -285,23 +285,21 @@ const PermissionManagement = () => {
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EMAIL</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">ROLE</div>
-        </Col>
 
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+      
+      
+
+        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PERMISSION ALLOWED</div>
         </Col>
 
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
+        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">CREATED DATE</div>
         </Col>
+        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+          <div className="text-muted text-small cursor-pointer sort">UPDATED DATE</div>
+        </Col>
+        
         <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
@@ -327,22 +325,15 @@ const PermissionManagement = () => {
                   <div className="round-image">
                     <img style={smallImageStyle} src={item.userImage} alt={item.name} />
                   </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
+                  <div>
+                    <div className=" ms-2">{item.name}</div>
+                    <div className="text-alternate ms-2 text-medium">{item.email}</div>
+                  </div>
                 </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">isActive</div>
-                <div>
-                  <div>{item.email}</div>
-                </div>
-              </Col>
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Status</div>
-                <div>
-                  <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>{item.isActive ? 'allowed' : 'not set'}</div>
-                </div>
-              </Col>
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+           
+           
+              {/* <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
                   {item.userRole.some((role) => role !== '') ? (
@@ -356,10 +347,10 @@ const PermissionManagement = () => {
                   )}
                   {item.userRole.length > 2 && <span className="ms-2 text-small text-danger">+ {item.userRole.length - 2} </span>}
                 </div>
-              </Col>
+              </Col> */}
 
               {/* #D5DA6D */}
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+              <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
                   <div className="text-alternate">
@@ -369,10 +360,16 @@ const PermissionManagement = () => {
                 </div>
               </Col>
               {/* #D5DA6D */}
-              <Col xs="3" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+              <Col xs="3" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Permission</div>
 
                 <div className="text-alternate">{item.date}</div>
+              </Col>
+
+              <Col xs="3" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+                <div className="text-muted text-small d-lg-none">User Permission</div>
+
+                <div className="text-alternate">{item.updatedDate}</div>
               </Col>
 
               <Col xs="3" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">

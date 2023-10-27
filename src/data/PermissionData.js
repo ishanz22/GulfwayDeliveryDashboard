@@ -8,7 +8,8 @@ const userPermissionData = [
       userRole: ["MANAGER", "ADMIN","ADMIN","ADMIN","ADMIN"],
       userImage: "https://preview.keenthemes.com/metronic-v4/theme/assets/pages/media/profile/profile_user.jpg",
       email:"alice.johnson@example.com",
-      date:'2023-01-15'
+      date:'2023-01-15',
+      updatedDate:'2023-06-25'
     },
     { 
       id: 2122, 
@@ -21,6 +22,7 @@ const userPermissionData = [
       email:"bob.wilson@example.com",
       permissions: ['dashboard', 'vendor dashboard', 'restaurant', 'restaurant list'],
       date:'2023-03-05',
+      updatedDate:'2023-04-22'
       
     },
     { 
@@ -34,6 +36,7 @@ const userPermissionData = [
       email:"john.doe@example.com",
       date:"2023-04-20",
       permissions: ['orders', 'grocery', 'vendor', 'grocery list'],
+      updatedDate:'2023-05-11'
     },
     { 
         id: 2124, 
@@ -46,6 +49,7 @@ const userPermissionData = [
         email:"eva.brown@example.com",
         date:"2023-06-10",
         permissions: ['orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting','orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting'],
+        updatedDate:'2023-06-01'
 
       },
       { 
@@ -59,6 +63,7 @@ const userPermissionData = [
         email:"eva.brown@example.com",
         date:"2023-06-10",
         permissions: ['orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting','orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting','vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting'],
+        updatedDate:'2023-06-02'
 
       },
       { 
@@ -72,6 +77,7 @@ const userPermissionData = [
         date:"2023-06-10",
         userRole: ["ADMIN"],
         permissions: ['orders', 'grocery', 'vendor grocery', 'grocery list'],
+        updatedDate:'2023-06-17'
 
       },
       { 
@@ -85,6 +91,7 @@ const userPermissionData = [
         email:"eva.brown@example.com",
         date:"2023-06-10",
         permissions: ['orders',  'vendor grocery', 'grocery list'],
+        updatedDate:'2023-06-17'
 
       },
       { 
@@ -98,6 +105,7 @@ const userPermissionData = [
         email:"eva.brown@example.com",
         date:"2023-06-10",
         permissions: [ 'grocery', 'vendor grocery', 'grocery list'],
+        updatedDate:'2023-06-17'
 
       },
       { 
@@ -111,7 +119,7 @@ const userPermissionData = [
         email:"eva.brown@example.com",
         date:"2023-06-10",
         permissions: ['orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting','orders', 'grocery', 'vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting','vendor grocery', 'grocery list','wishlist','rewards','products','riders','setting'],
-
+        updatedDate:'2023-06-17'
       },
 
   ];
