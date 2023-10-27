@@ -222,7 +222,7 @@ const EmployeeAccounts = () => {
 
             <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
               <Button onClick={createUser} variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto">
-                <CsLineIcons icon="plus" /> <span>Assign User</span>
+                <CsLineIcons icon="plus" /> <span>Assign Employee</span>
               </Button>
 
               <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
@@ -538,18 +538,12 @@ John Doe"
         centered // Add this prop to center the modal
       >
         <Modal.Header closeButton>
-          <Modal.Title>Assign User</Modal.Title>
+          <Modal.Title>Assign Employee</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row className="g-3">
-            <Col lg="6">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control type="text" />
-            </Col>
-            <Col lg="6">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control type="text" />
-            </Col>
+
+   
             <Col lg="12">
               <Form.Label>Email</Form.Label>
               <Form.Control type="text" />

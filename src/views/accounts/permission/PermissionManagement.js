@@ -12,8 +12,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import Select from 'react-select';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import userRoles from 'data/UserRoles';
+
+import MyComponent from 'components/mulit-select/MultiSelect';
 import userPermissionData from 'data/PermissionData';
 
 const PermissionManagement = () => {
@@ -169,6 +172,12 @@ const PermissionManagement = () => {
     borderRadius: '50%', // Makes the image round
     overflow: 'hidden', // Ensures the image stays within the round shape
   };
+  const [selectValueState, setSelectValueState] = useState();
+  const userRoleOptions = [
+    { value: 'ADMIN', label: 'Admin' },
+    { value: 'MANAGER', label: 'Manager' },
+    { value: 'AUDITOR', label: 'Auditor' },
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -286,9 +295,6 @@ const PermissionManagement = () => {
           <div className="text-muted text-small cursor-pointer sort">NAME</div>
         </Col>
 
-      
-      
-
         <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PERMISSION ALLOWED</div>
         </Col>
@@ -299,7 +305,7 @@ const PermissionManagement = () => {
         <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">UPDATED DATE</div>
         </Col>
-        
+
         <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
@@ -331,8 +337,7 @@ const PermissionManagement = () => {
                   </div>
                 </div>
               </Col>
-           
-           
+
               {/* <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
@@ -451,7 +456,17 @@ const PermissionManagement = () => {
           <Modal.Title>Modify Permission</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" placeholder="Enter the new category name" />
+          <Row className="g-3">
+            <Col lg="12">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="text" />
+            </Col>
+
+            <Col lg="12">
+              <Form.Label>User Role</Form.Label>
+              <Select classNamePrefix="react-select" options={userRoleOptions} value={selectValueState} onChange={setSelectValueState} placeholder="" isMulti />
+            </Col>
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModal(false)}>
@@ -471,7 +486,23 @@ const PermissionManagement = () => {
           <Modal.Title>Add Permission</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form.Control type="text" placeholder="Enter the new category name" />
+          <Row className="g-3">
+            <Col lg="12">
+              <Form.Label>Email</Form.Label>
+              <Form.Control type="text" />
+            </Col>
+
+            <Col lg="12">
+              <Form.Label>User Role</Form.Label>
+              <Select classNamePrefix="react-select" options={userRoleOptions} value={selectValueState} onChange={setSelectValueState} placeholder="" isMulti />
+            </Col>
+
+            <Col lg="12">
+  <MyComponent/>
+  </Col>
+
+     
+          </Row>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowModalNewUser(false)}>

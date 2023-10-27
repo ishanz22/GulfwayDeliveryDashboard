@@ -309,11 +309,11 @@ const RoleManagement = () => {
           <div className="text-muted text-small cursor-pointer sort">UPDATED</div>
         </Col>
 
-        <Col lg="3" className="d-flex flex-column pe-1 justify-content-center">
+        <Col lg="4" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">PERMISSION MODULES</div>
         </Col>
 
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
+        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
           <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
       </Row>
@@ -349,7 +349,7 @@ const RoleManagement = () => {
                 </div>
               </Col>
               {/* #D5DA6D */}
-              <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
+              <Col xs="6" lg="4" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
                   <div className="text-alternate">
@@ -358,7 +358,7 @@ const RoleManagement = () => {
                   </div>
                 </div>
               </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
+              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
                 <div className="text-muted text-small d-lg-none mb-1">Action</div>
                 <div className="text-primary d-flex">
                   <div
@@ -474,7 +474,7 @@ const RoleManagement = () => {
         centered // Add this prop to center the modal
       >
         <Modal.Header closeButton>
-          <Modal.Title>Add Role</Modal.Title>
+          <Modal.Title>Assign Role</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Modal.Body>
@@ -489,13 +489,7 @@ const RoleManagement = () => {
                 </Col>
               </Col>
 
-              <Col lg="12" className="mt-5">
-                <Form.Label>Status</Form.Label>
-                <RadioGroup aria-label="status" name="status" value={radioValue} onChange={handleRadioChange}>
-                  <FormControlLabel value="active" control={<Radio />} label="Active" />
-                  <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
-                </RadioGroup>
-              </Col>
+            
             </Row>
           </Modal.Body>
         </Modal.Body>
@@ -503,7 +497,7 @@ const RoleManagement = () => {
           <Button variant="secondary" onClick={() => setShowModalNewUser(false)}>
             Cancel
           </Button>
-          <Button variant="primary">Add Role</Button>
+          <Button variant="primary">Assign Role</Button>
         </Modal.Footer>
       </Modal>
     </>
