@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useHistory } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -7,11 +7,12 @@ import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import DeliveryLogo from '../../assets/Delivery.png'; 
+import ResetPassword from './ResetPassword';
 
 const ForgotPassword = () => {
   const title = 'Forgot Password';
   const description = 'Forgot Password Page';
-
+  const history = useHistory();
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
   });
@@ -43,15 +44,21 @@ const ForgotPassword = () => {
     </div>
   );
 
+
+ 
+  const ResetPasswordFunction = () => {
+    history.push('/reset-password');
+  };
+
   const rightSide = (
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
         <div className="sh-11">
-        <NavLink to="/">
+   
             <div style={{ width: '170px', paddingBottom: '20px' }}>
               <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
             </div>
-          </NavLink>
+       
         </div>
         <div className="mb-5">
           <h2 className="cta-1 mb-0 text-primary">Password is gone?</h2>
@@ -70,7 +77,8 @@ const ForgotPassword = () => {
               <Form.Control type="text" name="email" placeholder="Email" value={values.email} onChange={handleChange} />
               {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
             </div>
-            <Button size="lg" type="submit">
+            <Button size="lg" type="submit" onClick={ResetPasswordFunction} >
+              
               Send Reset Email
             </Button>
           </form>
