@@ -6,6 +6,8 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import DeliveryLogo from '../../assets/Delivery.png'; // Import your DeliveryLogo image
 
 const Login = () => {
@@ -28,7 +30,7 @@ const Login = () => {
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
-  
+
   const onClickLogin = () => {
     if (formik.isValid) {
       const { email, password } = values;
@@ -36,7 +38,13 @@ const Login = () => {
         if (email === 'test@gmail.com' && password === 'test12345') {
           history.push('/');
         } else {
-          history.push('/unauthorized');
+          const errorMessage = 'Unauthorized access. Please check your credentials.';
+        
+          // Show a toast message with the error message
+          toast.error(errorMessage, {
+            position: 'top-right', // You can change the position
+            autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+          });
         }
       }
     }
