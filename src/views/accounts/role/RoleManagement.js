@@ -488,6 +488,10 @@ const RoleManagement = () => {
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="text" />
               </Col>
+              <Col lg="12">
+                <Form.Label>Role Name</Form.Label>
+                <Form.Control type="text" />
+              </Col>
          
 
               <Col lg="12">
