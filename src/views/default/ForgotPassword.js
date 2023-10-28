@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import DeliveryLogo from '../../assets/Delivery.png'; 
 
 const ForgotPassword = () => {
   const title = 'Forgot Password';
@@ -46,8 +47,10 @@ const ForgotPassword = () => {
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
         <div className="sh-11">
-          <NavLink to="/">
-            <div className="logo-default" />
+        <NavLink to="/">
+            <div style={{ width: '170px', paddingBottom: '20px' }}>
+              <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
+            </div>
           </NavLink>
         </div>
         <div className="mb-5">
