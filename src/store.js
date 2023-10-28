@@ -9,18 +9,19 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from 'reduxjs-toolk
 import settingsReducer from 'settings/settingsSlice';
 import layoutReducer from 'layout/layoutSlice';
 import langReducer from 'lang/langSlice';
-import authReducer from 'auth/authSlice';
 import menuReducer from 'layout/nav/main-menu/menuSlice';
 import notificationReducer from 'layout/nav/notifications/notificationSlice';
 import scrollspyReducer from 'components/scrollspy/scrollspySlice';
 
 // import persist key
 import { REDUX_PERSIST_KEY } from 'config.js';
+import authReducer from './reducers/auth';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
-  storage,
-  whitelist: ['menu', 'settings', 'lang'],
+  // eslint-disable-next-line object-shorthand
+  storage: storage,
+  // whitelist: ['menu', 'settings', 'lang'],
 };
 
 const persistedReducer = persistReducer(
@@ -35,14 +36,17 @@ const persistedReducer = persistReducer(
     scrollspy: scrollspyReducer,
   })
 );
-const store = configureStore({
-  reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-      },
-    }),
-});
-const persistedStore = persistStore(store);
-export { store, persistedStore };
+
+export default () => {
+  const store = configureStore({
+    reducer: persistedReducer,
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware({
+        serializableCheck: {
+          ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+        },
+      }),
+  });
+  const persistedStore = persistStore(store);
+  return { persistedStore, store };
+};

@@ -1,16 +1,26 @@
 import React from 'react';
 import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
+
 import Rating from 'react-rating';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { useDispatch, connect } from 'react-redux';
+import { logoutUser } from 'actions/auth';
+
 import PerformanceChart from './components/PerformanceChart';
 
-const Dashboard = () => {
+const Dashboard = (props) => {
   const title = 'Dashboard';
+  const dispatch = useDispatch();
+  const history = useHistory();
   const description = 'Ecommerce Dashboard Page';
-
+  const { user, error, isAuthenticated, loading } = props;
+  const logout = () => {
+    dispatch(logoutUser());
+    history.push('/login');
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -20,8 +30,12 @@ const Dashboard = () => {
           <span className="align-middle text-small ms-1">&nbsp;</span>
         </NavLink>
         <h1 className="mb-0 pb-0 display-4" id="title">
-          Welcome, Lisa!
+          Welcome, {user?.firstName}!
         </h1>
+        <button type="submit" onClick={logout}>
+          {' '}
+          Logout
+        </button>
       </div>
       {/* Title End */}
 
@@ -880,4 +894,13 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    user: state.auth.user,
+    error: state.auth.error,
+    loading: state.auth.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
+export default connect(mapStateToProps)(Dashboard);

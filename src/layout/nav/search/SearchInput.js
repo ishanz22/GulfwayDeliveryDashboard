@@ -23,16 +23,16 @@ const SearchInput = ({ show, setShow }) => {
     mySelectedIndexRef.current = currenData;
     setSelectedIndex(currenData);
   };
-  const { isLogin, currentUser } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const routes = useMemo(
     () =>
       getSearchItems({
         data: routesAndMenuItems,
-        isLogin,
-        userRole: currentUser.role,
+        isAuthenticated,
+        userRole: user.role,
       })(),
-    [isLogin, currentUser]
+    [isAuthenticated, user]
   );
   const { formatMessage: f } = useIntl();
 

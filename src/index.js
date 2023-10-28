@@ -6,7 +6,6 @@ import reportWebVitals from 'reportWebVitals.js';
 // import redux requirements
 import { Provider } from 'react-redux';
 import { PersistGate } from 'reduxjs-toolkit-persist/integration/react';
-import { store, persistedStore } from 'store.js';
 
 // import html head tags requirements
 import { Helmet } from 'react-helmet';
@@ -27,11 +26,13 @@ import routesAndMenuItems from 'routes.js';
 
 // import toastify for notification
 import { Slide, ToastContainer } from 'react-toastify';
+import configureStore from './store';
 
 // mock server register for demo
 import '@mock-api';
 
 const Main = () => {
+  const { persistedStore, store } = configureStore();
   const layoutlessRoutes = useMemo(() => getLayoutlessRoutes({ data: routesAndMenuItems }), []);
   return (
     <Provider store={store}>
