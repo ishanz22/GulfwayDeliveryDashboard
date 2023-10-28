@@ -125,7 +125,7 @@ const accounts= {
   employees: lazy(() => import('views/accounts/employees/EmployeeAccounts')),
   permission: lazy(() => import('views/accounts/permission/PermissionManagement')),
   addEmployee : lazy(() => import('views/accounts/addEmployee/AddEmployee')),
- 
+  detail:lazy(() => import('views/accounts/detail/EmployeeDetails')),
 };
 
 
@@ -334,7 +334,9 @@ const routesAndMenuItems = {
       icon: 'user',
       subs: [
         { path: '/add', label: 'Add new', component: accounts.addEmployee },
-        { path: '/employee', label: 'Employees', component: accounts.employees, },
+        { path: '/employee', label: 'Employees', component: accounts.employees,  subs: [
+          { path: '/detail',  component: accounts.detail }, // refund details
+        ]},
         { path: '/role', label: 'Role', component: accounts.role },
         { path: '/permission', label: 'Permission', component: accounts.permission },
       
@@ -377,7 +379,7 @@ const routesAndMenuItems = {
       subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
     },
     {
-      path: `login`,
+      path: `/login`,
       component: logout,
       label: 'Logout',
       icon: 'logout',

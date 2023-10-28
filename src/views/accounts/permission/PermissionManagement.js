@@ -167,10 +167,10 @@ const PermissionManagement = () => {
     setShowModalNewUser(true);
   };
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '30px',
+    height: '30px', 
+    borderRadius: '50%', 
+    overflow: 'hidden', 
   };
   const [selectValueState, setSelectValueState] = useState();
   const userRoleOptions = [
@@ -338,23 +338,6 @@ const PermissionManagement = () => {
                 </div>
               </Col>
 
-              {/* <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Role</div>
-                <div>
-                  {item.userRole.some((role) => role !== '') ? (
-                    item.userRole.slice(0, 2).map((role, index) => (
-                      <Badge key={index} bg="outline-primary" className="me-2">
-                        {role}
-                      </Badge>
-                    ))
-                  ) : (
-                    <Badge bg="outline-warning">Not Assigned</Badge>
-                  )}
-                  {item.userRole.length > 2 && <span className="ms-2 text-small text-danger">+ {item.userRole.length - 2} </span>}
-                </div>
-              </Col> */}
-
-              {/* #D5DA6D */}
               <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Role</div>
                 <div>
@@ -364,7 +347,7 @@ const PermissionManagement = () => {
                   </div>
                 </div>
               </Col>
-              {/* #D5DA6D */}
+          
               <Col xs="3" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
                 <div className="text-muted text-small d-lg-none">User Permission</div>
 
@@ -383,10 +366,7 @@ const PermissionManagement = () => {
                   <div
                     className="d-flex"
                     style={{ cursor: 'pointer' }}
-                    // onClick={() => {
-                    //   console.log(item.id);
-                    //   handleModifyUserClick(item.id);
-                    // }}
+                   
                     onClick={handleSelectChange}
                   >
                     <CsLineIcons icon="edit" />

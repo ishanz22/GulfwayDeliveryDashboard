@@ -80,7 +80,7 @@ const RoleManagement = () => {
       Status: item.status
         .filter((statusItem) => !statusItem.disabled)
         .map((statusItem) => statusItem.name)
-        .join(', '), // Join status names
+        .join(', '), 
     }));
 
     const ws = utils.json_to_sheet(dataToExport);
@@ -190,7 +190,7 @@ const RoleManagement = () => {
   };
 
   const labelStyle = {
-    fontSize: '16px', // Adjust the font size as needed
+    fontSize: '16px', 
   };
   return (
     <>
@@ -328,8 +328,7 @@ const RoleManagement = () => {
       {/* List Items Start */}
       {displayedData.map((item) => (
         <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
+
           <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
             <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
               <Col xs="11" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
@@ -370,10 +369,7 @@ const RoleManagement = () => {
                   <div
                     className="d-flex"
                     style={{ cursor: 'pointer' }}
-                    // onClick={() => {
-                    //   console.log(item.id);
-                    //   handleModifyUserClick(item.id);
-                    // }}
+               
                     onClick={handleSelectChange}
                   >
                     <CsLineIcons icon="edit" />
@@ -381,7 +377,7 @@ const RoleManagement = () => {
                   </div>
                   &nbsp; &nbsp;
                   <div className="d-flex" style={{ cursor: 'pointer' }} onClick={handleDeleteUserClick}>
-                    {/* Add margin to create space */}
+            
                     <CsLineIcons icon="bin" />
                     &nbsp;
                   </div>
@@ -437,7 +433,7 @@ const RoleManagement = () => {
       <Modal
         show={showModal}
         onHide={() => setShowModal(false)}
-        centered // Add this prop to center the modal
+        centered 
       >
         <Modal.Header closeButton>
           <Modal.Title>Modify role</Modal.Title>
@@ -475,7 +471,7 @@ const RoleManagement = () => {
       <Modal
         show={showModalNewUser}
         onHide={() => setShowModalNewUser(false)}
-        centered // Add this prop to center the modal
+        centered 
       >
         <Modal.Header closeButton>
           <Modal.Title>Assign Role</Modal.Title>

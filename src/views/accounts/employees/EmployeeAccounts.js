@@ -30,10 +30,10 @@ const EmployeeAccounts = () => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '30px', 
+    height: '30px', 
+    borderRadius: '50%', 
+    overflow: 'hidden', 
   };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -135,7 +135,7 @@ const EmployeeAccounts = () => {
 
     const columns = ['ID', 'Name', 'Location', 'Earnings', 'LastOrder', 'Status'];
 
-    // Create a header row
+
     const headerRow = columns.map((col) => ({ title: col, dataKey: col }));
 
     doc.autoTable({
@@ -150,7 +150,7 @@ const EmployeeAccounts = () => {
 
   function handleModifyUserClick(id) {
     console.log('Item ID clicked:', id);
-    // You can add additional logic here
+ 
   }
 
   function handleDeleteUserClick() {
@@ -176,8 +176,8 @@ const EmployeeAccounts = () => {
   ];
 
   const [newStateName, setNewStateName] = useState([
-    userRoleOptions[0], // Default selected option 1
-    userRoleOptions[1], // Default selected option 2
+    userRoleOptions[0], 
+    userRoleOptions[1], 
   ]);
 
   return (
@@ -333,7 +333,7 @@ const EmployeeAccounts = () => {
             <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
               <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
                 <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/vendors/SuperMarket/detail/" className="text-truncate h-100 d-flex align-items-center">
+                <NavLink to="/accounts/employee/detail" className="text-truncate h-100 d-flex align-items-center">
                   {item.id}
                 </NavLink>
               </Col>

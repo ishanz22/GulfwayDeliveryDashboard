@@ -6,8 +6,8 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import defaultProfileImage from '../../../assets/DefaultUser.jpeg'; 
 
-const AddEmployee = () => {
-  const title = 'Add Employee';
+const EmployeeDetails = () => {
+  const title = 'Employee ID #5859412';
   const description = 'Ecommerce Storefront Checkout Page';
   const [profileImageSrc, setProfileImageSrc] = useState(defaultProfileImage);
   const [selectedEmiratesIDFile, setSelectedEmiratesIDFile] = useState(null);
@@ -18,7 +18,7 @@ const AddEmployee = () => {
     height: '100%', 
   };
 
-
+  // Function to handle file upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -30,31 +30,41 @@ const AddEmployee = () => {
     reader.readAsDataURL(file);
   };
 
+  // Function to trigger file input
   const handleChooseFileClick = () => {
     fileInputRef.current.click();
   };
-  const [selectValueState, setSelectValueState] = useState();
+
+
   const optionsState = [
-    { value: 'Fougasse', label: 'Fougasse' },
-    { value: 'Lefse', label: 'Lefse' },
+    { value: 'Weekly', label: 'Weekly' },
+    { value: 'Monthly', label: 'Monthly' },
   ];
-  const [selectGender, setSelectGender] = useState();
+  const [selectValueState, setSelectValueState] = useState(optionsState[1]);
+
+
   const optionsGender = [
     { value: 'Male', label: 'Male' },
     { value: 'Female', label: 'Female' },
   ];
-  const [selectEmploymentStatus, setSelectEmploymentStatus] = useState();
+  const [selectGender, setSelectGender] = useState(optionsGender[1]);
+
+
   const optionsEmployment = [
     { value: 'Full time', label: 'Full time' },
     { value: 'Part time', label: 'Part time' },
   ];
+  const [selectEmploymentStatus, setSelectEmploymentStatus] = useState(optionsEmployment[1]);
 
-  const [selectUserRole, setSelectUserRole] = useState();
+
+
   const optionsUserRole = [
     { value: 'Admin', label: 'Admin' },
     { value: 'Auditor', label: 'Auditor' },
     { value: 'Manager', label: 'Manager' },
   ];
+  const [selectUserRole, setSelectUserRole] = useState(optionsUserRole[1]);
+ 
 
   const [selectPayFrequency, setSelectPayfrequency] = useState();
   const optionsPayFrequency = [
@@ -109,24 +119,24 @@ const AddEmployee = () => {
                 <Row className="g-3">
                   <Col lg="6">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" defaultValue="Martine" />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text"   defaultValue="Swaniawski"/>
                   </Col>
                   <Col lg="6">
                     <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" defaultValue="+971 56 762 4176" />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" defaultValue="Martine@gmail.com"/>
                   </Col>
 
                   <Col lg="6">
                     <Form.Label>Date of Birth</Form.Label>
-                    <Form.Control type="text" />
+                    <Form.Control type="text" defaultValue="June 4, 1999"/>
                   </Col>
 
                   <Col lg="6">
@@ -134,6 +144,7 @@ const AddEmployee = () => {
                     <Select classNamePrefix="react-select" options={optionsGender} value={selectGender} onChange={setSelectGender} placeholder="" />
                   </Col>
 
+     
                 </Row>
               </Form>
               <br />
@@ -157,9 +168,9 @@ const AddEmployee = () => {
                 <text>&nbsp;</text>
 
                 <div className="text-center upload-button mt-2">
-        
+                  {/* Hidden file input */}
                   <input type="file" id="profile-upload" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
-      
+                  {/* Custom button to trigger file input */}
                   <button type="button" className="btn btn-outline-primary upload-label" onClick={handleChooseFileClick}>
                     Upload Image
                   </button>
@@ -172,7 +183,7 @@ const AddEmployee = () => {
       </Row>
 
       <Row>
-  
+        {/* Address End */}
         <h2 className="small-title">Employment Information</h2>
         <Card className="mb-5">
           <Card.Body>
@@ -180,15 +191,15 @@ const AddEmployee = () => {
               <Row className="g-3">
                 <Col lg="4">
                   <Form.Label>Job Title</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" defaultValue="Manager" />
                 </Col>
                 <Col lg="4">
                   <Form.Label>Employee ID</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" defaultValue="C0010" />
                 </Col>
                 <Col lg="4">
                   <Form.Label>Date of hire</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" defaultValue="May 4, 2024" />
                 </Col>
                 <Col lg="4">
                   <Form.Label>Employment Status</Form.Label>
@@ -210,7 +221,7 @@ const AddEmployee = () => {
           </Card.Body>
         </Card>
 
-
+        {/* Contact Start */}
         <h2 className="small-title">Compensation and Benefits</h2>
         <Card className="mb-5">
           <Card.Body>
@@ -218,19 +229,19 @@ const AddEmployee = () => {
               <Row className="g-3">
                 <Col lg="4">
                   <Form.Label>IBAN Account Number</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" defaultValue="NL38ABNA4026824314"  />
                 </Col>
                 <Col lg="4">
                   <Form.Label>Bank Name</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text"  defaultValue="Abu Dhabi Commercial Bank"/>
                 </Col>
                 <Col lg="4">
                   <Form.Label>Holder Name</Form.Label>
-                  <Form.Control type="text" />
+                  <Form.Control type="text" defaultValue="Martine Swaniawski" />
                 </Col>
                 <Col lg="4">
-                  <Form.Label>Salary</Form.Label>
-                  <Form.Control type="number" />
+                  <Form.Label>Salary (AED)</Form.Label>
+                  <Form.Control type="text" defaultValue="20,000 "  />
                 </Col>
                 <Col lg="4">
                   <Form.Label>Pay frequency </Form.Label>
@@ -238,8 +249,7 @@ const AddEmployee = () => {
                 </Col>
 
               </Row>
-              <br />
-   
+     
             </Form>
           </Card.Body>
         </Card>
@@ -322,7 +332,7 @@ const AddEmployee = () => {
                 </Col>
               </Row>
               <br />
-         
+             
             </Form>
           </Card.Body>
         </Card>
@@ -342,4 +352,4 @@ const AddEmployee = () => {
   );
 };
 
-export default AddEmployee;
+export default EmployeeDetails;
