@@ -17,6 +17,10 @@ function MyComponent() {
     { name: 'Plugh', value: 10 },
     { name: 'Xyzzy', value: 11 },
     { name: 'Thud', value: 12 },
+      { name: 'Xyzzy', value: 13 },
+    { name: 'Thud', value: 14 },
+    { name: 'Xyzzy', value: 15 },
+    { name: 'Thud', value: 16 },
   ]);
 
   const [value, setValue] = useState([0, 3, 9]);

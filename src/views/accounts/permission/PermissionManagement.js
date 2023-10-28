@@ -498,10 +498,9 @@ const PermissionManagement = () => {
             </Col>
 
             <Col lg="12">
-  <MyComponent/>
-  </Col>
-
-     
+            <Form.Label>Permission</Form.Label>
+              <MyComponent />
+            </Col>
           </Row>
         </Modal.Body>
         <Modal.Footer>

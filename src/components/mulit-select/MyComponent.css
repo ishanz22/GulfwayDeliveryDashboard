@@ -58,7 +58,7 @@
 	.msts__list-item {
 		padding: 5px 10px;
 		transition: background-color ease-in 0.1s, color ease-in 0.1s;
-
+    width: 100%;
 		&:hover {
 			background-color: #2980b9;
 			color: #fff;
@@ -86,7 +86,7 @@
 		padding: 10px 3px;
 		color: #bdc3c7;
 		transition: color ease 0.15s;
-background-color: red;
+
 		&:hover {
 			color: #95a5a6;
 		}
@@ -97,7 +97,7 @@ background-color: red;
 	}
 
 	.msts__control_select-all {
-  background-color: pink;
+ 
 		&:after {
 			content: '❯';
 		}
@@ -147,4 +147,28 @@ background-color: red;
 .msts_theme_example.msts_disabled {
 	background-color: #ecf0f1;
 }
+
+ul.msts__list {
+  min-width: 50% !important;
+  list-style: none;
+  /* margin-left: 0px !important; */
+  padding-left: 0px;
+
+
+}
+
+.msts__body {
+  display: inline-flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+
+
+  .msts__side.msts__side_available {
+    width: 47%;
+
+  }
+}
+
+
 
