@@ -4,11 +4,9 @@ import { Card, Button, Col, Form, Row } from 'react-bootstrap';
 import Select from 'react-select';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import defaultProfileImage from '../../../assets/DefaultUser.jpeg'; // Adjust the path as needed
-import MyLocationIcon from '../../../assets/my-location.png'; // Replace with the actual path to your image
 
-const AddEmployee = ({ google }) => {
+const AddEmployee = () => {
   const title = 'Add Employee';
   const description = 'Ecommerce Storefront Checkout Page';
   const [profileImageSrc, setProfileImageSrc] = useState(defaultProfileImage);
@@ -289,6 +287,4 @@ const AddEmployee = ({ google }) => {
   );
 };
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyDrI53GlC5-ymZmPKzJq11U36dheMGfeLU',
-})(AddEmployee);
+export default AddEmployee

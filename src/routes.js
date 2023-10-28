@@ -90,6 +90,8 @@ const rider = {
   allRiders: lazy(() => import('views/riders/all/AllRidersMap')),
   
 };
+
+
 const delivery = {
   deliveryCharges: lazy(() => import('views/charge/DeliveryCharges')), 
 };
@@ -126,6 +128,8 @@ const accounts= {
  
 };
 
+
+const logout = lazy(() => import('views/default/Login'));
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
 
 const routesAndMenuItems = {
@@ -372,7 +376,12 @@ const routesAndMenuItems = {
       icon: 'gear',
       subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
     },
- 
+    {
+      path: `login`,
+      component: logout,
+      label: 'Logout',
+      icon: 'logout',
+    },
   ],
   sidebarItems: [],
 };

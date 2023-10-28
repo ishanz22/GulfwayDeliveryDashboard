@@ -13,7 +13,7 @@
 		}
 
 		.msts__side_available {
-			background-color: #9b59b6;
+			background-color: #5A94C8;
       width: 50%;
 		}
 
@@ -165,10 +165,29 @@ ul.msts__list {
 
 
   .msts__side.msts__side_available {
-    width: 47%;
+    width: 48%;
+
+  }
+  .msts__side.msts__side_selected {
+    width: 46%;
 
   }
 }
 
 
+/* 
+.msts__list {
+  height: 140px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  width: 50%;
 
+
+}*/
+
+.msts__list {
+  height: 140px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+}

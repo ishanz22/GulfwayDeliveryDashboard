@@ -543,7 +543,10 @@ John Doe"
         <Modal.Body>
           <Row className="g-3">
 
-   
+          <Col lg="12">
+              <Form.Label>User Name</Form.Label>
+              <Form.Control type="text" />
+            </Col>
             <Col lg="12">
               <Form.Label>Email</Form.Label>
               <Form.Control type="text" />

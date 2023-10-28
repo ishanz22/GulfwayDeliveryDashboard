@@ -3,18 +3,20 @@ import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Modal, OverlayTrigger } from 'react-bootstrap';
-import { FormControl, Radio, RadioGroup, FormControlLabel, FormLabel, MenuItem } from '@mui/material';
+import { FormControl, Radio, RadioGroup, FormControlLabel, FormLabel, MenuItem,FormGroup,Checkbox } from '@mui/material';
 import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import Select from 'react-select';
 import Dialog from '@mui/material/Dialog';
+import '../../../sass/access.css';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import userRoles from 'data/UserRoles';
+
 
 const RoleManagement = () => {
   const title = 'Role Management';
@@ -186,6 +188,10 @@ const RoleManagement = () => {
   const handleRadioChange = (event) => {
     setRadioValue(event.target.value);
   };
+
+  const labelStyle = {
+    fontSize: '16px', // Adjust the font size as needed
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -345,7 +351,7 @@ const RoleManagement = () => {
               <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
                 <div className="text-muted text-small d-lg-none">Status</div>
                 <div>
-                <div className="text-alternate ">{item.updatedDate}</div>
+                  <div className="text-alternate ">{item.updatedDate}</div>
                 </div>
               </Col>
               {/* #D5DA6D */}
@@ -372,14 +378,12 @@ const RoleManagement = () => {
                   >
                     <CsLineIcons icon="edit" />
                     &nbsp;
-               
                   </div>
                   &nbsp; &nbsp;
-                  <div className="d-flex" style={{  cursor: 'pointer' }} onClick={handleDeleteUserClick}>
+                  <div className="d-flex" style={{ cursor: 'pointer' }} onClick={handleDeleteUserClick}>
                     {/* Add margin to create space */}
                     <CsLineIcons icon="bin" />
                     &nbsp;
-                 
                   </div>
                 </div>
               </Col>
@@ -479,17 +483,27 @@ const RoleManagement = () => {
         <Modal.Body>
           <Modal.Body>
             <Row className="g-3">
-              <Col lg="12">
-                <Form.Label>Name</Form.Label>
+            <Col lg="12">
+                
+                <Form.Label>Username</Form.Label>
                 <Form.Control type="text" />
-
-                <Col lg="12" className="mt-5">
-                  <Form.Label>Permission Modules</Form.Label>
-                  <Select classNamePrefix="react-select" options={userRoleOptions} onChange={setNewStateName} placeholder="" isMulti />
                 </Col>
+              <Col lg="12">
+                <Form.Label>Email</Form.Label>
+                <Form.Control type="text" />
               </Col>
+         
 
-            
+              <Col lg="12">
+              <Form.Label>Access</Form.Label>
+      <FormGroup style={{ display: 'flex', flexDirection: 'row' }}>
+        <FormControlLabel control={<Checkbox defaultChecked />} label="CREATE" className='text-small'  />
+      
+        <FormControlLabel control={<Checkbox defaultChecked />} label="READ" />
+        <FormControlLabel control={<Checkbox defaultChecked />} label="UPDATE" />
+        <FormControlLabel control={<Checkbox defaultChecked />} label="DELETE" />
+      </FormGroup>
+    </Col>
             </Row>
           </Modal.Body>
         </Modal.Body>
