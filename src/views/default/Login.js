@@ -28,18 +28,18 @@ const Login = () => {
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
   const onClickLogin = () => {
-
     if (formik.isValid) {
-     
-      if (values.email === 'test@gmail.com' && values.password === 'test12345') {
-    
-        history.push('/');
-      } else {
-   
-        setLoginError('Incorrect email or password. Please try again.');
+      const { email, password } = values;
+      if (email && password) {
+        if (email === 'test@gmail.com' && password === 'test12345') {
+          history.push('/');
+        } else {
+          history.push('/unauthorized');
+        }
       }
     }
   };
+  
   
   
   
@@ -111,26 +111,7 @@ const Login = () => {
               Login
             </Button>
 
-            {loginError && (
-  <div className="modal" style={{ display: 'block' }}>
-    <div className="modal-dialog" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <div className="modal-content">
-        <div className="modal-header">
-          <h5 className="modal-title">Login Error</h5>
-          <button type="button" className="close" onClick={() => setLoginError(null)}>
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div className="modal-body">
-          {loginError}
-        </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-primary" onClick={() => setLoginError(null)}>Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+
 
           </form>
         </div>
