@@ -8,7 +8,7 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DeliveryLogo from '../../assets/Delivery.png'; // Import your DeliveryLogo image
+import DeliveryLogo from '../../assets/Delivery.png';
 
 const Login = () => {
   const title = 'Login';
@@ -21,15 +21,12 @@ const Login = () => {
   });
   const initialValues = { email: '', password: '' };
   const onSubmit = (values) => {
-    
-    console.log('submit form', values)
-
+    console.log('submit form', values);
   };
   const [loginError, setLoginError] = useState(null);
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
-
 
   const onClickLogin = () => {
     if (formik.isValid) {
@@ -39,7 +36,7 @@ const Login = () => {
           history.push('/');
         } else {
           const errorMessage = 'Unauthorized access. Please check your credentials.';
-        
+
           // Show a toast message with the error message
           toast.error(errorMessage, {
             position: 'top-right', // You can change the position
@@ -49,11 +46,7 @@ const Login = () => {
       }
     }
   };
-  
-  
-  
-  
-  
+
   const leftSide = (
     <div className="min-h-100 d-flex align-items-center">
       <div className="w-100 w-lg-75 w-xxl-50">
@@ -80,27 +73,20 @@ const Login = () => {
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
         <div className="sh-11">
-          <NavLink to="/">
-            {/* <div className="logo-default" /> */}
-
-
-          </NavLink>
+          <NavLink to="/">{/* <div className="logo-default" /> */}</NavLink>
         </div>
         <div className="mb-5">
-        <NavLink to="/">
-  <div style={{ width: '170px', paddingBottom:"20px" }}>
-    <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
-  </div>
-</NavLink>
+          <NavLink to="/">
+            <div style={{ width: '170px', paddingBottom: '20px' }}>
+              <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
+            </div>
+          </NavLink>
 
           <h2 className="cta-1 mb-0 text-primary">Welcome,</h2>
           <h2 className="cta-1 text-primary">let's get started!</h2>
         </div>
         <div className="mb-5">
           <p className="h6">Please use your credentials to login.</p>
-          <p className="h6">
-            If you are not a member, please <NavLink to="/register">register</NavLink>.
-          </p>
         </div>
         <div>
           <form id="loginForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
@@ -120,15 +106,11 @@ const Login = () => {
             <Button onClick={onClickLogin} size="lg" type="submit">
               Login
             </Button>
-
-
-
           </form>
         </div>
       </div>
     </div>
   );
-
 
   return (
     <>

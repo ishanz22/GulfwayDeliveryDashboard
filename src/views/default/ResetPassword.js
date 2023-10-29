@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import DeliveryLogo from '../../assets/Delivery.png'; 
 
 const ResetPassword = () => {
   const title = 'Reset Password';
@@ -47,9 +48,11 @@ const ResetPassword = () => {
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
         <div className="sh-11">
-          <NavLink to="/">
-            <div className="logo-default" />
-          </NavLink>
+
+            <div style={{ width: '170px', paddingBottom: '20px' }}>
+              <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
+            </div>
+         
         </div>
         <div className="mb-5">
           <h2 className="cta-1 mb-0 text-primary">Password trouble?</h2>
@@ -74,6 +77,7 @@ const ResetPassword = () => {
               {errors.passwordConfirm && touched.passwordConfirm && <div className="d-block invalid-tooltip">{errors.passwordConfirm}</div>}
             </div>
             <Button size="lg" type="submit">
+              
               Reset Password
             </Button>
           </form>
