@@ -23,7 +23,7 @@ import { checkBehaviour, checkPlacement, isDeeplyDiffBehaviourStatus, isDeeplyDi
 const MainMenu = () => {
   const dispatch = useDispatch();
   const { placement, behaviour, placementStatus, behaviourStatus, attrMobile, breakpoints, useSidebar } = useSelector((state) => state.menu);
-  const { isLogin, currentUser } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const scrolled = useWindowScroll();
   const { width } = useWindowSize();
 
@@ -31,10 +31,10 @@ const MainMenu = () => {
     () =>
       getMenuItems({
         data: attrMobile && useSidebar ? routesAndMenuItems : routesAndMenuItems.mainMenuItems,
-        isLogin,
-        userRole: currentUser.role,
+        isAuthenticated,
+        userRole: user?.role,
       }),
-    [isLogin, currentUser, attrMobile, useSidebar]
+    [isAuthenticated, user, attrMobile, useSidebar]
   );
 
   useEffect(() => {

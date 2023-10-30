@@ -6,17 +6,17 @@ import routesAndMenuItems from 'routes.js';
 import SidebarMenuItems from './SidebarMenuItems';
 
 const SidebarMenu = () => {
-  const { isLogin, currentUser } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { useSidebar } = useSelector((state) => state.menu);
 
   const menuItemsMemo = useMemo(
     () =>
       getMenuItems({
         data: routesAndMenuItems.sidebarItems,
-        isLogin,
-        userRole: currentUser.role,
+        isAuthenticated,
+        userRole: user?.role,
       }),
-    [isLogin, currentUser]
+    [isAuthenticated, user]
   );
 
   if (!useSidebar === true) {

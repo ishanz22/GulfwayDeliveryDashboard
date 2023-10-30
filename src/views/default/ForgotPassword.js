@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
@@ -6,19 +6,46 @@ import { useFormik } from 'formik';
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
+import { useDispatch, connect } from 'react-redux';
+import { forgotPassword } from 'actions/auth';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const ForgotPassword = () => {
+const ForgotPassword = (props) => {
   const title = 'Forgot Password';
   const description = 'Forgot Password Page';
+  const dispatch = useDispatch();
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
   });
+  const { user, error } = props;
   const initialValues = { email: '' };
   const onSubmit = (values) => console.log('submit form', values);
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
+
+  const onClick = (e) => {
+    e.preventDefault();
+    if (formik.isValid) {
+      const { email } = values;
+      if (email) {
+        dispatch(forgotPassword({ email }));
+      }
+    }
+  };
+
+  useEffect(() => {
+    console.log(error);
+    if (error) {
+      // Show a toast message with the error message
+      toast.error(error, {
+        // position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
+    }
+  }, [error, user]);
 
   const leftSide = (
     <div className="min-h-100 d-flex align-items-center">
@@ -67,7 +94,7 @@ const ForgotPassword = () => {
               <Form.Control type="text" name="email" placeholder="Email" value={values.email} onChange={handleChange} />
               {errors.email && touched.email && <div className="d-block invalid-tooltip">{errors.email}</div>}
             </div>
-            <Button size="lg" type="submit">
+            <Button size="lg" type="submit" onClick={onClick}>
               Send Reset Email
             </Button>
           </form>
@@ -84,4 +111,11 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    user: state.auth.user,
+    error: state.auth.error,
+  };
+}
+export default connect(mapStateToProps)(ForgotPassword);

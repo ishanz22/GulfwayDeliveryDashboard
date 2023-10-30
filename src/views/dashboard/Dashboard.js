@@ -1,16 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
+
 import Rating from 'react-rating';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { useDispatch, connect } from 'react-redux';
+import { logoutUser } from 'actions/auth';
+import { toast } from 'react-toastify';
+
 import PerformanceChart from './components/PerformanceChart';
 
-const Dashboard = () => {
+const Dashboard = (props) => {
   const title = 'Dashboard';
+  const dispatch = useDispatch();
+  const history = useHistory();
   const description = 'Ecommerce Dashboard Page';
+  const { user, error, isAuthenticated, loading } = props;
+  const logout = (e) => {
+    e.preventDefault();
+    console.log('hi 1');
+    dispatch(logoutUser({}));
+  };
 
+  useEffect(() => {
+    if (error) {
+      // Show a toast message with the error message
+      toast.error(error, {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
+    }
+    if (!isAuthenticated) {
+      localStorage.removeItem('token');
+      history.push('/login');
+    }
+  }, [error, isAuthenticated]);
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -20,8 +46,12 @@ const Dashboard = () => {
           <span className="align-middle text-small ms-1">&nbsp;</span>
         </NavLink>
         <h1 className="mb-0 pb-0 display-4" id="title">
-          Welcome, Lisa!
+          Welcome, {user?.firstName}!
         </h1>
+        <button type="button" onClick={logout}>
+          {' '}
+          Logout
+        </button>
       </div>
       {/* Title End */}
 
@@ -880,4 +910,11 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    error: state.auth.error,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
+export default connect(mapStateToProps)(Dashboard);
