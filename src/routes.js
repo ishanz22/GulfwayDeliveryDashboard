@@ -184,8 +184,21 @@ const routesAndMenuItems = {
         },
       ],
       
-    }
-,    
+    },
+    {
+      path: `${appRoot}/users`,
+      exact: true,
+      redirect: true,
+      to: `${appRoot}/users/list`,
+      label: 'Users',
+      icon: 'user',
+      subs: [
+        { path: '/list', label: 'List', component: users.list },
+        { path: '/detail', label: 'Detail', component: users.detail },
+        { path: '/status', label: 'Status', component: users.status },
+        { path: '/analytics', label: 'Analytics', component: users.analytics },
+      ],
+    },    
     {
       path: `${appRoot}/orders`,
       exact: true,
@@ -200,6 +213,8 @@ const routesAndMenuItems = {
         { path: '/analytics', label: 'Analytics', component: orders.analytics },
       ],
     },
+
+  
     {
       path: `${appRoot}/rewards`,
       exact: true,
