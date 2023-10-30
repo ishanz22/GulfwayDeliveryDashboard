@@ -8,6 +8,7 @@ const Register = lazy(() => import('views/default/Register'));
 const ResetPassword = lazy(() => import('views/default/ResetPassword'));
 const Unauthorized = lazy(() => import('views/default/Unauthorized'));
 const InvalidAccess = lazy(() => import('views/default/InvalidAccess'));
+
 const App = lazy(() => import('App.js'));
 const Home = lazy(() => import('views/default/Home'));
 
