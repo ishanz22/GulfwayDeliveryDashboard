@@ -16,7 +16,7 @@ import Loading from 'components/loading/Loading';
 const App = () => {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isAuthenticated, userRole: user.role }), [isAuthenticated, user]);
+  const routes = useMemo(() => getRoutes({ data: routesAndMenuItems, isAuthenticated, userRole: user?.role }), [isAuthenticated, user]);
   if (routes) {
     return (
       <Layout>

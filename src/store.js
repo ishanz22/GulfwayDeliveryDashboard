@@ -21,7 +21,7 @@ const persistConfig = {
   key: REDUX_PERSIST_KEY,
   // eslint-disable-next-line object-shorthand
   storage: storage,
-  // whitelist: ['menu', 'settings', 'lang'],
+  whitelist: ['menu', 'settings', 'lang', 'auth'],
 };
 
 const persistedReducer = persistReducer(

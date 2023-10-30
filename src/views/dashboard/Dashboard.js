@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Dropdown, Card, Badge } from 'react-bootstrap';
 
 import Rating from 'react-rating';
@@ -8,6 +8,7 @@ import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useDispatch, connect } from 'react-redux';
 import { logoutUser } from 'actions/auth';
+import { toast } from 'react-toastify';
 
 import PerformanceChart from './components/PerformanceChart';
 
@@ -17,10 +18,25 @@ const Dashboard = (props) => {
   const history = useHistory();
   const description = 'Ecommerce Dashboard Page';
   const { user, error, isAuthenticated, loading } = props;
-  const logout = () => {
-    dispatch(logoutUser());
-    history.push('/login');
+  const logout = (e) => {
+    e.preventDefault();
+    console.log('hi 1');
+    dispatch(logoutUser({}));
   };
+
+  useEffect(() => {
+    if (error) {
+      // Show a toast message with the error message
+      toast.error(error, {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
+    }
+    if (!isAuthenticated) {
+      localStorage.removeItem('token');
+      history.push('/login');
+    }
+  }, [error, isAuthenticated]);
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -32,7 +48,7 @@ const Dashboard = (props) => {
         <h1 className="mb-0 pb-0 display-4" id="title">
           Welcome, {user?.firstName}!
         </h1>
-        <button type="submit" onClick={logout}>
+        <button type="button" onClick={logout}>
           {' '}
           Logout
         </button>
@@ -897,9 +913,7 @@ const Dashboard = (props) => {
 function mapStateToProps(state) {
   console.log(state.auth);
   return {
-    user: state.auth.user,
     error: state.auth.error,
-    loading: state.auth.loading,
     isAuthenticated: state.auth.isAuthenticated,
   };
 }

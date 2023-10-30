@@ -38,12 +38,11 @@ const authSlice = createSlice({
     [logoutUser.fulfilled]: (state) => {
       state.loading = false;
       state.user = null;
-      state.isAuthenticated = false;
+      state.isAuthenticated = null;
     },
     [logoutUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
-      state.isAuthenticated = false;
     },
 
     // forgot password
@@ -51,9 +50,9 @@ const authSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    [forgotPassword.fulfilled]: (state) => {
+    [forgotPassword.fulfilled]: (state, { payload }) => {
       state.loading = false;
-      state.data = null;
+      state.data = payload;
       state.isAuthenticated = false;
     },
     [forgotPassword.rejected]: (state, { payload }) => {
