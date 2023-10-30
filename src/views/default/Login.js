@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useHistory } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
@@ -8,13 +8,17 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DeliveryLogo from '../../assets/Delivery.png';
+import { loginUser } from 'actions/auth';
+import { useDispatch, connect } from 'react-redux';
 
-const Login = () => {
+import DeliveryLogo from '../../assets/Delivery.png'; // Import your DeliveryLogo image
+
+const Login = (props) => {
   const title = 'Login';
   const description = 'Login Page';
+  const dispatch = useDispatch();
   const history = useHistory();
-
+  const { user, error, isAuthenticated, loading } = props;
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required('Email is required'),
     password: Yup.string().min(6, 'Must be at least 6 chars!').required('Password is required'),
@@ -28,24 +32,31 @@ const Login = () => {
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
-  const onClickLogin = () => {
+  const onClickLogin = (e) => {
+    e.preventDefault();
     if (formik.isValid) {
       const { email, password } = values;
       if (email && password) {
-        if (email === 'test@gmail.com' && password === 'test12345') {
-          history.push('/');
-        } else {
-          const errorMessage = 'Unauthorized access. Please check your credentials.';
-
-          // Show a toast message with the error message
-          toast.error(errorMessage, {
-            position: 'top-right', // You can change the position
-            autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
-          });
-        }
+        dispatch(loginUser({ email, password }));
       }
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      // Show a toast message with the error message
+      toast.error(error, {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
+    }
+    if (isAuthenticated) {
+      localStorage.setItem('token', user.token);
+      history.push('/');
+    }
+  }, [error, isAuthenticated, user]);
+
+  console.log(user);
 
   const leftSide = (
     <div className="min-h-100 d-flex align-items-center">
@@ -87,6 +98,7 @@ const Login = () => {
         </div>
         <div className="mb-5">
           <p className="h6">Please use your credentials to login.</p>
+         
         </div>
         <div>
           <form id="loginForm" className="tooltip-end-bottom" onSubmit={handleSubmit}>
@@ -120,4 +132,13 @@ const Login = () => {
   );
 };
 
-export default Login;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    user: state.auth.user,
+    error: state.auth.error,
+    loading: state.auth.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
+export default connect(mapStateToProps)(Login);
