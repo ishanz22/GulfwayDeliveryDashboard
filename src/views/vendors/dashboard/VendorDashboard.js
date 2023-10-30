@@ -6,10 +6,12 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import PerformanceChart from 'views/dashboard/components/PerformanceChart';
+import { connect } from 'react-redux';
 
-const VendorDashboard = () => {
+const VendorDashboard = (props) => {
   const title = 'Dashboard';
   const description = 'Ecommerce Dashboard Page';
+  const { user, error, isAuthenticated, loading } = props;
 
   return (
     <>
@@ -20,7 +22,7 @@ const VendorDashboard = () => {
           <span className="align-middle text-small ms-1">&nbsp;</span>
         </NavLink>
         <h1 className="mb-0 pb-0 display-4" id="title">
-          Welcome, Lisa!
+          Welcome, {user?.firstName}!
         </h1>
       </div>
       {/* Title End */}
@@ -880,4 +882,12 @@ const VendorDashboard = () => {
   );
 };
 
-export default VendorDashboard;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    error: state.auth.error,
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
+  };
+}
+export default connect(mapStateToProps)(VendorDashboard);

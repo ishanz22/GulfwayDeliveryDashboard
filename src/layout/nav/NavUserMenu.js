@@ -141,7 +141,7 @@ const NavUserMenu = () => {
     attrMenuAnimate,
   } = useSelector((state) => state.menu);
 
-  const { isLogin, currentUser } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const { color } = useSelector((state) => state.settings);
   const { showingNavMenu } = useSelector((state) => state.layout);
 
@@ -156,7 +156,7 @@ const NavUserMenu = () => {
     // eslint-disable-next-line
   }, [attrMenuAnimate, behaviourHtmlData, attrMobile, color]);
 
-  if (!isLogin) {
+  if (!isAuthenticated) {
     return <></>;
   }
   return (

@@ -915,6 +915,7 @@ function mapStateToProps(state) {
   return {
     error: state.auth.error,
     isAuthenticated: state.auth.isAuthenticated,
+    user: state.auth.user,
   };
 }
 export default connect(mapStateToProps)(Dashboard);
