@@ -294,16 +294,7 @@ const GroceryList = () => {
               <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
                 <div className="text-muted text-small d-lg-none mb-1">Status</div>
                 <div>
-                  {item.status.map((status, index) => (
-                    <OverlayTrigger key={index} placement="top" overlay={<Tooltip id={`tooltip-${index}`}>{status.name}</Tooltip>}>
-                      <div className={`d-inline-block me-2 ${status.disabled ? 'text-muted' : ''}`}>
-                        {status.name === 'Restaurant' && <CsLineIcons icon="shop" className={`text-${status.disabled ? 'muted' : 'warning'}`} size="17" />}
-                        {status.name === 'Purchased' && <CsLineIcons icon="boxes" className={`text-${status.disabled ? 'muted' : 'info'}`} size="17" />}
-                        {status.name === 'Trusted' && <CsLineIcons icon="check-square" className={`text-${status.disabled ? 'muted' : 'success'}`} size="17" />}
-                        {status.name === 'Phone' && <CsLineIcons icon="phone" className={`text-${status.disabled ? 'muted' : 'danger'}`} size="17" />}
-                      </div>
-                    </OverlayTrigger>
-                  ))}
+                {item.status}
                 </div>
               </Col>
               <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">

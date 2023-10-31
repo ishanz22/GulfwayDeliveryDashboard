@@ -7,11 +7,23 @@ import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { Table, Tag } from 'antd';
 import VendorListData from 'data/VendorListData';
+import { gulfwayBlue } from 'layout/colors/Colors';
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const CustomersList = () => {
   const title = 'Restaurant List';
   const description = 'Ecommerce Customer List Page';
+  const [selectionType, setSelectionType] = useState('checkbox');
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
@@ -132,8 +144,92 @@ const CustomersList = () => {
     doc.save('RefundList.pdf');
   };
 
-  // Rest of your code remains unchanged
+  function handleViewClick(id) {
+    console.log(id);
+  }
 
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
+
+  const columns = [
+    {
+      title: <span style={{ color: 'grey' }}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
+    },
+    {
+      title: <span style={{ color: 'grey' }}>Name</span>,
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: <span style={{ color: 'grey' }}>Location</span>,
+      dataIndex: 'location',
+      key: 'location',
+    },
+    {
+      title: <span style={{ color: 'grey' }}>Earning</span>,
+      dataIndex: 'earnings',
+      key: 'earnings',
+    },
+    {
+      title: <span style={{ color: 'grey' }}>Lat Order</span>,
+      dataIndex: 'lastOrder',
+      key: 'lastOrder',
+    },
+    {
+      title: <span style={{ color: 'grey' }}>Status</span>,
+      dataIndex: 'status',
+      key: 'status',
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'Pending') {
+          color = 'warning';
+        } else if (text === 'Approved') {
+          color = 'success';
+        } else if (text === 'Declined') {
+          color = 'error';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -141,7 +237,7 @@ const CustomersList = () => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-NavLink pb-1 d-inline-block hidden breadcrumb-back" to="/">
               <CsLineIcons icon="chevron-left" size="13" />
               <span className="align-middle text-small ms-1">Home</span>
             </NavLink>
@@ -234,89 +330,82 @@ const CustomersList = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EARNINGS</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LAST ORDER</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
-          <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-            <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-                <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/vendors/Restaurant/detail/" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-                <div className="text-muted text-small d-lg-none">Location</div>
-                <div className="text-alternate">{item.location}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Earnings</div>
-                <div className="text-alternate">
-                  <span>
-                    <span className="text-medium">AED</span> {item.earnings}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Last Order</div>
-                <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                  {item.lastOrder}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Status</div>
-                <div>
-                  {item.status.map((status, index) => (
-                    <OverlayTrigger key={index} placement="top" overlay={<Tooltip id={`tooltip-${index}`}>{status.name}</Tooltip>}>
-                      <div className={`d-inline-block me-2 ${status.disabled ? 'text-muted' : ''}`}>
-                        {status.name === 'Restaurant' && <CsLineIcons icon="shop" className={`text-${status.disabled ? 'muted' : 'warning'}`} size="17" />}
-                        {status.name === 'Purchased' && <CsLineIcons icon="boxes" className={`text-${status.disabled ? 'muted' : 'info'}`} size="17" />}
-                        {status.name === 'Trusted' && <CsLineIcons icon="check-square" className={`text-${status.disabled ? 'muted' : 'success'}`} size="17" />}
-                        {status.name === 'Phone' && <CsLineIcons icon="phone" className={`text-${status.disabled ? 'muted' : 'danger'}`} size="17" />}
-                      </div>
-                    </OverlayTrigger>
-                  ))}
-                </div>
-              </Col>
-              <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+      {/* <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell style={{ color: 'grey' }}>&nbsp;</TableCell>
+            <TableCell style={{ color: 'grey' }}>ID</TableCell>
+            <TableCell style={{ color: 'grey' }}>NAME</TableCell>
+            <TableCell style={{ color: 'grey' }}>LOCATION</TableCell>
+            <TableCell style={{ color: 'grey' }}>EARNINGS</TableCell>
+            <TableCell style={{ color: 'grey' }}>LAST ORDER</TableCell>
+            <TableCell style={{ color: 'grey' }}>STATUS</TableCell>
+            <TableCell style={{ color: 'grey' }}>ACTIONS</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {displayedData.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>
+                <Box display="flex" alignItems="center">
+                  <Checkbox checked={selectedItems.includes(item.id)} onChange={() => checkItem(item.id)} size="small" />
+                </Box>
+              </TableCell>
+              <TableCell>
+                <NavLink to="/vendors/Restaurant/detail">{item.id}</NavLink>
+              </TableCell>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.location}</TableCell>
+              <TableCell>
+                <span>
+                  <span className="text-medium">AED</span> {item.earnings}
+                </span>
+              </TableCell>
+              <TableCell>
+                <NavLink to="/customers/detail">{item.lastOrder}</NavLink>
+              </TableCell>
+              <TableCell>{item.status}</TableCell>
+              <TableCell>
+                <Box display="flex" alignItems="center">
+                  <div style={{ cursor: 'pointer' }}      onClick={() => handleViewClick(item.id)}>
+                    <CsLineIcons
+                      className="text-primary me-3"
+                      icon="eye"
+                      fontSize="large"
+                      style={{ cursor: 'pointer' }}
+                 
+                    />
+                  </div>
+                  <div style={{ cursor: 'pointer' }}  onClick={() => handleEditClick(item.id)}>
+                    <CsLineIcons className="text-primary me-3" icon="pen" style={{ cursor: 'pointer' }} />
+                  </div>
+                  <div style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(item.id)}>
+                    <CsLineIcons className="text-danger" icon="bin" style={{ cursor: 'pointer' }}  />
+                  </div>
+                </Box>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table> */}
 
       {/* List Items End */}
 
       {/* Pagination Start */}
+
+      {/* Pagination End */}
+
+      <div>
+        <Table
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
+          columns={columns}
+          dataSource={displayedData}
+          pagination={false}
+        />
+      </div>
       <div className="d-flex justify-content-center mt-5">
         <Pagination>
           <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
@@ -332,7 +421,6 @@ const CustomersList = () => {
           </Pagination.Next>
         </Pagination>
       </div>
-      {/* Pagination End */}
     </>
   );
 };

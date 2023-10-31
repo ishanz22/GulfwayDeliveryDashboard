@@ -11,6 +11,8 @@ import Layout from 'layout/Layout';
 import RouteIdentifier from 'routing/components/RouteIdentifier';
 import { getRoutes } from 'routing/helper';
 import routesAndMenuItems from 'routes.js';
+
+
 import Loading from 'components/loading/Loading';
 
 const App = () => {

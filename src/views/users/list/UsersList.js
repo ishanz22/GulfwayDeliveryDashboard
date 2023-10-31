@@ -197,39 +197,7 @@ const UsersList = () => {
           </Col>
           {/* Title End */}
 
-          {/* Top Buttons Start */}
-          <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-            <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
-            </Button>
-            {/* <div className="btn-group ms-1 check-all-container">
-              <CheckAll
-                allItems={allItems}
-                selectedItems={selectedItems}
-                onToggle={toggleCheckAll}
-                inputClassName="form-check"
-                className="btn btn-outline-primary btn-custom-control py-0"
-              />
-              <Dropdown align="end">
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item>Move</Dropdown.Item>
-                  <Dropdown.Item>Archive</Dropdown.Item>
-                  <Dropdown.Item>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div> */}
 
-            <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-              <Button onClick={createUser} variant="outline-primary" className="btn-icon btn-icon-start w-100 w-md-auto">
-                <CsLineIcons icon="plus" /> <span>Assign Employee</span>
-              </Button>
-
-              <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-                <CsLineIcons icon="sort" />
-              </Button>
-            </Col>
-          </Col>
           {/* Top Buttons End */}
         </Row>
       </div>

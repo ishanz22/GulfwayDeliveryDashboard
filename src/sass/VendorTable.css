@@ -1,0 +1,72 @@
+/* Common styles for all devices */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #fff;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  /* Mobile styles - for screens up to 767px (typical mobile) */
+  @media (max-width: 767px) {
+    .table-container {
+      display: flex;
+      flex-wrap: wrap;
+      border: 1px solid #ddd; /* Add a border around each card */
+      margin: 10px;
+      border-radius: 4px;
+    }
+  
+    .table-container > table {
+      width: 100%;
+      border: none; /* Remove the table border */
+      margin: 0;
+    }
+  
+    th, td {
+      padding: 10px;
+    }
+  
+    th {
+      background-color: #333;
+      color: white;
+    }
+  }
+  
+  /* Tablet styles - for screens between 768px and 1023px (typical tablets) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+  }
+  
+  /* Laptop and larger screens */
+  @media (min-width: 1024px) {
+    /* Add your styles for laptop and larger screens here */
+  
+    table {
+      /* Example: Increase the font size for table cells */
+      font-size: 16px;
+    }
+  
+    th, td {
+      /* Example: Add more padding for table cells on larger screens */
+      padding: 12px;
+    }
+  
+    /* Add any other styles or layout adjustments as needed */
+  }
+  
