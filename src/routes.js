@@ -19,7 +19,7 @@ const users= {
   list: lazy(() => import('views/users/list/UsersList')),
   detail: lazy(() => import('views/users/detail/UsersDetail')),
   logs: lazy(() => import('views/users/logs/ActivityLogs')),
-  Permission: lazy(() => import('views/users/permissions/Permission')),
+  analytics: lazy(() => import('views/users/analytics/Analytics')),
 };
 const VendorDashboard = lazy(() => import('views/vendors/dashboard/VendorDashboard'));
 
@@ -195,7 +195,7 @@ const routesAndMenuItems = {
       subs: [
         { path: '/list', label: 'List', component: users.list },
         { path: '/detail', label: 'Detail', component: users.detail },
-        { path: '/status', label: 'Status', component: users.status },
+        { path: '/status', label: 'Status', component: users.logs },
         { path: '/analytics', label: 'Analytics', component: users.analytics },
       ],
     },    

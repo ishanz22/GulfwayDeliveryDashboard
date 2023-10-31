@@ -6,7 +6,7 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 
 const Permission = () => {
-  const title = 'User Permissions';
+  const title = 'User Analytics';
   const description = 'Ecommerce Customer List Page';
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

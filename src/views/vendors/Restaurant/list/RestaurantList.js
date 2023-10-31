@@ -144,10 +144,6 @@ const CustomersList = () => {
     doc.save('RefundList.pdf');
   };
 
-  function handleViewClick(id) {
-    console.log(id);
-  }
-
   const handleView = (id) => {
     console.log(`View Item ID ${id}`);
   };
@@ -165,7 +161,8 @@ const CustomersList = () => {
       title: <span style={{ color: 'grey' }}>ID</span>,
       dataIndex: 'id',
       key: 'id',
-      render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
+      // render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${text}`}>{text}</NavLink>,
+      render: (text, record) => <NavLink to="/vendors/Restaurant/detail">{text}</NavLink>,
     },
     {
       title: <span style={{ color: 'grey' }}>Name</span>,
@@ -328,72 +325,6 @@ const CustomersList = () => {
           {/* Length End */}
         </Col>
       </Row>
-
-      {/* List Header Start */}
-      {/* <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell style={{ color: 'grey' }}>&nbsp;</TableCell>
-            <TableCell style={{ color: 'grey' }}>ID</TableCell>
-            <TableCell style={{ color: 'grey' }}>NAME</TableCell>
-            <TableCell style={{ color: 'grey' }}>LOCATION</TableCell>
-            <TableCell style={{ color: 'grey' }}>EARNINGS</TableCell>
-            <TableCell style={{ color: 'grey' }}>LAST ORDER</TableCell>
-            <TableCell style={{ color: 'grey' }}>STATUS</TableCell>
-            <TableCell style={{ color: 'grey' }}>ACTIONS</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {displayedData.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>
-                <Box display="flex" alignItems="center">
-                  <Checkbox checked={selectedItems.includes(item.id)} onChange={() => checkItem(item.id)} size="small" />
-                </Box>
-              </TableCell>
-              <TableCell>
-                <NavLink to="/vendors/Restaurant/detail">{item.id}</NavLink>
-              </TableCell>
-              <TableCell>{item.name}</TableCell>
-              <TableCell>{item.location}</TableCell>
-              <TableCell>
-                <span>
-                  <span className="text-medium">AED</span> {item.earnings}
-                </span>
-              </TableCell>
-              <TableCell>
-                <NavLink to="/customers/detail">{item.lastOrder}</NavLink>
-              </TableCell>
-              <TableCell>{item.status}</TableCell>
-              <TableCell>
-                <Box display="flex" alignItems="center">
-                  <div style={{ cursor: 'pointer' }}      onClick={() => handleViewClick(item.id)}>
-                    <CsLineIcons
-                      className="text-primary me-3"
-                      icon="eye"
-                      fontSize="large"
-                      style={{ cursor: 'pointer' }}
-                 
-                    />
-                  </div>
-                  <div style={{ cursor: 'pointer' }}  onClick={() => handleEditClick(item.id)}>
-                    <CsLineIcons className="text-primary me-3" icon="pen" style={{ cursor: 'pointer' }} />
-                  </div>
-                  <div style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(item.id)}>
-                    <CsLineIcons className="text-danger" icon="bin" style={{ cursor: 'pointer' }}  />
-                  </div>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table> */}
-
-      {/* List Items End */}
-
-      {/* Pagination Start */}
-
-      {/* Pagination End */}
 
       <div>
         <Table
