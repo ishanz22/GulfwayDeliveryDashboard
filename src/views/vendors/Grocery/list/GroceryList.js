@@ -38,6 +38,10 @@ const GroceryList = () => {
       setSelectedItems([...selectedItems, item]);
     }
   };
+
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
+  };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
       setSelectedItems(allItems);
@@ -157,37 +161,53 @@ const GroceryList = () => {
 
   const columns = [
     {
-      title: <span style={{ color: 'grey' }}>ID</span>,
+      title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       key: 'id',
+      responsive: ['xs','md','lg','sm','xl'],
       // render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
       render: (text, record) => <NavLink to="/vendors/Grocery/detail">{text}</NavLink>,
 
     },
     {
-      title: <span style={{ color: 'grey' }}>Name</span>,
+      title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => (
+        <div style={{ wordBreak: ' break-all' }}>{text}</div>
+      ),
     },
     {
-      title: <span style={{ color: 'grey' }}>Location</span>,
+      title: <span style={tableHeaderStyle}>LOCATION</span>,
       dataIndex: 'location',
       key: 'location',
+      responsive: ['xs','md','lg','sm','xl'],
+        render: (text) => (
+    <div style={{ wordBreak: ' break-all' }}>{text}</div>
+  ),
     },
     {
-      title: <span style={{ color: 'grey' }}>Earning</span>,
+      title: <span style={tableHeaderStyle}>EARNING</span>,
       dataIndex: 'earnings',
       key: 'earnings',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => (
+        <div style={{ wordBreak: ' break-all' }}>{text}</div>
+      ),
     },
     {
-      title: <span style={{ color: 'grey' }}>Lat Order</span>,
+      title: <span style={tableHeaderStyle}>LAST ORDER</span>,
       dataIndex: 'lastOrder',
       key: 'lastOrder',
+      responsive: ['xs','md','lg','sm','xl'],
+      
     },
     {
-      title: <span style={{ color: 'grey' }}>Status</span>,
+      title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
       key: 'status',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text) => {
         let color = 'default';
 
@@ -204,8 +224,9 @@ const GroceryList = () => {
     },
 
     {
-      title: 'Action',
+      title:  <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div

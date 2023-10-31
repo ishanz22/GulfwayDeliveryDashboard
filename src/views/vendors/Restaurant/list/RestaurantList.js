@@ -31,6 +31,10 @@ const CustomersList = () => {
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(VendorListData);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
+  };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -158,36 +162,42 @@ const CustomersList = () => {
 
   const columns = [
     {
-      title: <span style={{ color: 'grey' }}>ID</span>,
+      title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       key: 'id',
       // render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${text}`}>{text}</NavLink>,
       render: (text, record) => <NavLink to="/vendors/Restaurant/detail">{text}</NavLink>,
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title: <span style={{ color: 'grey' }}>Name</span>,
+      title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title: <span style={{ color: 'grey' }}>Location</span>,
+      title: <span style={tableHeaderStyle}>LOCATION</span>,
       dataIndex: 'location',
       key: 'location',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title: <span style={{ color: 'grey' }}>Earning</span>,
+      title: <span style={tableHeaderStyle}>EARNING</span>,
       dataIndex: 'earnings',
       key: 'earnings',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title: <span style={{ color: 'grey' }}>Lat Order</span>,
+      title: <span style={tableHeaderStyle}>LAST ORDER</span>,
       dataIndex: 'lastOrder',
       key: 'lastOrder',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title: <span style={{ color: 'grey' }}>Status</span>,
+      title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
       key: 'status',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text) => {
         let color = 'default';
 
@@ -201,11 +211,13 @@ const CustomersList = () => {
 
         return <Tag color={color}>{text}</Tag>;
       },
+    
     },
 
     {
-      title: 'Action',
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div
@@ -226,6 +238,7 @@ const CustomersList = () => {
         </span>
       ),
     },
+   
   ];
   return (
     <>

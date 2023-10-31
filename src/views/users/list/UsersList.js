@@ -47,6 +47,10 @@ const UsersList = () => {
     borderRadius: '50%',
     overflow: 'hidden',
   };
+
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
+  };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -202,15 +206,17 @@ const UsersList = () => {
   };
   const columns = [
     {
-      title: <span style={{ color: 'grey' }}>ID</span>,
+      title: <span style={{ color: 'grey',fontSize:'10px' }}>ID</span>,
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => <NavLink to="/users/detail">{text}</NavLink>,
 
     },
     {
-      title: <span style={{ color: 'grey' }}>User</span>,
+      title: <span style={{ color: 'grey',fontSize:'10px' }}>USER</span>,
       dataIndex: 'user',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
         <div className='d-flex'>
           <div className="round-image">
@@ -224,36 +230,43 @@ const UsersList = () => {
       ),
     },
     {
-      title: <span style={{ color: 'grey' }}>Created</span>,
+      title: <span style={tableHeaderStyle}>CREATED</span>,
       dataIndex: 'date',
+      responsive: ['xs','md','lg','sm','xl'],
       sorter: (a, b) => a.date.localeCompare(b.date),
     },
     {
-      title: <span style={{ color: 'grey' }}>Status</span>,
+      title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'isActive',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (isActive) => <div style={{ color: isActive ? '#B3B95A' : 'RGB(226, 182, 75)' }}>{isActive ? 'Active' : 'Inactive'}</div>,
     },
     {
-      title: <span style={{ color: 'grey' }}>Updated</span>,
+      title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
+      responsive: ['xs','md','lg','sm','xl'],
       sorter: (a, b) => a.updatedDate.localeCompare(b.updatedDate),
     },
     {
-      title: <span style={{ color: 'grey' }}>Session</span>,
+      title: <span style={tableHeaderStyle}>SESSION</span>,
       dataIndex: 'status',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (status) => <div style={{ color: status === 'Not Logged in' ? '#ebb71a' : '#B3B95A' }}>{status}</div>,
     },
     {
-      title: <span style={{ color: 'grey' }}>Log-In Time</span>,
+      title: <span style={tableHeaderStyle}>LOG-IN TIME</span>,
       dataIndex: 'loginTime',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title:  <span style={{ color: 'grey' }}>Log-Out Time</span>,
+      title:  <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
       dataIndex: 'logOutTime',
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
-      title:  <span style={{ color: 'grey' }}>Actions</span>,
+      title:  <span style={tableHeaderStyle}>ACTION</span>,
       dataIndex: 'id',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
         <span className="d-flex">
         <div
@@ -275,7 +288,7 @@ const UsersList = () => {
       ),
     },
   ];
-
+ 
   return (
     <>
       <HtmlHead title={title} description={description} />

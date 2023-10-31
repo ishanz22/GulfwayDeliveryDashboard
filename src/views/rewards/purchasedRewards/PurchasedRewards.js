@@ -8,8 +8,19 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import ExcelJS from 'exceljs';
+import { Table, Tag, Image } from 'antd';
 import RewardListData from '../../../data/RewardListData';
 
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const PurchasedRewards = () => {
   const title = 'Purchased Rewards';
   const description = 'Ecommerce Customer List Page';
@@ -22,6 +33,11 @@ const PurchasedRewards = () => {
     } else {
       setSelectedItems([...selectedItems, item]);
     }
+  };
+
+
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -41,10 +57,10 @@ const PurchasedRewards = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '30px', 
+    height: '30px', 
+    borderRadius: '50%',
+    overflow: 'hidden', 
   };
 
   const nextPage = () => {
@@ -144,7 +160,53 @@ const PurchasedRewards = () => {
 
     doc.save('RewardListData.pdf');
   };
+  const columns = [
+    {
+      title: 'INVOICE ID',
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record) => 
+        <NavLink to="/rewards/purchased-rewards/">{text}</NavLink>, // set the path 
+       
+    },
+    {
+      title: 'NAME',
+      dataIndex: 'name',
+      key: 'name',
 
+    },
+    {
+      title: 'TOTAL AMOUNT',
+      dataIndex: 'transactionAmount',
+      key: 'transactionAmount',
+      render: (text) => `AED ${text}`,
+    },
+    {
+      title: 'DISCOUNTED AMOUNT',
+      dataIndex: 'discountedAmount',
+      key: 'discountedAmount',
+    },
+    {
+      title: 'POINTS',
+      dataIndex: 'points',
+      key: 'points',
+    },
+    {
+      title: 'RECEIVED',
+      dataIndex: 'received',
+      key: 'received',
+    },
+  ];
+
+  const dataSource = displayedData.map((item) => ({
+    key: item.id,
+    id: item.id,
+    name: item.name,
+    transactionAmount: item.transactionAmount,
+    discountedAmount: item.discountedAmount,
+    points: item.points,
+    received: item.received,
+  }));
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -247,88 +309,15 @@ const PurchasedRewards = () => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">INVOICE ID</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TOTAL AMOUNT</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DISCOUNTED AMOUNT</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">POINTS</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">RECEIVED</div>
-        </Col>
-      
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Touch Points</div>
-                <div className="text-truncate">
-   
-                  <div className="text-truncate h-100 d-flex align-items-center">AED {item.transactionAmount}</div>
-                </div>
-              </Col>
-
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Point</div>
-                <div className="text-alternate">
-                  <span>{item.points}</span>
-                </div>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">TOUCHPOINTS</div>
-                <div className="text-alternate">{item.points}</div>
-              </Col>
-
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">RECEIVED</div>
-                <div>
-                  <div className="text-alternate"> {item.received}</div>
-                </div>
-              </Col>
-          
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
+      <Table
+    columns={columns}
+    dataSource={dataSource}
+    rowSelection={rowSelection}
+    onRow={(record) => ({
+      onClick: () => checkItem(record.key),
+    })}
+    pagination={false}
+  />
       {/* List Items End */}
 
       {/* Pagination Start */}

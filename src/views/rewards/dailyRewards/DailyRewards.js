@@ -7,15 +7,28 @@ import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Ove
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { Table, Tag, Image } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import ExcelJS from 'exceljs';
 import RewardListData from '../../../data/RewardListData';
 
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const DailyRewards = () => {
   const title = 'Daily Rewards';
   const description = 'Ecommerce Customer List Page';
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectionType, setSelectionType] = useState('checkbox');
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -30,7 +43,9 @@ const DailyRewards = () => {
       setSelectedItems([]);
     }
   };
-
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
+  };
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(RewardListData);
 
@@ -144,7 +159,93 @@ const DailyRewards = () => {
 
     doc.save('RewardListData.pdf');
   };
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
 
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
+
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      sorter: (a, b) => a.id - b.id,
+      render: (text, record) => (
+        <a href={`/riders/detail/${record.id}`}>{text}</a>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <div className="d-flex align-items-center">
+          <Image style={smallImageStyle} src={record.image} alt={text} />
+          <span className="text-alternate ms-2">{text}</span>
+        </div>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>TOUCH POINTS</span>,
+      dataIndex: 'touchPoints',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => (
+        <span>+{text}</span>
+      ),
+      sorter: (a, b) => a.touchPoints - b.touchPoints,
+    },
+    {
+      title: <span style={tableHeaderStyle}>TOTAL POINTS</span>,
+      dataIndex: 'points',
+      responsive: ['xs','md','lg','sm','xl'],
+      sorter: (a, b) => a.points - b.points,
+    },
+    {
+      title:<span style={tableHeaderStyle}>EVENT</span> ,
+      dataIndex: 'event',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title:<span style={tableHeaderStyle}>DATE</span>  ,
+      dataIndex: 'date',
+      responsive: ['xs','md','lg','sm','xl'],
+      sorter: (a, b) => a.date.localeCompare(b.date),
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      key: 'action',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+  
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+
+ 
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -246,90 +347,15 @@ const DailyRewards = () => {
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TOUCH POINTS</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TOTAL POINTS</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EVENT</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DATE</div>
-        </Col>
-      
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Touch Points</div>
-                <div className="text-truncate">
-   
-                  <div className="text-truncate h-100 d-flex align-items-center">+{item.touchPoints}</div>
-                </div>
-              </Col>
-
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Point</div>
-                <div className="text-alternate">
-                  <span>{item.points}</span>
-                </div>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Event</div>
-                <div className="text-alternate">{item.event}</div>
-              </Col>
-
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">DATE</div>
-                <div>
-                  <div className="text-alternate"> {item.date}</div>
-                </div>
-              </Col>
-          
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
-      {/* List Items End */}
+      <Table
+    columns={columns}
+    dataSource={data}
+    rowSelection={{
+      type: selectionType,
+      ...rowSelection,     
+    }}
+    pagination={false}
+  />
 
       {/* Pagination Start */}
       <div className="d-flex justify-content-center mt-5">
