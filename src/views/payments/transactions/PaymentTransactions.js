@@ -1,18 +1,29 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { utils, write } from 'xlsx';
-import { Row, Col, Button, Dropdown, Form, Card,Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { Table, Tag, Checkbox } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import CheckAll from 'components/check-all/CheckAll';
 import RefundList from '../../../data/RefundList';
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const PaymentTransactions = () => {
   const title = 'Transactions';
   const description = 'Ecommerce Customer List Page';
-
+  const [selectionType, setSelectionType] = useState('checkbox');
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
@@ -30,7 +41,10 @@ const PaymentTransactions = () => {
     }
   };
 
-
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(RefundList);
 
@@ -38,15 +52,14 @@ const PaymentTransactions = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
- // Track the selected section
+  // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
   };
-
 
   const nextPage = () => {
     if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
@@ -60,11 +73,9 @@ const PaymentTransactions = () => {
     }
   };
 
-
   const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const displayedData = filteredData.slice(startIndex, endIndex);
-
+  const endIndex = startIndex + itemsPerPage;
+  const displayedData = filteredData.slice(startIndex, endIndex);
 
   // making K,M,B Format
   const formatNumberToKMB = (number) => {
@@ -122,6 +133,112 @@ const displayedData = filteredData.slice(startIndex, endIndex);
     doc.save('RefundList.pdf');
   };
 
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>INVOICE ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <NavLink to={`/payments/transactions/detail/${record.id}`}>{record.id}</NavLink>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="d-flex">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>REMAINING AMOUNT</span>,
+      dataIndex: 'purchase',
+      key: 'purchase',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <span className="text-medium">AED {formatNumberToKMB(record.purchase)}</span>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>DATE</span>,
+      dataIndex: 'date',
+      key: 'date',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>STATUS</span>,
+      dataIndex: 'status',
+      key: 'status',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'PENDING') {
+          color = 'warning';
+        } else if (text === 'PAID') {
+          color = 'success';
+        } else if (text === 'CANCELED') {
+          color = 'error';
+        } else if (text === 'REFUNDED') {
+          color = 'blue';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+
+  const data = displayedData.map((item) => ({
+    key: item.id,
+    id: item.id,
+    name: item.name,
+    purchase: item.purchase,
+    date: item.date,
+    status: item.status,
+    image: item.image,
+    email: item.email,
+  }));
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -206,91 +323,31 @@ const displayedData = filteredData.slice(startIndex, endIndex);
 
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-  <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-    <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-      {itemsPerPage} Items
-    </Dropdown.Toggle>
-  </OverlayTrigger>
-  <Dropdown.Menu className="shadow dropdown-menu-end">
-    <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-  </Dropdown.Menu>
-</Dropdown>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+                {itemsPerPage} Items
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
           {/* Length End */}
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">INVOICE ID</div>
-        </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">REMAINING AMOUNT</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DATE</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/payments/transactions/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Purchase</div>
-                <div className="text-alternate">
-                  <span>
-                    <span className="text-medium">AED </span>
-                    {formatNumberToKMB(item.purchase)}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">{item.date}</div>
-              </Col>
-              
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
-                <div>
-                  <Badge bg="outline-primary">{item.status}</Badge>
-                </div>
-              </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
       {/* List Items End */}
 
       {/* Pagination Start */}
