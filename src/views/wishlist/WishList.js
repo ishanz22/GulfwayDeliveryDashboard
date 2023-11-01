@@ -7,12 +7,24 @@ import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Ove
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { gulfwayBlue } from 'layout/colors/Colors';
+import { Table, Tag, Checkbox, Image } from 'antd';
 import ExcelJS from 'exceljs';
 import RewardListData from 'data/RewardListData';
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const WishList = () => {
   const title = 'Wishlist';
   const description = 'Ecommerce Customer List Page';
+  const [selectionType, setSelectionType] = useState('checkbox');
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
@@ -31,6 +43,10 @@ const WishList = () => {
     }
   };
 
+  const tableHeaderStyle = {
+    color: 'grey',fontSize:'10px'
+  };
+
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(RewardListData);
 
@@ -38,13 +54,13 @@ const WishList = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Track the selected section
+
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '40px', 
+    height: '40px', 
+    borderRadius: '50%', 
+    overflow: 'hidden', 
   };
 
   const nextPage = () => {
@@ -63,7 +79,7 @@ const WishList = () => {
   const endIndex = startIndex + itemsPerPage;
   const displayedData = filteredData.slice(startIndex, endIndex);
 
-  // making K,M,B Format
+
   const formatNumberToKMB = (number) => {
     if (number < 1e3) {
       return number.toString();
@@ -145,6 +161,123 @@ const WishList = () => {
     doc.save('RewardListData.pdf');
   };
 
+
+  const handleView = (id) => {
+    console.log(`View User ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit User ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete User ID ${id}`);
+  };
+  const columns = [
+    {
+      title:<span style={tableHeaderStyle}>WISHLIST ID</span>, 
+      dataIndex: 'id',
+      key: 'id',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <a href="/riders/detail">{text}</a>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>USER DETAILS</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>USER ID</span>, 
+      dataIndex: 'userId',
+      key: 'userId',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>PRODUCT ID</span>,
+      dataIndex: 'productId',
+      key: 'productId',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>COUNT</span>,
+      dataIndex: 'count',
+      key: 'count',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>TIME</span>,
+      dataIndex: 'time',
+      key: 'time',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title:<span style={tableHeaderStyle}>DATE</span> ,
+      dataIndex: 'date',
+      key: 'date',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>MODULE</span>,
+      dataIndex: 'module',
+      key: 'module',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title:  <span style={tableHeaderStyle}>ACTION</span>,
+      dataIndex: 'id',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+        <div
+          onClick={() => handleView(record.id)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+        >
+          <CsLineIcons icon="eye" />
+        </div>
+        <div
+          onClick={() => handleEdit(record.id)}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+        >
+          <CsLineIcons icon="pen" />
+        </div>
+        <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+          <CsLineIcons icon="bin" />
+        </div>
+      </span>
+      ),
+    },
+  ];
+  
+  // Assuming displayedData is an array of your data
+  const data = displayedData.map(item => ({
+    key: item.id, 
+    id: item.id,
+    name: item.name,
+    userId: item.userId,
+    productId: item.productId,
+    count: item.count,
+    time: item.time,
+    date: item.date,
+    module: item.module,
+    image: item.image, 
+    email:item.email
+  }));
+  
+  
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -247,112 +380,16 @@ const WishList = () => {
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">WISHLIST ID</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">USER DETAILS</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">USER ID</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">PRODUCT ID</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">COUNT</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TIME</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DATE </div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">MODULE</div>
-        </Col>
-      
-      </Row>
-      {/* List Header End */}
+      <Table
+    columns={columns}
+    dataSource={data}
+    rowSelection={{
+      type: selectionType,
+      ...rowSelection,     
+    }}
+    pagination={false}
+  />
 
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-              
-
-              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">User ID</div>
-                <div className="text-truncate">
-   
-                  <div className="text-truncate h-100 d-flex align-items-center"> {item.userId}</div>
-                </div>
-              </Col>
-
-              <Col xs="3" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Product ID</div>
-                <div className="text-truncate">
-   
-                  <div className="text-truncate h-100 d-flex align-items-center"> {item.productId}</div>
-                </div>
-              </Col>
-
-              
-
-              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Count</div>
-                <div className="text-alternate">
-                  <span>{item.count}</span>
-                </div>
-              </Col>
-       
-
-              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Time</div>
-                <div className="text-alternate">
-                  <span>{item.time}</span>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">{item.date}</div>
-              </Col>
-
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Module</div>
-                <div>
-                  <div className="text-alternate"> {item.module}</div>
-                </div>
-              </Col>
-          
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
 
       {/* List Items End */}
 
