@@ -7,10 +7,10 @@ import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Ove
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import ExcelJS from 'exceljs';
 import { Table, Tag, Image } from 'antd';
 import RewardListData from '../../../data/RewardListData';
-
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -35,9 +35,9 @@ const PurchasedRewards = () => {
     }
   };
 
-
   const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
+    color: 'grey',
+    fontSize: '10px',
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -57,10 +57,10 @@ const PurchasedRewards = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', 
-    height: '30px', 
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
-    overflow: 'hidden', 
+    overflow: 'hidden',
   };
 
   const nextPage = () => {
@@ -160,41 +160,92 @@ const PurchasedRewards = () => {
 
     doc.save('RewardListData.pdf');
   };
+
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
   const columns = [
     {
-      title: 'INVOICE ID',
+      title: <span style={tableHeaderStyle}>INVOICE ID</span>,
       dataIndex: 'id',
       key: 'id',
-      render: (text, record) => 
-        <NavLink to="/rewards/purchased-rewards/">{text}</NavLink>, // set the path 
-       
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <NavLink to="/rewards/purchased-rewards/">{text}</NavLink>, // set the path
     },
     {
-      title: 'NAME',
+      title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
-
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
     },
     {
-      title: 'TOTAL AMOUNT',
+      title: <span style={tableHeaderStyle}>TOTAL AMOUNT</span>,
       dataIndex: 'transactionAmount',
       key: 'transactionAmount',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => `AED ${text}`,
     },
     {
-      title: 'DISCOUNTED AMOUNT',
+      title: <span style={tableHeaderStyle}>DISCOUNTED AMOUNT</span>,
       dataIndex: 'discountedAmount',
       key: 'discountedAmount',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
-      title: 'POINTS',
+      title: <span style={tableHeaderStyle}>POINTS</span>,
       dataIndex: 'points',
       key: 'points',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
-      title: 'RECEIVED',
+      title: <span style={tableHeaderStyle}>RECEIVED</span>,
       dataIndex: 'received',
       key: 'received',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
     },
   ];
 
@@ -206,6 +257,8 @@ const PurchasedRewards = () => {
     discountedAmount: item.discountedAmount,
     points: item.points,
     received: item.received,
+    image: item.image,
+    email:item.email
   }));
   return (
     <>
@@ -310,14 +363,14 @@ const PurchasedRewards = () => {
 
       {/* List Header Start */}
       <Table
-    columns={columns}
-    dataSource={dataSource}
-    rowSelection={rowSelection}
-    onRow={(record) => ({
-      onClick: () => checkItem(record.key),
-    })}
-    pagination={false}
-  />
+        columns={columns}
+        dataSource={dataSource}
+        rowSelection={rowSelection}
+        onRow={(record) => ({
+          onClick: () => checkItem(record.key),
+        })}
+        pagination={false}
+      />
       {/* List Items End */}
 
       {/* Pagination Start */}

@@ -112,6 +112,7 @@ const UsersData = [
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
       updatedDate:'2023-06-17'
-    }
+    },
+    
   ];
   export default UsersData;

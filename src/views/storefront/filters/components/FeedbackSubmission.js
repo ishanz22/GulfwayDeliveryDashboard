@@ -95,9 +95,9 @@ function FeedbackSubmission({ data }) {
           </div>
         </div>
       </div>
-      <button type="button" className="btn btn-primary">
-        View
-      </button>
+      <button type="button" className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold ">
+          View
+        </button>
     </div>
   );
 }

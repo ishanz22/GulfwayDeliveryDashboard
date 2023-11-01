@@ -39,8 +39,8 @@ const OrdersList = () => {
   const [selectedSection, setSelectedSection] = useState('Total Orders'); // Track the selected section
 
   const smallImageStyle = {
-    width: '30px',
-    height: '30px', 
+    width: '40px',
+    height: '40px', 
     borderRadius: '50%', 
     overflow: 'hidden',
   };
@@ -257,20 +257,28 @@ const OrdersList = () => {
       title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
+      responsive: ['xs','md','lg','sm','xl'],
     },
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
-        <div className="d-flex align-items-center">
-          <Image style={smallImageStyle} src={record.image} alt={record.name} />
-          <span className="text-alternate ms-2">{text}</span>
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
         </div>
       ),
     },
     {
       title:  <span style={tableHeaderStyle}>PURCHASE</span>,
       dataIndex: 'purchase',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text) => (
         <span className="text-alternate">
           <span className="text-medium">AED </span>
@@ -282,11 +290,13 @@ const OrdersList = () => {
     {
       title: <span style={tableHeaderStyle}>DATE</span>, 
       dataIndex: 'date',
+      responsive: ['xs','md','lg','sm','xl'],
       sorter: (a, b) => a.date.localeCompare(b.date),
     },
     {
       title:<span style={tableHeaderStyle}>STATUS</span> ,
       dataIndex: 'status',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text) => {
         let color = 'default';
 
@@ -306,6 +316,7 @@ const OrdersList = () => {
     {
       title: <span style={tableHeaderStyle}>ACTION</span> ,
       key: 'action',
+      responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div

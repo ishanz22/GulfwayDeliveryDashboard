@@ -58,10 +58,10 @@ const LoginRewards = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '40px', 
+    height: '40px', 
+    borderRadius: '50%', 
+    overflow: 'hidden', 
   };
 
   const nextPage = () => {
@@ -188,9 +188,14 @@ const LoginRewards = () => {
       dataIndex: 'name',
       responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
-        <div className="d-flex align-items-center">
-          <Image style={smallImageStyle} src={record.image} alt={text} />
-          <span className="text-alternate ms-2">{text}</span>
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
         </div>
       ),
     },

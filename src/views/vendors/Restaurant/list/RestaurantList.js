@@ -174,12 +174,18 @@ const CustomersList = () => {
       dataIndex: 'name',
       key: 'name',
       responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => (
+        <div style={{ wordBreak: ' break-all' }}>{text}</div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>LOCATION</span>,
       dataIndex: 'location',
       key: 'location',
       responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => (
+        <div style={{ wordBreak: ' break-all' }}>{text}</div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>EARNING</span>,
