@@ -57,8 +57,8 @@ const RiderList = () => {
  // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', 
-    height: '30px', 
+    width: '40px', 
+    height: '40px', 
     borderRadius: '50%', 
     overflow: 'hidden', 
   };
@@ -193,11 +193,14 @@ const displayedData = filteredData.slice(startIndex, endIndex);
       key: 'name',
       responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
-        <div className="d-flex align-items-center">
+        <div className='d-flex'>
           <div className="round-image">
             <img style={smallImageStyle} src={record.image} alt={record.name} />
           </div>
-          <div className="text-alternate ms-2">{record.name}</div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
         </div>
       ),
     },

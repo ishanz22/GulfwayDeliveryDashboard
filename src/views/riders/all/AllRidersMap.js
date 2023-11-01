@@ -9,6 +9,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { Table,Tag,Image } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import TabPanel from '@mui/lab/TabPanel';
 import AllRidersDataMap from 'data/AllRidersDataMap';
 import RiderListData from '../../../data/RiderListData';
@@ -81,8 +82,8 @@ const AllRidersMap = ({ google }) => {
   };
 
   const smallImageStyle = {
-    width: '30px', 
-    height: '30px', 
+    width: '40px', 
+    height: '40px', 
     borderRadius: '50%', 
     overflow: 'hidden', 
   };
@@ -139,7 +140,17 @@ const AllRidersMap = ({ google }) => {
   }, []);
 
 
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
 
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
 
   const columns = [
     {
@@ -157,11 +168,14 @@ const AllRidersMap = ({ google }) => {
       key: 'name',
       responsive: ['xs','md','lg','sm','xl'],
       render: (text, record) => (
-        <div className="d-flex align-items-center">
+        <div className='d-flex'>
           <div className="round-image">
             <img style={smallImageStyle} src={record.image} alt={record.name} />
           </div>
-          <div className="text-alternate ms-2">{record.name}</div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
         </div>
       ),
     },
@@ -204,6 +218,30 @@ const AllRidersMap = ({ google }) => {
 
         return <Tag color={color}>{text}</Tag>;
       },
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
     },
   ];
 

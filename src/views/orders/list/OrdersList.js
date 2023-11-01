@@ -40,12 +40,13 @@ const OrdersList = () => {
 
   const smallImageStyle = {
     width: '40px',
-    height: '40px', 
-    borderRadius: '50%', 
+    height: '40px',
+    borderRadius: '50%',
     overflow: 'hidden',
   };
   const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
+    color: 'grey',
+    fontSize: '10px',
   };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -78,8 +79,7 @@ const OrdersList = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayedData = filteredData.slice(startIndex, endIndex);
-  
-  
+
   // Rest of your code remains unchanged
   const filterDataByStatus = (status) => {
     setSelectedStatus(status);
@@ -145,8 +145,6 @@ const OrdersList = () => {
   // You can now use these revenue arrays in your component where needed.
 
   const exportToExcel = () => {
-  
-  
     const dataToExport = OrderList.map((item) => ({
       ID: item.id,
       Name: item.name,
@@ -154,11 +152,11 @@ const OrdersList = () => {
       Date: item.date,
       Status: item.status,
     }));
-  
+
     // Create a new Excel workbook and worksheet
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('Orders');
-  
+
     // Define the column headers
     ws.columns = [
       { header: 'ID', key: 'ID', width: 10 },
@@ -167,7 +165,7 @@ const OrdersList = () => {
       { header: 'Date', key: 'Date', width: 15 },
       { header: 'Status', key: 'Status', width: 15 },
     ];
-  
+
     // Set the header row background color to blue
     ws.getRow(1).eachCell((cell) => {
       cell.fill = {
@@ -176,19 +174,19 @@ const OrdersList = () => {
         fgColor: { argb: '5A94C8' }, // Blue color
       };
     });
-  
+
     // Populate the worksheet with data
     dataToExport.forEach((item) => {
       ws.addRow(item);
     });
-  
+
     // Create a buffer for the Excel file
     wb.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
       const url = URL.createObjectURL(blob);
-  
+
       const a = document.createElement('a');
       a.href = url;
       a.download = 'RiderListData.xlsx';
@@ -257,14 +255,14 @@ const OrdersList = () => {
       title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="round-image">
             <img style={smallImageStyle} src={record.image} alt={record.name} />
           </div>
@@ -276,9 +274,9 @@ const OrdersList = () => {
       ),
     },
     {
-      title:  <span style={tableHeaderStyle}>PURCHASE</span>,
+      title: <span style={tableHeaderStyle}>PURCHASE</span>,
       dataIndex: 'purchase',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => (
         <span className="text-alternate">
           <span className="text-medium">AED </span>
@@ -288,15 +286,15 @@ const OrdersList = () => {
       sorter: (a, b) => a.purchase - b.purchase,
     },
     {
-      title: <span style={tableHeaderStyle}>DATE</span>, 
+      title: <span style={tableHeaderStyle}>DATE</span>,
       dataIndex: 'date',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       sorter: (a, b) => a.date.localeCompare(b.date),
     },
     {
-      title:<span style={tableHeaderStyle}>STATUS</span> ,
+      title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => {
         let color = 'default';
 
@@ -306,7 +304,7 @@ const OrdersList = () => {
           color = 'success';
         } else if (text === 'CANCELED') {
           color = 'error';
-        }else if (text === 'REFUNDED') {
+        } else if (text === 'REFUNDED') {
           color = 'blue';
         }
 
@@ -314,9 +312,9 @@ const OrdersList = () => {
       },
     },
     {
-      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div
@@ -338,8 +336,8 @@ const OrdersList = () => {
       ),
     },
   ];
-  const data = displayedData.map((item) => ({ ...item, key: item.id }));
-  
+    const data = displayedData.map((item) => ({ ...item, key: item.id }));
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -396,14 +394,12 @@ const OrdersList = () => {
       <div className="d-flex" style={{ justifyContent: 'space-between' }}>
         <Card className="sh-45 h-xl-100-card w-80 " style={{ padding: '7px' }}>
           <Card.Body className="h-100 d-flex">
-           
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
               onClick={() => TotalOrders('Total Orders')}
             >
               <div style={{ display: 'flex' }}>
-                
                 <div>
                   <div style={{ display: 'flex' }}>
                     <text>{totalOrdersCount}</text>
@@ -423,7 +419,7 @@ const OrdersList = () => {
               </div>
             </div>
 
-{/* paid orders */}
+            {/* paid orders */}
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
@@ -449,7 +445,7 @@ const OrdersList = () => {
               </div>
             </div>
 
-{/* canceled orders */}
+            {/* canceled orders */}
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
@@ -586,53 +582,49 @@ const OrdersList = () => {
 
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-  <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-    <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-      {itemsPerPage} Items
-    </Dropdown.Toggle>
-  </OverlayTrigger>
-  <Dropdown.Menu className="shadow dropdown-menu-end">
-    <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-  </Dropdown.Menu>
-</Dropdown>
-
-
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+                {itemsPerPage} Items
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
           <div className="btn-group ms-1 check-all-container">
-      <CheckAll
-        allItems={allItems}
-        selectedItems={selectedItems}
-        onToggle={toggleCheckAll}
-        inputClassName="form-check"
-        className="btn btn-outline-primary btn-custom-control py-0"
-      />
-      <Dropdown align="end">
-        <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-        <Dropdown.Menu>
-          <Dropdown.Item>Move</Dropdown.Item>
-          <Dropdown.Item>Archive</Dropdown.Item>
-          <Dropdown.Item>Delete</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
+            <CheckAll
+              allItems={allItems}
+              selectedItems={selectedItems}
+              onToggle={toggleCheckAll}
+              inputClassName="form-check"
+              className="btn btn-outline-primary btn-custom-control py-0"
+            />
+            <Dropdown align="end">
+              <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
+              <Dropdown.Menu>
+                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item>Archive</Dropdown.Item>
+                <Dropdown.Item>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
       <Table
-    columns={columns}
-    dataSource={data}
-    rowSelection={{
-      type: selectionType,
-      ...rowSelection,     
-    }}
-    pagination={false}
-  />
-
-
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
 
       {/* List Items End */}
 
