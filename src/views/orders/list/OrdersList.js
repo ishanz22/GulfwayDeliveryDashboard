@@ -278,7 +278,7 @@ const OrdersList = () => {
       dataIndex: 'purchase',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => (
-        <span className="text-alternate">
+        <span >
           <span className="text-medium">AED </span>
           {formatNumberToKMB(text)}
         </span>
@@ -532,7 +532,7 @@ const OrdersList = () => {
                 <p className="text-small text-muted mb-1">TOTAL REVENUE</p>
                 <div className="cta-2">
                   <span>
-                    <span className="text-small text-muted cta-2">AED</span> {formatNumberToKMB(totalRevenue)}
+                    <span className="cta-2">AED</span> {formatNumberToKMB(totalRevenue)}
                   </span>
                 </div>
               </div>

@@ -297,16 +297,16 @@ const RiderDetail = ({ google }) => {
           <Card className="mb-5">
             <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Number</div>
-                <div>CA-5A32353</div>
+                <div >Number</div>
+                <div className=' text-alternate'>CA-5A32353</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Type</div>
-                <div>auto</div>
+                <div >Type</div>
+                <div className=' text-alternate'>auto</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700', paddingBottom: '10px' }}>Lorem</div>
-                <div>ipsum</div>
+                <div >Lorem</div>
+                <div className=' text-alternate'>ipsum</div>
               </div>
             </Card.Body>
           </Card>
