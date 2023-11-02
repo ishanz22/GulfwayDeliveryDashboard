@@ -11,9 +11,21 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Table,Tag,Image,Checkbox } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import OrderDetailsData from 'data/OrderDetailsData';
 import RiderListData from '../../../data/RiderListData';
 
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const RiderDetail = ({ google }) => {
   const title = 'Rider ID #3848484';
   const description = 'Ecommerce Order Detail Page';
@@ -56,13 +68,16 @@ const RiderDetail = ({ google }) => {
  // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', 
-    height: '30px', 
+    width: '40px', 
+    height: '40px', 
     borderRadius: '50%', 
     overflow: 'hidden',   
   };
 
-
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const nextPage = () => {
     if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
@@ -166,6 +181,105 @@ const RiderDetail = ({ google }) => {
     doc.save('RiderListData.pdf');
   };
 
+
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      sorter: (a, b) => a.id - b.id,
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>PHONE</span>,
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title:  <span style={tableHeaderStyle}>ASSIGNED ORDERS</span>,
+      dataIndex: 'assignedOrders',
+      key: 'assignedOrders',
+      sorter: (a, b) => a.assignedOrders - b.assignedOrders,
+    },
+    {
+      title:  <span style={tableHeaderStyle}>STATUS</span>,
+      dataIndex: 'status',
+      key: 'status',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'AVAILABLE') {
+          color = 'warning';
+        } else if (text === 'SUCCESS') {
+          color = 'success';
+        } else if (text === 'NOT-AVAILABLE') {
+          color = 'error';
+        }else if (text === 'ON-TRAVEL') {
+          color = 'blue';
+        }else if (text === 'CANCELED') {
+          color = 'orange';
+        }else if (text === 'DELIVERED') {
+          color = 'pink';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      key: 'action',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));  
 
   return (
     <>
@@ -278,9 +392,10 @@ const RiderDetail = ({ google }) => {
 
                 {/* Badge in top right corner */}
                 <div className="position-relative">
-                  <Badge bg="outline-primary" className="position-absolute top-0 end-0">
-                    ON-TRAVEL
-                  </Badge>
+                <Tag  color="blue">
+  ON-TRAVEL
+</Tag>
+
                 </div>
               </div>
 
@@ -387,27 +502,27 @@ const RiderDetail = ({ google }) => {
           <Card style={{height:'400px'}} >
           <Card.Body>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Hours of Service</div>
-                <div>2 hr 15 min</div>
+                <div >Hours of Service</div>
+                <div className='text-alternate'>2 hr 15 min</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Hours of Break</div>
-                <div>1 hr 15 min</div>
+                <div >Hours of Break</div>
+                <div className='text-alternate'>1 hr 15 min</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Lorem ipsum</div>
-                <div>lorem ipsum</div>
+                <div >Lorem ipsum</div>
+                <div className='text-alternate'>lorem ipsum</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Hours Available Today</div>
-                <div>CA-5A32353</div>
+                <div >Hours Available Today</div>
+                <div className='text-alternate'>CA-5A32353</div>
               </div>    <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Lorem</div>
-                <div>Ipsum</div>
+                <div >Lorem</div>
+                <div className='text-alternate'>Ipsum</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Total Lorem</div>
-                <div>2 hr 15 min</div>
+                <div >Total Lorem</div>
+                <div  className='text-alternate'> 2 hr 15 min</div>
               </div>
             </Card.Body>
           </Card>
@@ -513,7 +628,7 @@ const RiderDetail = ({ google }) => {
       </Row>
 
       {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
+      {/* <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
         </Col>
@@ -530,64 +645,17 @@ const RiderDetail = ({ google }) => {
           <div className="text-muted text-small cursor-pointer sort">STATUS</div>
         </Col>
         
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-              
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Purchase</div>
-                <div className="text-alternate">
-                  <span>
-                    
-                    {item.phone}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Assigned Orders</div>
-                <div className="text-alternate">{item.assignedOrders}</div>
-              </Col>
-              
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
-                <div>
-                  <Badge bg="outline-primary">{item.status}</Badge>
-                </div>
-              </Col>
-
-              
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-              
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
+      </Row> */}
+     
+     <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={rowSelection}
+        onRow={(record) => ({
+          onClick: () => checkItem(record.key),
+        })}
+        pagination={false}
+      />
       {/* List Items End */}
 
       {/* Pagination Start */}
