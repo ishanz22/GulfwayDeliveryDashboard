@@ -14,6 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import UserAccountsData from 'data/EmployeeAccountsData';
 
 const rowSelection = {
@@ -190,6 +191,18 @@ const EmployeeAccounts = () => {
   ];
 
   const [newStateName, setNewStateName] = useState([userRoleOptions[0], userRoleOptions[1]]);
+
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+  };
   const columns = [
     {
       title:  <span style={tableHeaderStyle}>ID</span>,
@@ -279,6 +292,30 @@ const EmployeeAccounts = () => {
       dataIndex: 'logOutTime',
       key: 'logOutTime',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
     },
   ];
   const data = displayedData.map((item) => ({ ...item, key: item.id }));

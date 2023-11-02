@@ -187,24 +187,24 @@ const FeedbackDetail = () => {
           <Card className="mb-0">
             <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Order Created</div>
-                <div>Sun, Sep 7 2023</div>
+                <div >Order Created</div>
+                <div className='text-mute text-alternate'>Sun, Sep 7 2023</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Order Item</div>
-                <div>Margherita Pizza</div>
+                <div >Order Item</div>
+                <div className='text-mute text-alternate'>Margherita Pizza</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Order Time</div>
-                <div>06.24 AM</div>
+                <div >Order Time</div>
+                <div className='text-mute text-alternate'>06.24 AM</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Sub Total</div>
-                <div>AED 375</div>
+                <div>Sub Total</div>
+                <div className='text-mute text-alternate'>AED 375</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Delivery Fee</div>
-                <div>0.00</div>
+                <div >Delivery Fee</div>
+                <div className='text-mute text-alternate'>0.00</div>
               </div>
             </Card.Body>
           </Card>
@@ -213,7 +213,7 @@ const FeedbackDetail = () => {
             <Card.Body>
               <div className=" p-0 d-flex justify-content-between">
                 <div>
-                  <text style={{ fontWeight: '700' }}>Total</text>
+                  <text >Total</text>
                 </div>
                 <div>AED 375</div>
               </div>
