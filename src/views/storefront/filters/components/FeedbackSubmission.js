@@ -87,7 +87,7 @@ function FeedbackSubmission({ data }) {
           </div>
         </div>
         <div className="ml-3 p-2">
-          <div className="font-weight-bold">
+          <div >
             {data.name} - {data.survey}
           </div>
           <div className="text-muted">

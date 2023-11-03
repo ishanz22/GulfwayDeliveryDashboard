@@ -168,10 +168,6 @@ const EmployeeAccounts = () => {
     console.log('Item ID clicked:', id);
   }
 
-  function handleDeleteUserClick() {
-    console.log('Delete user clicked');
-    setIsDeleteDialogOpen(true);
-  }
 
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
@@ -202,6 +198,7 @@ const EmployeeAccounts = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -459,18 +456,7 @@ const EmployeeAccounts = () => {
       </div>
       {/* Pagination End */}
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Employee ?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button color="primary">Yes</Button>
-        </DialogActions>
-      </Dialog>
+
 
       {/* modify user modal */}
       <Modal
@@ -555,6 +541,22 @@ John Doe"
           <Button variant="primary">Assign Role</Button>
         </Modal.Footer>
       </Modal>
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this account?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button  color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

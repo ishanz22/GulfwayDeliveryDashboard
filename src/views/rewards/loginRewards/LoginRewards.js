@@ -10,6 +10,11 @@ import CheckAll from 'components/check-all/CheckAll';
 import ExcelJS from 'exceljs';
 import { gulfwayBlue } from 'layout/colors/Colors';
 import { Table, Tag, Image } from 'antd';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import RewardListData from '../../../data/RewardListData';
 
 
@@ -28,6 +33,8 @@ const LoginRewards = () => {
   const [selectionType, setSelectionType] = useState('checkbox');
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -172,7 +179,10 @@ const LoginRewards = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
+
+  
   const columns = [
     {
       title:  <span style={tableHeaderStyle}>INVOICE ID</span>,
@@ -250,7 +260,14 @@ const LoginRewards = () => {
       ),
     },
   ];
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
   const data = displayedData.map((item) => ({ ...item, key: item.id }));
+  const handleDeleteConfirmed = () => {
+    
+    setIsDeleteDialogOpen(false);
+  };
   
   return (
     <>
@@ -383,6 +400,22 @@ const LoginRewards = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this login reward?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </>
   );
 };

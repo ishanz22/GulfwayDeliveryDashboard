@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Modal, OverlayTrigger } from 'react-bootstrap';
-import { FormControl, Radio, RadioGroup, FormControlLabel, FormLabel, MenuItem,FormGroup,Checkbox } from '@mui/material';
+import { FormControl, Radio, RadioGroup, FormControlLabel, FormLabel, MenuItem, FormGroup, Checkbox } from '@mui/material';
 import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
@@ -94,7 +94,7 @@ const RoleManagement = () => {
       Status: item.status
         .filter((statusItem) => !statusItem.disabled)
         .map((statusItem) => statusItem.name)
-        .join(', '), 
+        .join(', '),
     }));
 
     const ws = utils.json_to_sheet(dataToExport);
@@ -204,7 +204,7 @@ const RoleManagement = () => {
   };
 
   const labelStyle = {
-    fontSize: '16px', 
+    fontSize: '16px',
   };
   const handleView = (id) => {
     console.log(`View Item ID ${id}`);
@@ -216,18 +216,15 @@ const RoleManagement = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
 
-    const columns = [
+  const columns = [
     {
-      title:  <span style={tableHeaderStyle}>ID</span>,
+      title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       key: 'id',
-      render: (text, record) => (
-        <NavLink to={`/vendors/SuperMarket/detail/${record.id}`}>
-          {text}
-        </NavLink>
-      ),
+      render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${record.id}`}>{text}</NavLink>,
     },
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
@@ -242,19 +239,19 @@ const RoleManagement = () => {
       render: (text) => <div className="text-alternate">{text}</div>,
     },
     {
-      title:  <span style={tableHeaderStyle}>UPDATED</span>,
+      title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
       key: 'updatedDate',
       render: (text) => <div className="text-alternate">{text}</div>,
     },
     {
-      title:<span style={tableHeaderStyle}>PERMISSION MODULES</span>,
+      title: <span style={tableHeaderStyle}>PERMISSION MODULES</span>,
       dataIndex: 'permissions',
       key: 'permissions',
       render: (permissions) => (
         <div className="text-alternate">
-         {permissions.slice(0, 3).join(', ')}
-                    {permissions.length > 3 ? <span className="text-danger text-small"> + {permissions.length - 3} more</span> : ''}
+          {permissions.slice(0, 3).join(', ')}
+          {permissions.length > 3 ? <span className="text-danger text-small"> + {permissions.length - 3} more</span> : ''}
         </div>
       ),
     },
@@ -424,25 +421,10 @@ const RoleManagement = () => {
       </div>
       {/* Pagination End */}
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Role ?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button color="primary">Yes</Button>
-        </DialogActions>
-      </Dialog>
+
 
       {/* modify user modal */}
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        centered 
-      >
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Modify role</Modal.Title>
         </Modal.Header>
@@ -476,22 +458,17 @@ const RoleManagement = () => {
       </Modal>
 
       {/* create new user modal */}
-      <Modal
-        show={showModalNewUser}
-        onHide={() => setShowModalNewUser(false)}
-        centered 
-      >
+      <Modal show={showModalNewUser} onHide={() => setShowModalNewUser(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Assign Role</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Modal.Body>
             <Row className="g-3">
-            <Col lg="12">
-                
+              <Col lg="12">
                 <Form.Label>Username</Form.Label>
                 <Form.Control type="text" />
-                </Col>
+              </Col>
               <Col lg="12">
                 <Form.Label>Email</Form.Label>
                 <Form.Control type="text" />
@@ -500,18 +477,17 @@ const RoleManagement = () => {
                 <Form.Label>Role Name</Form.Label>
                 <Form.Control type="text" />
               </Col>
-         
 
               <Col lg="12">
-              <Form.Label>Access</Form.Label>
-      <FormGroup style={{ display: 'flex', flexDirection: 'row' }}>
-        <FormControlLabel control={<Checkbox defaultChecked />} label="CREATE" className='text-small'  />
-      
-        <FormControlLabel control={<Checkbox defaultChecked />} label="READ" />
-        <FormControlLabel control={<Checkbox defaultChecked />} label="UPDATE" />
-        <FormControlLabel control={<Checkbox defaultChecked />} label="DELETE" />
-      </FormGroup>
-    </Col>
+                <Form.Label>Access</Form.Label>
+                <FormGroup style={{ display: 'flex', flexDirection: 'row' }}>
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="CREATE" className="text-small" />
+
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="READ" />
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="UPDATE" />
+                  <FormControlLabel control={<Checkbox defaultChecked />} label="DELETE" />
+                </FormGroup>
+              </Col>
             </Row>
           </Modal.Body>
         </Modal.Body>
@@ -522,6 +498,23 @@ const RoleManagement = () => {
           <Button variant="primary">Assign Role</Button>
         </Modal.Footer>
       </Modal>
+
+
+   
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this role?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button  color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

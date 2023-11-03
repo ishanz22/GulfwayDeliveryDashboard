@@ -8,8 +8,15 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import { Table, Tag } from 'antd';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import VendorListData from 'data/VendorListData';
 import { gulfwayBlue } from 'layout/colors/Colors';
+
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -24,7 +31,7 @@ const CustomersList = () => {
   const title = 'Restaurant List';
   const description = 'Ecommerce Customer List Page';
   const [selectionType, setSelectionType] = useState('checkbox');
-
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -158,6 +165,7 @@ const CustomersList = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
 
   const columns = [
@@ -246,6 +254,14 @@ const CustomersList = () => {
     },
    
   ];
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const handleDeleteConfirmed = () => {
+    
+    setIsDeleteDialogOpen(false);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -371,6 +387,21 @@ const CustomersList = () => {
           </Pagination.Next>
         </Pagination>
       </div>
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this item?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

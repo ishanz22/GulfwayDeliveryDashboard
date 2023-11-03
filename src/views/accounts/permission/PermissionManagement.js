@@ -206,6 +206,7 @@ const PermissionManagement = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -457,18 +458,7 @@ const PermissionManagement = () => {
       </div>
       {/* Pagination End */}
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Permission ?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button color="primary">Yes</Button>
-        </DialogActions>
-      </Dialog>
+ 
 
       {/* modify user modal */}
       <Modal
@@ -534,6 +524,23 @@ const PermissionManagement = () => {
           <Button variant="primary">Add</Button>
         </Modal.Footer>
       </Modal>
+
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this permission ?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button  color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

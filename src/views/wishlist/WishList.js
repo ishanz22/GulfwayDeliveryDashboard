@@ -10,6 +10,11 @@ import CheckAll from 'components/check-all/CheckAll';
 import { gulfwayBlue } from 'layout/colors/Colors';
 import { Table, Tag, Checkbox, Image } from 'antd';
 import ExcelJS from 'exceljs';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import RewardListData from 'data/RewardListData';
 
 const rowSelection = {
@@ -27,6 +32,8 @@ const WishList = () => {
   const [selectionType, setSelectionType] = useState('checkbox');
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -172,6 +179,7 @@ const WishList = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete User ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -262,6 +270,11 @@ const WishList = () => {
     },
   ];
   
+
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
   // Assuming displayedData is an array of your data
   const data = displayedData.map(item => ({
     key: item.id, 
@@ -276,6 +289,10 @@ const WishList = () => {
     image: item.image, 
     email:item.email
   }));
+  const handleDeleteConfirmed = () => {
+    
+    setIsDeleteDialogOpen(false);
+  };
   
   
   return (
@@ -410,6 +427,22 @@ const WishList = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this wishlist?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

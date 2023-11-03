@@ -184,6 +184,7 @@ const UsersList = () => {
   };
 
 
+
   const [selectValueState, setSelectValueState] = useState();
   const userRoleOptions = [
     { value: 'ADMIN', label: 'Admin' },
@@ -203,6 +204,7 @@ const UsersList = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete User ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -399,7 +401,7 @@ const UsersList = () => {
       <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Employee ?</DialogContentText>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this User ?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelDelete} color="primary">
@@ -409,89 +411,8 @@ const UsersList = () => {
         </DialogActions>
       </Dialog>
 
-      {/* modify user modal */}
-      <Modal
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        centered // Add this prop to center the modal
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Modify User</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row className="g-3">
-            <Col lg="6">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue="
-John Doe"
-              />
-            </Col>
-            <Col lg="6">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue="
- Doe"
-              />
-            </Col>
-            <Col lg="12">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="text"
-                defaultValue="
- JohnDoe@gmail.com"
-              />
-            </Col>
+            
 
-            <Col lg="12">
-              <Form.Label>User Role</Form.Label>
-              <Select classNamePrefix="react-select" options={userRoleOptions} value={newStateName} onChange={setNewStateName} placeholder="" isMulti />
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary">Modify</Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* create new user modal */}
-      <Modal
-        show={showModalNewUser}
-        onHide={() => setShowModalNewUser(false)}
-        centered // Add this prop to center the modal
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Assign Employee</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row className="g-3">
-            <Col lg="12">
-              <Form.Label>User Name</Form.Label>
-              <Form.Control type="text" />
-            </Col>
-            <Col lg="12">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="text" />
-            </Col>
-
-            <Col lg="12">
-              <Form.Label>User Role</Form.Label>
-              <Select classNamePrefix="react-select" options={userRoleOptions} value={selectValueState} onChange={setSelectValueState} placeholder="" isMulti />
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModalNewUser(false)}>
-            Cancel
-          </Button>
-          <Button variant="primary">Assign Role</Button>
-        </Modal.Footer>
-      </Modal>
     </>
   );
 };

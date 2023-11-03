@@ -9,6 +9,11 @@ import DatePicker from 'react-datepicker';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import { Table,Tag,Image,Checkbox } from 'antd';
@@ -31,6 +36,8 @@ const RiderDetail = ({ google }) => {
   const description = 'Ecommerce Order Detail Page';
 
   const allItems = [1, 2, 3, 4];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -192,6 +199,7 @@ const RiderDetail = ({ google }) => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -278,9 +286,13 @@ const RiderDetail = ({ google }) => {
       ),
     },
   ];
-
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
   const data = displayedData.map((item) => ({ ...item, key: item.id }));  
-
+  const handleDeleteConfirmed = () => {    
+    setIsDeleteDialogOpen(false);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -674,6 +686,22 @@ const RiderDetail = ({ google }) => {
           </Pagination.Next>
         </Pagination>
       </div>
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Rider?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

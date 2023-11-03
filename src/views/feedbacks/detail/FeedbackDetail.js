@@ -78,6 +78,12 @@ const FeedbackDetail = () => {
 
   };
 
+
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -223,39 +229,26 @@ const FeedbackDetail = () => {
           &nbsp;
           <h5 className="me-3">Delivered Address</h5>
           <Card className="mb-0">
-            <Card.Body>
-              <div className=" mb-n0 p-2 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Address line:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>Port Saeed, Deira Dubai</text>
+          <Card.Body>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Address</div>
+                <div className='text-alternate' >Port Saeed, Deira Dubai</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Flat Building Name:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>SBK</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Flat Building Name</div>
+                <div className='text-alternate'>SBK</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Street Name:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>Deira</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Street Name</div>
+                <div className='text-alternate'>Deira</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>PostCode:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>en34hy</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >PostCode</div>
+                <div className='text-alternate'>en34hy</div>
               </div>
             </Card.Body>
+
+
           </Card>
         </Col>
       </Row>
@@ -263,7 +256,7 @@ const FeedbackDetail = () => {
 
 
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">Are you sure you want to delete this feedback ?</DialogContentText>

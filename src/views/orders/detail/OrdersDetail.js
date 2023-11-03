@@ -9,6 +9,7 @@ import CheckAll from 'components/check-all/CheckAll';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import OrderDetailsData from 'data/OrderDetailsData';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import Divider from '@mui/material/Divider';
 import AllRidersDataMap from 'data/AllRidersDataMap';
 import RiderList from 'views/riders/list/RiderList';
 
@@ -144,7 +145,7 @@ const OrdersDetail = ({ google }) => {
 
                                     {/* Profile Name */}
                                     <div>
-                                      <p style={{ paddingLeft: '10px' }} className="fw-bold fs-5">
+                                      <p style={{ paddingLeft: '10px' }} className=" fs-5">
                                         {selectedRider.profileName}
                                       </p>
                                     </div>
@@ -164,11 +165,11 @@ const OrdersDetail = ({ google }) => {
                                   {/* Name and Email */}
                                   <div className="d-flex flex-column flex-md-row">
                                     <div className="me-4">
-                                      <p className="fw-bold text-muted">
+                                      <p className=" text-muted">
                                         <CsLineIcons icon="credit-card" className="me-2" />
                                         {selectedRider.creditCard}
                                       </p>
-                                      <p className="fw-bold text-muted">
+                                      <p className=" text-muted">
                                         <CsLineIcons icon="compass" className="me-2" />
                                         {selectedRider.location}
                                       </p>
@@ -176,11 +177,11 @@ const OrdersDetail = ({ google }) => {
                                     <div className="ms-md-5">
                                       {' '}
                                       {/* Add margin-left for spacing */}
-                                      <p className="fw-bold text-muted">
+                                      <p className=" text-muted">
                                         <CsLineIcons icon="email" className="me-2" />
                                         {selectedRider.email}
                                       </p>
-                                      <p className="fw-bold text-muted">
+                                      <p className=" text-muted">
                                         <CsLineIcons icon="clock" className="me-2" />
                                         {selectedRider.clockIconText}
                                       </p>
@@ -205,19 +206,19 @@ const OrdersDetail = ({ google }) => {
                                     {/* Name and Email */}
                                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '300' }} className="d-flex flex-column flex-md-row">
                                       <div className="me-4">
-                                        <p className="fw-bold text-normal">Vehicle Type</p>
-                                        <p className="fw-bold text-normal">Vehicle Number</p>
-                                        <p className="fw-bold text-normal">Vehicle Extra Charges</p>
-                                        <p className="fw-bold text-normal">Vehicle Min Coverage</p>
-                                        <p className="fw-bold text-normal">Vehicle Max Coverage</p>
+                                        <p className=" text-normal">Vehicle Type</p>
+                                        <p className=" text-normal">Vehicle Number</p>
+                                        <p className=" text-normal">Vehicle Extra Charges</p>
+                                        <p className=" text-normal">Vehicle Min Coverage</p>
+                                        <p className=" text-normal">Vehicle Max Coverage</p>
                                       </div>
                                       <div className="ms-md-5">
                                         {/* Add margin-left for spacing */}
-                                        <p className="fw-bold text-alternate">{selectedRider.vehicleType}</p>
-                                        <p className="fw-bold text-alternate">{selectedRider.vehicleNumber}</p>
-                                        <p className="fw-bold text-alternate">{selectedRider.vehicleExtraCharges}</p>
-                                        <p className="fw-bold text-alternate">{selectedRider.vehicleMinCoverage}</p>
-                                        <p className="fw-bold text-alternate">{selectedRider.vehicleMaxCoverage}</p>
+                                        <p className=" text-alternate">{selectedRider.vehicleType}</p>
+                                        <p className=" text-alternate">{selectedRider.vehicleNumber}</p>
+                                        <p className=" text-alternate">{selectedRider.vehicleExtraCharges}</p>
+                                        <p className=" text-alternate">{selectedRider.vehicleMinCoverage}</p>
+                                        <p className=" text-alternate">{selectedRider.vehicleMaxCoverage}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -240,13 +241,13 @@ const OrdersDetail = ({ google }) => {
                                     {/* Name and Email */}
                                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '300' }} className="d-flex flex-column flex-md-row">
                                       <div className="me-4">
-                                        <p className="fw-bold text-normal">Identity Type</p>
-                                        <p className="fw-bold text-normal">Identity Number</p>
+                                        <p className=" text-normal">Identity Type</p>
+                                        <p className=" text-normal">Identity Number</p>
                                       </div>
                                       <div className="ms-md-5">
                                         {/* Add margin-left for spacing */}
-                                        <p className="fw-bold text-alternate">{selectedRider.identityType}</p>
-                                        <p className="fw-bold text-alternate">{selectedRider.identityNumber}</p>
+                                        <p className=" text-alternate">{selectedRider.identityType}</p>
+                                        <p className=" text-alternate">{selectedRider.identityNumber}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -335,111 +336,31 @@ const OrdersDetail = ({ google }) => {
           {/* Activity End */}
           <h2 className="small-title">Customer and Order Details</h2>
           <Card className="mb-10">
+        
+
             <Card.Body>
-              <div className="mb-5">
-                <Row className="g-0 sh-0 mb-0">
-                  <Col>
-                    <div className="ps-4 pt-0 pb-0 pe-0 h-100">
-                      <Row className="g-0 h-0 align-items-start align-content-center">
-                        <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
-                          <Row className="g-0">
-                            <Col xs="6" className=" d-flex flex-row pe-2 align-items-end text-alternate">
-                              <text style={{ color: '#4E4E4E' }}> Customer Name</text>
-                            </Col>
-                            <Col xs="6" className="d-flex flex-row align-items-end justify-content-end text-alternate">
-                              <span>Harun Billi</span>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div > Customer Name</div>
+                <div className='text-alternate' >Harun Billi</div>
               </div>
-              <hr />
-              <div className="mb-5">
-                <Row className="g-0 sh-0 mb-0">
-                  <Col>
-                    <div className="ps-4 pt-0 pb-0 pe-0 h-100">
-                      <Row className="g-0 h-0 align-items-start align-content-center">
-                        <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
-                          <Row className="g-0">
-                            <Col xs="6" className="d-flex flex-row pe-2 align-items-end text-alternate">
-                              <text style={{ color: '#4E4E4E' }}> Phone Number</text>
-                            </Col>
-                            <Col xs="6" className="d-flex flex-row align-items-end justify-content-end text-alternate">
-                              <span>05064738383</span>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mb-n0 p-3 d-flex justify-content-between border-top">
+                <div >Phone Number</div>
+                <div className='text-alternate'>05064738383</div>
               </div>
-              <hr />
-              <div className="mb-5">
-                <Row className="g-0 sh-0 mb-0">
-                  <Col>
-                    <div className="ps-4 pt-0 pb-0 pe-0 h-100">
-                      <Row className="g-0 h-0 align-items-start align-content-center">
-                        <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
-                          <Row className="g-0">
-                            <Col xs="6" className="d-flex flex-row pe-2 align-items-end text-alternate">
-                              <text style={{ color: '#4E4E4E' }}> Bag Option</text>
-                            </Col>
-                            <Col xs="6" className="d-flex flex-row align-items-end justify-content-end text-alternate">
-                              <span>No Blog</span>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mb-n0 p-3 d-flex justify-content-between border-top">
+                <div >Date</div>
+                <div className='text-alternate'>13.09.2021</div>
               </div>
-              <hr />
-              <div className="mb-5">
-                <Row className="g-0 sh-0 mb-0">
-                  <Col>
-                    <div className="ps-4 pt-0 pb-0 pe-0 h-100">
-                      <Row className="g-0 h-0 align-items-start align-content-center">
-                        <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
-                          <Row className="g-0">
-                            <Col xs="6" className="d-flex flex-row pe-2 align-items-end text-alternate">
-                              <text style={{ color: '#4E4E4E' }}> Type</text>
-                            </Col>
-                            <Col xs="6" className="d-flex flex-row align-items-end justify-content-end text-alternate">
-                              <span>Delivery</span>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mb-n0 p-3 d-flex justify-content-between border-top">
+                <div >Type</div>
+                <div className='text-alternate'>Delivery</div>
               </div>
-              <hr />
-              <div className="mb-5">
-                <Row className="g-0 sh-0 mb-0">
-                  <Col>
-                    <div className="ps-4 pt-0 pb-0 pe-0 h-100">
-                      <Row className="g-0 h-0 align-items-start align-content-center">
-                        <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
-                          <Row className="g-0">
-                            <Col xs="6" className="d-flex flex-row pe-2 align-items-end text-alternate">
-                              <text style={{ color: '#4E4E4E' }}> Note</text>
-                            </Col>
-                            <Col xs="6" className="d-flex flex-row align-items-end justify-content-end text-alternate">
-                              <span>N/A</span>
-                            </Col>
-                          </Row>
-                        </Col>
-                      </Row>
-                    </div>
-                  </Col>
-                </Row>
+              <div className="mb-n0 p-3 d-flex justify-content-between border-top">
+                <div >Note</div>
+                <div className='text-alternate'>N/A</div>
               </div>
+
+            
             </Card.Body>
           </Card>
         </Col>
@@ -474,20 +395,20 @@ const OrdersDetail = ({ google }) => {
           <Card className="mb-0">
             <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Order Created</div>
-                <div>Sun, Sep 7 2023</div>
+                <div >Order Created</div>
+                <div className='text-alternate' >Sun, Sep 7 2023</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Order Time</div>
-                <div>06.24 AM</div>
+                <div >Order Time</div>
+                <div className='text-alternate'>06.24 AM</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Sub Total</div>
-                <div>AED 375</div>
+                <div >Sub Total</div>
+                <div className='text-alternate'>AED 375</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div style={{ fontWeight: '700' }}>Delivery Fee</div>
-                <div>0.00</div>
+                <div >Delivery Fee</div>
+                <div className='text-alternate'>0.00</div>
               </div>
             </Card.Body>
           </Card>
@@ -496,9 +417,9 @@ const OrdersDetail = ({ google }) => {
             <Card.Body>
               <div className=" p-0 d-flex justify-content-between">
                 <div>
-                  <text style={{ fontWeight: '700' }}>Total</text>
+                  <text >Total</text>
                 </div>
-                <div>AED 375</div>
+                <div className='text-alternate'>AED 375</div>
               </div>
             </Card.Body>
           </Card>
@@ -506,39 +427,26 @@ const OrdersDetail = ({ google }) => {
           &nbsp;
           <h5 className="me-3">Delivery Address</h5>
           <Card className="mb-0">
-            <Card.Body>
-              <div className=" mb-n0 p-2 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Address line:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>Port Saeed, Deira Dubai</text>
+          <Card.Body>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Address</div>
+                <div className='text-alternate' >Port Saeed, Deira Dubai</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Flat Building Name:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>SBK</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Flat Building Name</div>
+                <div className='text-alternate'>SBK</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>Street Name:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>Deira</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >Street Name</div>
+                <div className='text-alternate'>Deira</div>
               </div>
-
-              <div className="mb-n0 p-2 p-0 d-flex ">
-                <div>
-                  <text style={{ fontWeight: '700' }}>PostCode:</text>
-                </div>
-                <text>&nbsp;&nbsp;</text>
-                <text>en34hy</text>
+              <div className="mb-n0 p-2 d-flex justify-content-between">
+                <div >PostCode</div>
+                <div className='text-alternate'>en34hy</div>
               </div>
             </Card.Body>
+
+
           </Card>
         </Col>
       </Row>

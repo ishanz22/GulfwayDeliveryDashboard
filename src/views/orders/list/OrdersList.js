@@ -12,6 +12,12 @@ import DateRange from 'views/dashboard/components/DateRange';
 import ExcelJS from 'exceljs';
 import { Table, Tag, Image } from 'antd';
 import { gulfwayBlue } from 'layout/colors/Colors';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import ArrowUpIcon from '../../../assets/arrowwi.png';
 import OrderList from '../../../data/OrderList';
 
@@ -31,6 +37,7 @@ const OrdersList = () => {
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(OrderList);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectionType, setSelectionType] = useState('checkbox');
@@ -249,6 +256,7 @@ const OrdersList = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
   };
   const columns = [
     {
@@ -278,7 +286,7 @@ const OrdersList = () => {
       dataIndex: 'purchase',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => (
-        <span >
+        <span>
           <span className="text-medium">AED </span>
           {formatNumberToKMB(text)}
         </span>
@@ -336,8 +344,16 @@ const OrdersList = () => {
       ),
     },
   ];
-    const data = displayedData.map((item) => ({ ...item, key: item.id }));
 
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+  const handleDeleteConfirmed = () => {
+    
+    setIsDeleteDialogOpen(false);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -645,6 +661,21 @@ const OrdersList = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this order?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
