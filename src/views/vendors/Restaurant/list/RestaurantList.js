@@ -161,6 +161,7 @@ const CustomersList = () => {
 
   const handleEdit = (id) => {
     console.log(`Edit Item ID ${id}`);
+    
   };
 
   const handleDelete = (id) => {

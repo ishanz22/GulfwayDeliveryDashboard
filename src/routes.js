@@ -59,22 +59,22 @@ const feedbacks = {
   detail: lazy(() => import('views/feedbacks/detail/FeedbackDetail')),
 };
 
-const storefront = {
-  home: lazy(() => import('views/storefront/home/Home')),
-  filters: lazy(() => import('views/storefront/filters/Filters')),
-  categories: lazy(() => import('views/storefront/categories/Categories')),
-  detail: lazy(() => import('views/storefront/detail/Detail')),
-  cart: lazy(() => import('views/storefront/cart/Cart')),
-  checkout: lazy(() => import('views/storefront/checkout/Checkout')),
-  invoice: lazy(() => import('views/storefront/invoice/Invoice')),
-};
-const shipping = lazy(() => import('views/shipping/Shipping'));
+// const storefront = {
+//   home: lazy(() => import('views/storefront/home/Home')),
+//   filters: lazy(() => import('views/storefront/filters/Filters')),
+//   categories: lazy(() => import('views/storefront/categories/Categories')),
+//   detail: lazy(() => import('views/storefront/detail/Detail')),
+//   cart: lazy(() => import('views/storefront/cart/Cart')),
+//   checkout: lazy(() => import('views/storefront/checkout/Checkout')),
+//   invoice: lazy(() => import('views/storefront/invoice/Invoice')),
+// };
+// const shipping = lazy(() => import('views/shipping/Shipping'));
 const discount = lazy(() => import('views/discount/Discount'));
 
-const settings = {
-  home: lazy(() => import('views/settings/home/Home')),
-  general: lazy(() => import('views/settings/general/General')),
-};
+// const settings = {
+//   home: lazy(() => import('views/settings/home/Home')),
+//   general: lazy(() => import('views/settings/general/General')),
+// };
 
 const setting = {
   admin: lazy(() => import('views/setting/AdminProfile')),
@@ -370,42 +370,42 @@ const routesAndMenuItems = {
         { path: '/permission', label: 'Permission', component: accounts.permission },
       ],
     },
-    {
-      path: `${appRoot}/storefront`,
-      exact: true,
-      redirect: true,
-      to: `${appRoot}/storefront/home`,
-      label: 'menu.storefront',
-      icon: 'screen',
-      subs: [
-        { path: '/home', label: 'menu.home', component: storefront.home },
-        { path: '/filters', label: 'menu.filters', component: storefront.filters },
-        { path: '/categories', label: 'menu.categories', component: storefront.categories },
-        { path: '/detail', label: 'menu.detail', component: storefront.detail },
-        { path: '/cart', label: 'menu.cart', component: storefront.cart },
-        { path: '/checkout', label: 'menu.checkout', component: storefront.checkout },
-        { path: '/invoice', label: 'menu.invoice', component: storefront.invoice },
-      ],
-    },
-    {
-      path: `${appRoot}/shipping`,
-      component: shipping,
-      label: 'menu.shipping',
-      icon: 'shipping',
-    },
+    // {
+    //   path: `${appRoot}/storefront`,
+    //   exact: true,
+    //   redirect: true,
+    //   to: `${appRoot}/storefront/home`,
+    //   label: 'menu.storefront',
+    //   icon: 'screen',
+    //   subs: [
+    //     { path: '/home', label: 'menu.home', component: storefront.home },
+    //     { path: '/filters', label: 'menu.filters', component: storefront.filters },
+    //     { path: '/categories', label: 'menu.categories', component: storefront.categories },
+    //     { path: '/detail', label: 'menu.detail', component: storefront.detail },
+    //     { path: '/cart', label: 'menu.cart', component: storefront.cart },
+    //     { path: '/checkout', label: 'menu.checkout', component: storefront.checkout },
+    //     { path: '/invoice', label: 'menu.invoice', component: storefront.invoice },
+    //   ],
+    // },
+    // {
+    //   path: `${appRoot}/shipping`,
+    //   component: shipping,
+    //   label: 'menu.shipping',
+    //   icon: 'shipping',
+    // },
     {
       path: `${appRoot}/discount`,
       component: discount,
       label: 'menu.discount',
       icon: 'tag',
     },
-    {
-      path: `${appRoot}/settings`,
-      component: settings.home,
-      label: 'menu.settings',
-      icon: 'gear',
-      subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
-    },
+    // {
+    //   path: `${appRoot}/settings`,
+    //   component: settings.home,
+    //   label: 'menu.settings',
+    //   icon: 'gear',
+    //   subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
+    // },
     {
       path: `/login`,
       component: logout,

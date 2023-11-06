@@ -67,6 +67,7 @@ const WishList = () => {
     width: '40px', 
     height: '40px', 
     borderRadius: '50%', 
+    
     overflow: 'hidden', 
   };
 
