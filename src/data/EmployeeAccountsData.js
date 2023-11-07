@@ -11,7 +11,10 @@ const UserAccountsData = [
       isActive: true,
       loginTime: '08:30:00',
       logOutTime:'13:45:00',
-      updatedDate:'2023-03-15'
+      updatedDate:'2023-03-15',
+      phone:'+971 55 420 3678',
+      address:'dubai',
+      createdDate:'2023-2-12'
     },
     {
       key: '2',
@@ -25,7 +28,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '16:30:00',
       logOutTime:'13:30:00',
-      updatedDate:'2023-05-16'
+      updatedDate:'2023-05-16',
+      phone:'+971 55 420 36723',
+      address:'Rashidiya',
+      createdDate:'2023-1-1'
   
 
     },
@@ -41,7 +47,10 @@ const UserAccountsData = [
       isActive: true,
       loginTime: '18:30:00',
       logOutTime:' 19:45:00',
-      updatedDate:'2023-06-25'
+      updatedDate:'2023-06-25',
+      phone:'+971 55 432 3678',
+      address:'Ras al qoor',
+      createdDate:'2023-1-29'
     },
     {
       key: '4',
@@ -55,7 +64,10 @@ const UserAccountsData = [
       isActive: true,
       loginTime: '08:30:00',
       logOutTime:' 09:15:00',
-      updatedDate:'2023-04-22'
+      updatedDate:'2023-04-22',
+      phone:'+971 55 123 3678',
+      address:'Deira',
+      createdDate:'2023-1-30'
     },
     {
       key: '5',
@@ -69,7 +81,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-05-11'
+      updatedDate:'2023-05-11',
+      phone:'+971 55 420 3678',
+      address:'Dubai Marina',
+      createdDate:'2023-1-15'
     },
     {
       key: '6',
@@ -83,7 +98,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-01'
+      updatedDate:'2023-06-01',
+      phone:'+971 55 420 3678',
+      address:'Al Barsha',
+      createdDate:'2023-2-02'
     },
     {
       key: '7',
@@ -97,7 +115,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-02'
+      updatedDate:'2023-06-02',
+      phone:'+971 55 420 3678',
+      address:'Al Barsha',
+      createdDate:'2023-2-18'
     },
     {
       key: '8',
@@ -111,7 +132,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Al Satwa',
+      createdDate:'2023-2-18'
     },
     {
       key: '9',
@@ -125,7 +149,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Al Quoz',
+      createdDate:'2023-2-18'
     },
     {
       key: '10',
@@ -139,7 +166,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Al Safa',
+      createdDate:'2023-2-18'
     },
     {
       key: '11',
@@ -153,7 +183,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Bur Dubai',
+      createdDate:'2023-2-18'
     },
     {
       key: '12',
@@ -167,7 +200,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Bur Dubai',
+      createdDate:'2023-2-18'
     }, 
     {
       key: '13',
@@ -181,7 +217,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Bur Dubai',
+      createdDate:'2023-2-18'
     },
     {
       key: '14',
@@ -195,7 +234,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Bur Dubai',
+      createdDate:'2023-2-18'
     },
     {
       key: '15',
@@ -209,7 +251,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'Bur Dubai',
+      createdDate:'2023-2-18'
     },
     {
       key: '16',
@@ -223,7 +268,10 @@ const UserAccountsData = [
       isActive: false,
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
-      updatedDate:'2023-06-17'
+      updatedDate:'2023-06-17',
+      phone:'+971 55 420 3678',
+      address:'International City',
+      createdDate:'2023-2-18'
     }
   ];
   export default UserAccountsData;

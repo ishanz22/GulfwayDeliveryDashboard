@@ -1,22 +1,19 @@
 import React, { useState, useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useLocation } from 'react-router-dom';
 import { Card, Button, Col, Form, Row } from 'react-bootstrap';
-import Select from 'react-select';
+
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import defaultProfileImage from '../../../assets/DefaultUser.jpeg'; 
+import defaultProfileImage from '../../../assets/DefaultUser.jpeg';
 
 const UsersDetail = () => {
-  const title = 'User ID #5859412';
+  const location = useLocation();
+  const { user } = location.state; // Destructure the user property
+  console.log(user);
+  const title = `User ID #${user.id}`;
   const description = 'Ecommerce Storefront Checkout Page';
   const [profileImageSrc, setProfileImageSrc] = useState(defaultProfileImage);
-  const [selectedEmiratesIDFile, setSelectedEmiratesIDFile] = useState(null);
-  const [selectEmiratesIDBack, setSelectEmiratesIDBack] = useState(null)
   const fileInputRef = useRef(null);
-  const mapStyles = {
-    width: '100%', 
-    height: '100%', 
-  };
 
   // Function to handle file upload
   const handleImageUpload = (event) => {
@@ -33,64 +30,6 @@ const UsersDetail = () => {
   // Function to trigger file input
   const handleChooseFileClick = () => {
     fileInputRef.current.click();
-  };
-
-
-  const optionsState = [
-    { value: 'Weekly', label: 'Weekly' },
-    { value: 'Monthly', label: 'Monthly' },
-  ];
-  const [selectValueState, setSelectValueState] = useState(optionsState[1]);
-
-
-  const optionsGender = [
-    { value: 'Male', label: 'Male' },
-    { value: 'Female', label: 'Female' },
-  ];
-  const [selectGender, setSelectGender] = useState(optionsGender[1]);
-
-
-  const optionsEmployment = [
-    { value: 'Full time', label: 'Full time' },
-    { value: 'Part time', label: 'Part time' },
-  ];
-  const [selectEmploymentStatus, setSelectEmploymentStatus] = useState(optionsEmployment[1]);
-
-
-
-  const optionsUserRole = [
-    { value: 'Admin', label: 'Admin' },
-    { value: 'Auditor', label: 'Auditor' },
-    { value: 'Manager', label: 'Manager' },
-  ];
-  const [selectUserRole, setSelectUserRole] = useState(optionsUserRole[1]);
- 
-
-  const [selectPayFrequency, setSelectPayfrequency] = useState();
-  const optionsPayFrequency = [
-    { value: 'Monthly', label: 'Monthly' },
-    { value: 'Weekly', label: 'Weekly' },
-
-  ];
-
-
-
-  const OwnerInfoImages = {
-    border: '1px dashed #ced4da',
-    backgroundImage:
-      'linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.5) 25%, rgba(255, 255, 255, 0.5) 50%, transparent 50%, transparent 75%, rgba(255, 255, 255, 0.5) 75%, rgba(255, 255, 255, 0.5))',
-    backgroundSize: '10px 10px',
-    height: '120px',
-    width: '200px',
-    borderRadius: '10px',
-  };
-  const handleEmiratesIDFileChange = (event) => {
-    const file = event.target.files[0];
-    setSelectedEmiratesIDFile(file);
-  };
-  const handleEmiratesIDFileBack = (event) => {
-    const file = event.target.files[0];
-    setSelectEmiratesIDBack(file);
   };
 
   return (
@@ -111,17 +50,6 @@ const UsersDetail = () => {
             </h1>
           </Col>
 
-
-
-          {/* Top Buttons Start */}
-          <Col xs="12" sm="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-            <Button  variant="outline-danger" className="btn-icon btn-icon-start w-100 w-md-auto" >
-              <CsLineIcons icon="bin"  /> <span>Delete User</span>
-            </Button>
-            <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
-            </Button>
-          </Col>
           {/* Title End */}
         </Row>
       </div>
@@ -136,30 +64,25 @@ const UsersDetail = () => {
                 <Row className="g-3">
                   <Col lg="6">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" defaultValue="Martine" />
+                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text"   defaultValue="Swaniawski"/>
+                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly/>
                   </Col>
                   <Col lg="6">
                     <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" defaultValue="+971 56 762 4176" />
+                    <Form.Control type="text" defaultValue={`${user.phone}`} readOnly/>
                   </Col>
                   <Col lg="6">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="text" defaultValue="Martine@gmail.com"/>
+                    <Form.Control type="text" defaultValue={`${user.email}`} readOnly/>
                   </Col>
 
                   <Col lg="6">
                     <Form.Label>Address </Form.Label>
-                    <Form.Control type="text" defaultValue="Oasis Center Mall"/>
+                    <Form.Control type="text" defaultValue={`${user.address}`} readOnly/>
                   </Col>
-
-           
-
-          
-
                 </Row>
               </Form>
               <br />
@@ -174,7 +97,7 @@ const UsersDetail = () => {
               <Col lg="auto" className="order-0 order-lg-1">
                 <div className="text-center mt-4">
                   <img
-                    src={profileImageSrc || 'default-profile-image.jpg'}
+                    src={`${user.userImage}`}
                     alt="Profile"
                     className="rounded-circle"
                     style={{ width: '100px', height: '100px', objectFit: 'cover', border: '1px solid #fff' }}
@@ -182,15 +105,13 @@ const UsersDetail = () => {
                 </div>
                 <text>&nbsp;</text>
 
-                <div className="text-center upload-button mt-2">
-                  {/* Hidden file input */}
-                  <input type="file" id="profile-upload" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
-                  {/* Custom button to trigger file input */}
-                  <button type="button" className="btn btn-outline-primary upload-label" onClick={handleChooseFileClick}>
-                    Upload Image
-                  </button>
-                </div>
               </Col>
+
+
+              <h5 className="me-3 text-center">{`${user.name}`}</h5>
+              <Form.Label style={{ display: 'block', margin: '0 auto', textAlign: 'center' }}>{`${user.email}`}</Form.Label>
+
+
             </Card.Body>
           </Card>
         </Col>
@@ -204,39 +125,27 @@ const UsersDetail = () => {
           <Card.Body>
             <Form>
               <Row className="g-3">
-   
-              <Col lg="4">
-                    <Form.Label>Created Date </Form.Label>
-                    <Form.Control type="text" defaultValue="June 4, 1999"/>
-                  </Col>
-                <Col lg="4">
+                <Col lg="3">
+                  <Form.Label>Created Date </Form.Label>
+                  <Form.Control type="text" defaultValue={`${user.createdDate}`} readOnly />
+                </Col>
+                <Col lg="3">
                   <Form.Label>Updated Date</Form.Label>
-                  <Form.Control type="text" defaultValue="June 4, 2024"/>
+                  <Form.Control type="text" defaultValue={`${user.updatedDate}`} readOnly />
                 </Col>
-                <Col lg="4">
+                <Col lg="3">
                   <Form.Label>Logged Time</Form.Label>
-                  <Form.Control type="text" defaultValue="May 4, 2024" />
+                  <Form.Control type="text" defaultValue={`${user.loginTime}`} readOnly />
                 </Col>
-      
-               
+                <Col lg="3">
+                  <Form.Label>Logout Time</Form.Label>
+                  <Form.Control type="text" defaultValue={`${user.logOutTime}`} readOnly />
+                </Col>
               </Row>
             </Form>
             <br />
           </Card.Body>
         </Card>
-
-
-      </Row>
-      <Row>
-        {/* <div className="container d-flex justify-content-end" style={{ margin: 0, padding: 0 }}>
-          <button o type="button" className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold ">
-            Reset
-          </button>
-
-          <button style={{ marginLeft: '15px', backgroundColor: '#5A94C8' }} type="button" className="btn btn-icon btn-icon-start btn-primary font-weight-bold">
-            Add Employee
-          </button>
-        </div> */}
       </Row>
     </>
   );
