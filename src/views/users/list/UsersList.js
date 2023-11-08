@@ -17,6 +17,7 @@ import { Table, Tag } from 'antd';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import { gulfwayBlue } from 'layout/colors/Colors';
 
+import moment from 'moment';
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -195,7 +196,7 @@ const UsersList = () => {
   const [newStateName, setNewStateName] = useState([userRoleOptions[0], userRoleOptions[1]]);
 
   const handleView = (record) => {
-      console.log("View User Details", record);
+    console.log('View User Details', record);
   };
 
   const handleEdit = (id) => {
@@ -212,10 +213,16 @@ const UsersList = () => {
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (text, record) => <NavLink   to={{
-        pathname: `/users/detail/${record.id}`,
-        state: { user: record },
-      }}>{text}</NavLink>,
+      render: (text, record) => (
+        <NavLink
+          to={{
+            pathname: `/users/detail/${record.id}`,
+            state: { user: record },
+          }}
+        >
+          {text}
+        </NavLink>
+      ),
     },
     {
       title: <span style={{ color: 'grey', fontSize: '10px' }}>USER</span>,
@@ -233,11 +240,34 @@ const UsersList = () => {
         </div>
       ),
     },
+
     {
       title: <span style={tableHeaderStyle}>CREATED</span>,
       dataIndex: 'date',
+      
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      sorter: (a, b) => a.date.localeCompare(b.date),
+      render: (date) => {
+        const formattedDate = moment(date).format('MMM D, YYYY');
+        const formattedTime = moment(date).format('h:mm A');
+
+        return (
+          
+          <div>
+            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
+            </div>
+            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      title: <span style={tableHeaderStyle}>PHONE</span>,
+      dataIndex: 'phone',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+   
     },
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
@@ -249,54 +279,118 @@ const UsersList = () => {
       title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      sorter: (a, b) => a.updatedDate.localeCompare(b.updatedDate),
+      render: (date) => {
+        const formattedDate = moment(date).format('MMM D, YYYY');
+        const formattedTime = moment(date).format('h:mm A');
+
+        return (
+          
+          <div>
+            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
+            </div>
+            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
+            </div>
+          </div>
+        );
+      },
     },
     {
-      title: <span style={tableHeaderStyle}>SESSION</span>,
-      dataIndex: 'status',
+      title: <span style={tableHeaderStyle}>LOGGED-IN</span>,
+      dataIndex: 'loggedIn',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (status) => <div style={{ color: status === 'Not Logged in' ? '#ebb71a' : '#B3B95A' }}>{status}</div>,
+      render: (loggedIn) => {
+        const textClass = loggedIn ? 'text-alternate' : 'text-alternate';
+        return <span className={textClass}>{loggedIn ? 'Yes' : 'No'}</span>;
+      },
     },
     {
       title: <span style={tableHeaderStyle}>LOG-IN TIME</span>,
       dataIndex: 'loginTime',
+      
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => {
+        const formattedDate = moment(date).format('MMM D, YYYY');
+        const formattedTime = moment(date).format('h:mm A');
+
+        return (
+          <div>
+            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedTime}
+            </div>
+            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedDate}
+            </div>
+          </div>
+        );
+      },
     },
     {
       title: <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
       dataIndex: 'logOutTime',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => {
+        const formattedDate = moment(date).format('MMM D, YYYY');
+        const formattedTime = moment(date).format('h:mm A');
+
+        return (
+          <div>
+            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedTime}
+            </div>
+            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedDate}
+            </div>
+          </div>
+        );
+      },
     },
+
     {
       title: <span style={tableHeaderStyle}>ACTION</span>,
       dataIndex: 'id',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
-            <NavLink
-      to={{
-        pathname: `/users/detail/${record.id}`,
-        state: { user: record },
-      }}
-    >
-      <div
-        style={{
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          paddingRight: '10px',
-          color: gulfwayBlue
-        }}
-      >
-        <CsLineIcons icon="eye" />
-      </div>
-    </NavLink>
-          <div
-            onClick={() => handleEdit(record.id)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          <NavLink
+            to={{
+              pathname: `/users/detail/${record.id}`,
+              state: { user: record },
+            }}
           >
-            <CsLineIcons icon="pen" />
-          </div>
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="eye" />
+            </div>
+          </NavLink>
+
+          <NavLink
+            to={{
+              pathname: `/users/edit/${record.id}`,
+              state: { user: record },
+            }}
+          >
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="pen" />
+            </div>
+          </NavLink>
+
           <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
             <CsLineIcons icon="bin" />
           </div>
@@ -342,12 +436,7 @@ const UsersList = () => {
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
+   
 
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">

@@ -1,35 +1,83 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Card, Button, Col, Form, Row } from 'react-bootstrap';
-
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import defaultProfileImage from '../../../assets/DefaultUser.jpeg';
 
-const UsersDetail = () => {
-  const location = useLocation();
-  const { user } = location.state; // Destructure the user property
-  console.log(user);
-  const title = `User ID #${user.id}`;
-  const description = 'Ecommerce Storefront Checkout Page';
-  const [profileImageSrc, setProfileImageSrc] = useState(defaultProfileImage);
-  const fileInputRef = useRef(null);
+const UserEdit = () => {
 
-  // Function to handle file upload
+  const [isFormModified, setIsFormModified] = useState(false);
+  const [isImageUploaded, setIsImageUploaded] = useState(false);
+  const location = useLocation();
+
+  const { user } = location.state;
+
+  const title = 'Edit User';
+  const description = 'Ecommerce Storefront Checkout Page';
+  const fileInputRef = useRef(null);
+  const [profileImageSrc, setProfileImageSrc] = useState(user.userImage || null);
+
+  const [formData, setFormData] = useState({
+    firstName: user.name,
+    lastName: user.name,
+    address: user.address,
+    city: user.city,
+    latitude: user.latitude,
+    longitude: user.longitude,
+  });
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setIsFormModified(true);
+  };
+
+  const handleUpdateClick = () => {
+
+    const updatedFormData = {
+      ...formData,
+      userImage: profileImageSrc,
+    };
+  
+ 
+    console.log('Updated formData:', updatedFormData);
+  
+
+    setIsFormModified(false);
+    setIsImageUploaded(false);
+
+  };
+  
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (e) => {
       setProfileImageSrc(e.target.result);
+      setIsImageUploaded(true);
     };
 
     reader.readAsDataURL(file);
+    setIsFormModified(true); 
+    setFormData({ ...formData, userImage: file });
   };
-
-  // Function to trigger file input
   const handleChooseFileClick = () => {
     fileInputRef.current.click();
+  };
+  const handleResetClick = () => {
+    setFormData({
+      firstName: user.name,
+      lastName: user.name,
+      address: user.address,
+      city: user.city,
+      latitude: user.latitude,
+      longitude: user.longitude,
+    });
+    setProfileImageSrc(user.userImage || null);
+    setIsFormModified(false);
+    setIsImageUploaded(false);
   };
 
   return (
@@ -64,11 +112,11 @@ const UsersDetail = () => {
                 <Row className="g-3">
                   <Col lg="6">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly />
+                    <Form.Control type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly />
+                    <Form.Control type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Phone</Form.Label>
@@ -90,11 +138,11 @@ const UsersDetail = () => {
           <Card className="mb-3 w-100 sw-lg-35">
             <Card.Body>
               <Col lg="auto" className="order-0 order-lg-1">
+                <div className="text-center ">
                 <div className="text-center">
-                  <div className="text-center">
                     <div className="position-relative d-inline-block">
                       <img
-                        src={user.userImage}
+                        src={profileImageSrc}
                         alt="Profile"
                         className="rounded-circle"
                         style={{
@@ -113,12 +161,16 @@ const UsersDetail = () => {
                     </div>
                   </div>
                 </div>
-
                 <text>&nbsp;</text>
               </Col>
 
-              <h5 className="me-3 text-center">{`${user.name}`}</h5>
-              <Form.Label style={{ display: 'block', margin: '0 auto', textAlign: 'center' }}>{`${user.email}`}</Form.Label>
+              <div className="text-center upload-button mt-2">
+                {/* Hidden file input */}
+                <input type="file" id="profile-upload" accept="image/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleImageUpload} />
+                <button type="button" className="btn btn-outline-primary upload-label" onClick={handleChooseFileClick}>
+                  Upload Image
+                </button>
+              </div>
             </Card.Body>
           </Card>
         </Col>
@@ -134,19 +186,19 @@ const UsersDetail = () => {
               <Row className="g-3">
                 <Col lg="3">
                   <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.address}`} readOnly />
+                  <Form.Control type="text" name="address" value={formData.address} onChange={handleInputChange} />
                 </Col>
                 <Col lg="3">
                   <Form.Label>City</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.city}`} readOnly />
+                  <Form.Control type="text" name="city" value={formData.city} onChange={handleInputChange} />
                 </Col>
                 <Col lg="3">
                   <Form.Label>Latitude</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.latitude}`} readOnly />
+                  <Form.Control name="latitude" value={formData.latitude} onChange={handleInputChange} />
                 </Col>
                 <Col lg="3">
                   <Form.Label>Longitude</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.longitude}`} readOnly />
+                  <Form.Control type="text" name="longitude" value={formData.longitude} onChange={handleInputChange} />
                 </Col>
               </Row>
             </Form>
@@ -181,8 +233,26 @@ const UsersDetail = () => {
           </Card.Body>
         </Card>
       </Row>
+
+      <Row>
+        <div className="container d-flex justify-content-end" style={{ margin: 0, padding: 0 }}>
+          <button type="button" onClick={handleResetClick} className="btn btn-icon btn-icon-start btn-outline-primary font-weight-bold">
+            Reset
+          </button>
+
+          <Button
+            style={{ marginLeft: '15px' }}
+            type="button"
+            variant="primary"
+            onClick={handleUpdateClick}
+            disabled={!isFormModified || (!isImageUploaded && !user.userImage)}
+          >
+            Update
+          </Button>
+        </div>
+      </Row>
     </>
   );
 };
 
-export default UsersDetail;
+export default UserEdit;
