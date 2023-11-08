@@ -1,45 +1,25 @@
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Card, Button, Col, Form, Row } from 'react-bootstrap';
+import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import defaultProfileImage from '../../../assets/DefaultUser.jpeg';
+
 
 const UsersDetail = () => {
   const location = useLocation();
-  const { user } = location.state; // Destructure the user property
+  const { user } = location.state; 
   console.log(user);
   const title = `User ID #${user.id}`;
   const description = 'Ecommerce Storefront Checkout Page';
-  const [profileImageSrc, setProfileImageSrc] = useState(defaultProfileImage);
-  const fileInputRef = useRef(null);
 
-  // Function to handle file upload
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      setProfileImageSrc(e.target.result);
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  // Function to trigger file input
-  const handleChooseFileClick = () => {
-    fileInputRef.current.click();
-  };
 
   return (
     <>
       <HtmlHead title={title} description={description} />
 
-      {/* Title Start */}
       <div className="page-title-container">
         <Row className="g-0">
-          {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
             <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/users/list">
               <CsLineIcons icon="chevron-left" size="13" />
@@ -49,14 +29,11 @@ const UsersDetail = () => {
               {title}
             </h1>
           </Col>
-
-          {/* Title End */}
         </Row>
       </div>
 
       <Row>
         <Col xs="12" className="col-lg order-1 order-lg-0">
-          {/* Address Start */}
           <h2 className="small-title">Personal information</h2>
           <Card className="mb-5">
             <Card.Body>

@@ -246,22 +246,8 @@ const UsersList = () => {
       dataIndex: 'date',
       
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => {
-        const formattedDate = moment(date).format('MMM D, YYYY');
-        const formattedTime = moment(date).format('h:mm A');
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
-        return (
-          
-          <div>
-            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
-            </div>
-            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
-            </div>
-          </div>
-        );
-      },
     },
     {
       title: <span style={tableHeaderStyle}>PHONE</span>,
@@ -279,22 +265,8 @@ const UsersList = () => {
       title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => {
-        const formattedDate = moment(date).format('MMM D, YYYY');
-        const formattedTime = moment(date).format('h:mm A');
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
-        return (
-          
-          <div>
-            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
-            </div>
-            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
-            </div>
-          </div>
-        );
-      },
     },
     {
       title: <span style={tableHeaderStyle}>LOGGED-IN</span>,
@@ -310,41 +282,15 @@ const UsersList = () => {
       dataIndex: 'loginTime',
       
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => {
-        const formattedDate = moment(date).format('MMM D, YYYY');
-        const formattedTime = moment(date).format('h:mm A');
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
-        return (
-          <div>
-            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedTime}
-            </div>
-            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedDate}
-            </div>
-          </div>
-        );
-      },
     },
     {
       title: <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
       dataIndex: 'logOutTime',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => {
-        const formattedDate = moment(date).format('MMM D, YYYY');
-        const formattedTime = moment(date).format('h:mm A');
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
-        return (
-          <div>
-            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedTime}
-            </div>
-            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedDate}
-            </div>
-          </div>
-        );
-      },
     },
 
     {

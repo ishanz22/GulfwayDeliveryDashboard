@@ -17,7 +17,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
+import moment from 'moment';
 import ArrowUpIcon from '../../../assets/arrowwi.png';
 import OrderList from '../../../data/OrderList';
 
@@ -246,12 +246,13 @@ const OrdersList = () => {
 
     return `${(number / 1e9).toFixed(1)}B`;
   };
-  const handleView = (id) => {
-    console.log(`View Item ID ${id}`);
+  const handleView = (record) => {
+    console.log(record);
   };
 
-  const handleEdit = (id) => {
-    console.log(`Edit Item ID ${id}`);
+  const handleEdit = (record) => {
+       console.log(record);
+
   };
 
   const handleDelete = (id) => {
@@ -264,6 +265,16 @@ const OrdersList = () => {
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <NavLink
+          to={{
+            pathname: `/orders/detail/${record.id}`,
+            state: { user: record },
+          }}
+        >
+          {text}
+        </NavLink>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
@@ -297,7 +308,8 @@ const OrdersList = () => {
       title: <span style={tableHeaderStyle}>DATE</span>,
       dataIndex: 'date',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      sorter: (a, b) => a.date.localeCompare(b.date),
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
+
     },
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
@@ -325,14 +337,27 @@ const OrdersList = () => {
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
-          <div
-            onClick={() => handleView(record.id)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+       <NavLink
+            to={{
+              pathname: `/orders/detail/${record.id}`,
+              state: { user: record },
+            }}
           >
-            <CsLineIcons icon="eye" />
-          </div>
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="eye" />
+            </div>
+          </NavLink>
+
           <div
-            onClick={() => handleEdit(record.id)}
+            onClick={() => handleEdit(record)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
           >
             <CsLineIcons icon="pen" />

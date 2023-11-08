@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { Row, Col, Button, Dropdown, Form, Card, Badge, Tooltip, OverlayTrigger, Modal, Container } from 'react-bootstrap';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
@@ -14,17 +14,19 @@ import AllRidersDataMap from 'data/AllRidersDataMap';
 import RiderList from 'views/riders/list/RiderList';
 
 const OrdersDetail = ({ google }) => {
-  const title = 'Order Number #3848484';
+  const location = useLocation();
+  const { user } = location.state;
+  console.log(user);
+  const title = `Order #${user.id}`;
   const description = 'Ecommerce Order Detail Page';
-  const [showModal, setShowModal] = useState(false); 
+  const [showModal, setShowModal] = useState(false);
   const [selectedRider, setSelectedRider] = useState(null);
   const customMarkerIcons = {};
 
-  
   const [value, setValue] = useState('1');
   AllRidersDataMap.forEach((rider) => {
     customMarkerIcons[rider.id] = {
-      url: rider.profileImage, 
+      url: rider.profileImage,
       scaledSize: new google.maps.Size(40, 40),
     };
   });
@@ -32,11 +34,11 @@ const OrdersDetail = ({ google }) => {
     setSelectedRider(rider);
   };
   const handleShowModal = () => {
-    setShowModal(true); 
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
   const allItems = [1, 2, 3, 4];
   const [selectedItems, setSelectedItems] = useState([]);
@@ -58,17 +60,14 @@ const OrdersDetail = ({ google }) => {
     if (selectedRider) {
       const image = selectedRider.profileImage;
       const name = selectedRider.profileName;
-  
-      console.log("Image:", image);
-      console.log("Name:", name);
+
+      console.log('Image:', image);
+      console.log('Name:', name);
     }
-  
-    // Add any additional functionality you need when the button is clicked.
-    // For example, you can close the modal here.
+
     handleCloseModal();
   };
-  
-    
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -176,7 +175,6 @@ const OrdersDetail = ({ google }) => {
                                     </div>
                                     <div className="ms-md-5">
                                       {' '}
-                                      {/* Add margin-left for spacing */}
                                       <p className=" text-muted">
                                         <CsLineIcons icon="email" className="me-2" />
                                         {selectedRider.email}
@@ -201,9 +199,7 @@ const OrdersDetail = ({ google }) => {
                             {selectedRider ? (
                               <>
                                 <div className="d-flex flex-column flex-md-row">
-                                  {/* Name and Email */}
                                   <div className="d-flex flex-column flex-md-row">
-                                    {/* Name and Email */}
                                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '300' }} className="d-flex flex-column flex-md-row">
                                       <div className="me-4">
                                         <p className=" text-normal">Vehicle Type</p>
@@ -213,7 +209,6 @@ const OrdersDetail = ({ google }) => {
                                         <p className=" text-normal">Vehicle Max Coverage</p>
                                       </div>
                                       <div className="ms-md-5">
-                                        {/* Add margin-left for spacing */}
                                         <p className=" text-alternate">{selectedRider.vehicleType}</p>
                                         <p className=" text-alternate">{selectedRider.vehicleNumber}</p>
                                         <p className=" text-alternate">{selectedRider.vehicleExtraCharges}</p>
@@ -269,7 +264,9 @@ const OrdersDetail = ({ google }) => {
                 Cancel
               </Button>
               {/* You can add additional functionality when the modal closes */}
-              <Button variant="primary" onClick={handleChangeRider}>Change Rider</Button>
+              <Button variant="primary" onClick={handleChangeRider}>
+                Change Rider
+              </Button>
             </Modal.Footer>
           </Modal>
         </Row>
@@ -303,112 +300,103 @@ const OrdersDetail = ({ google }) => {
                   <div className="text-muted text-small cursor-pointer sort">TOTAL PRICE</div>
                 </Col>
               </Row>
-
-              {OrderDetailsData.map((orderDetail) => (
-                <Card key={orderDetail.id} className={`mb-2 ${selectedItems.includes(orderDetail.id) && 'selected'}`}>
+              {user.items.map((item, index) => (
+                <Card className='mt-2' key={index}>
                   <Card.Body className="pt-0 pb-0 sh-21 sh-md-6">
                     <Row className="g-0 h-100 align-content-center cursor-default">
                       <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
                         <div className="text-muted text-small d-md-none">Code</div>
-                        {/* <Button variant="link" className="p-0 text-alternate h-100 d-flex align-items-center">
-                          {orderDetail.itemName}
-                        </Button> */}
-                        <div className="text-alternate">{` ${orderDetail.itemName}`}</div>
+                        <div className="text-alternate">{item.itemName}</div>
                       </Col>
                       <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                        <div className="text-muted text-small d-md-none">Type</div>
-                        <div className="text-alternate">{`x ${orderDetail.quantity}`}</div>
+                        <div className="text-muted text-small d-md-none">Quantity</div>
+                        <div className="text-alternate">{item.quantity}</div>
                       </Col>
                       <Col xs="6" md="4" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                        <div className="text-muted text-small d-md-none">Date</div>
-                        <div className="text-alternate">{orderDetail.price}</div>
+                        <div className="text-muted text-small d-md-none">Item Price</div>
+                        <div className="text-alternate">{item.itemPrice}</div>
                       </Col>
                       <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                        <div className="text-muted text-small d-md-none">Usage</div>
-                        <div className="text-alternate">{orderDetail.totalPrice}</div>
+                        <div className="text-muted text-small d-md-none">Total</div>
+                        <div className="text-alternate">{item.quantity * item.itemPrice}</div> {/* Calculate and display the total value */}
                       </Col>
                     </Row>
                   </Card.Body>
                 </Card>
               ))}
+
+
+
             </Card.Body>
           </Card>
           {/* Activity End */}
           <h2 className="small-title">Customer and Order Details</h2>
           <Card className="mb-10">
-        
-
             <Card.Body>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div > Customer Name</div>
-                <div className='text-alternate' >Harun Billi</div>
+                <div> Customer Name</div>
+                <div className="text-alternate">Harun Billi</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between border-top">
-                <div >Phone Number</div>
-                <div className='text-alternate'>05064738383</div>
+                <div>Phone Number</div>
+                <div className="text-alternate">05064738383</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between border-top">
-                <div >Date</div>
-                <div className='text-alternate'>13.09.2021</div>
+                <div>Date</div>
+                <div className="text-alternate">13.09.2021</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between border-top">
-                <div >Type</div>
-                <div className='text-alternate'>Delivery</div>
+                <div>Type</div>
+                <div className="text-alternate">Delivery</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between border-top">
-                <div >Note</div>
-                <div className='text-alternate'>N/A</div>
+                <div>Note</div>
+                <div className="text-alternate">N/A</div>
               </div>
-
-            
             </Card.Body>
           </Card>
         </Col>
 
         <Col xl="4" xxl="3">
           {/* Address Start */}
-          <h5 className="me-3">Rider Details</h5>
+          <h2 className="small-title">Rider Details</h2>
           <Card className="mb-5">
             <Card.Body>
-              <div className="d-flex align-items-center">
-                <br />
-                <div className="rounded-circle overflow-hidden w-20 h-20">
-                  <div>
-                    <img
-                      src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" 
-                      alt="Profile"
-                      className="w-100 h-100 object-fit-cover"
-                    />
+              <div className="d-flex align-items-center justify-content-center text-center">
+                <div className="mx-auto rounded-circle overflow-hidden" style={{ width: '100px', height: '100px' }}>
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', overflow: 'hidden' }}>
+                    <img src={user.image} alt="Profile" className="w-100 h-100 object-fit-cover" />
                   </div>
                 </div>
-                <div className="ms-3" style={{ paddingTop: 15 }}>
-                  <p>Robert Suvent</p>
-                </div>
-                &ensp; &ensp;
+              </div>
+              <div className="d-flex align-items-center justify-content-center text-center pt-3">
+                <h5>{user.name}</h5>
+              </div>
+              <div className="d-flex align-items-center justify-content-center text-center pt-2">
                 <button type="button" className="btn btn-primary upload-label">
                   Track Rider
                 </button>
               </div>
             </Card.Body>
           </Card>
-          <h5 className="me-3">Order Summary</h5>
+          <h2 className="small-title">Order Summary</h2>
           <Card className="mb-0">
             <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Order Created</div>
-                <div className='text-alternate' >Sun, Sep 7 2023</div>
+                <div>Order Created</div>
+                <div className="text-alternate">Sun, Sep 7 2023</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Order Time</div>
-                <div className='text-alternate'>06.24 AM</div>
+                <div>Order Time</div>
+                <div className="text-alternate">06.24 AM</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Sub Total</div>
-                <div className='text-alternate'>AED 375</div>
+                <div>Sub Total</div>
+                <div className="text-alternate">AED 375</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Delivery Fee</div>
-                <div className='text-alternate'>0.00</div>
+                <div>Delivery Fee</div>
+                <div className="text-alternate">0.00</div>
               </div>
             </Card.Body>
           </Card>
@@ -417,36 +405,34 @@ const OrdersDetail = ({ google }) => {
             <Card.Body>
               <div className=" p-0 d-flex justify-content-between">
                 <div>
-                  <text >Total</text>
+                  <text>Total</text>
                 </div>
-                <div className='text-alternate'>AED 375</div>
+                <div className="text-alternate">AED 375</div>
               </div>
             </Card.Body>
           </Card>
           {/* Address End */}
           &nbsp;
-          <h5 className="me-3">Delivery Address</h5>
+          <h2 className="small-title">Delivery Address</h2>
           <Card className="mb-0">
-          <Card.Body>
+            <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Address</div>
-                <div className='text-alternate' >Port Saeed, Deira Dubai</div>
+                <div>Address</div>
+                <div className="text-alternate">Port Saeed, Deira Dubai</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Flat Building Name</div>
-                <div className='text-alternate'>SBK</div>
+                <div>Flat Building Name</div>
+                <div className="text-alternate">SBK</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Street Name</div>
-                <div className='text-alternate'>Deira</div>
+                <div>Street Name</div>
+                <div className="text-alternate">Deira</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >PostCode</div>
-                <div className='text-alternate'>en34hy</div>
+                <div>PostCode</div>
+                <div className="text-alternate">en34hy</div>
               </div>
             </Card.Body>
-
-
           </Card>
         </Col>
       </Row>

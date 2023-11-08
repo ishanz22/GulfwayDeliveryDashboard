@@ -210,7 +210,7 @@ const routesAndMenuItems = {
       icon: 'cart',
       subs: [
         { path: '/list', label: 'List', component: orders.list },
-        { path: '/detail', label: 'Detail', component: orders.detail },
+        { path: '/detail', component: orders.detail },
         { path: '/status', label: 'Status', component: orders.status },
         { path: '/analytics', label: 'Analytics', component: orders.analytics },
       ],

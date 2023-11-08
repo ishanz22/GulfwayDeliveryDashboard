@@ -27,6 +27,7 @@ const orderDetailsData = [
     price: 'AED 100',
     totalPrice: 'AED 200',
   },
+
 ];
 
 export default orderDetailsData;
