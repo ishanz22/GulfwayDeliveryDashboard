@@ -7,6 +7,13 @@ const RiderListData = [
       status: 'SUCCESS',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
       email: 'joisse@example.com' ,
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 456',
+      duration:'5 days',
+      distance:"10 miles",
+      packageDescription:'small box'
     },
     {
       id: 1002,
@@ -15,8 +22,14 @@ const RiderListData = [
       assignedOrders: '12',
       status: 'AVAILABLE',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
-      email:"joisse.kaycee@example.com"
-  
+      email:"joisse.kaycee@example.com",
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 457',
+      duration:'5 days',
+      distance:"30 miles",
+      packageDescription:'small box'
     },
     {
       id: 1003,
@@ -25,7 +38,14 @@ const RiderListData = [
       assignedOrders: '10',
       status: 'DELIVERED',
       image: 'https://t4.ftcdn.net/jpg/02/11/41/93/360_F_211419379_s1YK0JMte7f1y4VRllpzkuUldI35oGlW.jpg', 
-      email:'john.doe@example.com'
+      email:'john.doe@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 459',
+      duration:'4 days',
+      distance:"30 miles",
+      packageDescription:'small box'
   
     },
     {
@@ -35,7 +55,14 @@ const RiderListData = [
       assignedOrders: '1',
       status: 'CANCELED',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-      email:"jane.smith@example.com"
+      email:"jane.smith@example.com",
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'4 days',
+      distance:"20 miles",
+      packageDescription:'small box'
     },
     {
       id: 1005,
@@ -44,8 +71,15 @@ const RiderListData = [
       assignedOrders: '8',
       status: 'ON-TRAVEL',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-      email:"sarah.jones@example.com"
-    },
+      email:"sarah.jones@example.com",
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'4 days',
+      distance:"3 miles"
+,
+packageDescription:'small box'    },
     {
       id: 1006,
       name: 'Esperanza Lodge',
@@ -53,7 +87,14 @@ const RiderListData = [
       assignedOrders: '11',
       status: 'NOT-AVAILABLE',
       image: 'https://t4.ftcdn.net/jpg/02/11/41/93/360_F_211419379_s1YK0JMte7f1y4VRllpzkuUldI35oGlW.jpg', 
-      email:'mike.wilson@example.com'
+      email:'mike.wilson@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'4 days',
+      distance:"50 miles",
+      packageDescription:'small box'
     },
     {
       id: 1007,
@@ -62,7 +103,15 @@ const RiderListData = [
       assignedOrders: '20',
       status: 'ON-TRAVEL',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-      email:"emily.martin@example.com"
+      email:"emily.martin@example.com",
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'4 days',
+      distance:"10 miles",
+      packageDescription:'small box'
+
     },
     {
       id: 1008,
@@ -71,8 +120,15 @@ const RiderListData = [
       assignedOrders: '5',
       status: 'ON-TRAVEL',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
-      email:'emily.martin@example.com'
-  
+      email:'emily.martin@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'4 days',
+      distance:"5 miles"
+,
+packageDescription:'small box'  
     },
     {
       id: 1009,
@@ -81,8 +137,15 @@ const RiderListData = [
       assignedOrders: '5',
       status: 'ON-TRAVEL',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
-      email:'emily.martin@example.com'
-  
+      email:'emily.martin@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'6 days',
+      distance:"4 miles"
+,
+packageDescription:'small box'  
     },
     {
       id: 1010,
@@ -91,8 +154,15 @@ const RiderListData = [
       assignedOrders: '5',
       status: 'ON-TRAVEL',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
-      email:'emily.martin@example.com'
-  
+      email:'emily.martin@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'2 days',
+      distance:"2 miles"
+,
+packageDescription:'small box'  
     },
     {
       id: 1011,
@@ -101,7 +171,14 @@ const RiderListData = [
       assignedOrders: '5',
       status: 'ON-TRAVEL',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
-      email:'emily.martin@example.com'
+      email:'emily.martin@example.com',
+      deliveryDate: '2023-11-05',
+    pickupLocation :'Warehouse A',
+    deliveryLocation:" Customer Address B",
+      bikeNumber:'XYZ 856',
+      duration:'3 days',
+      distance:"10 miles",
+      packageDescription:'small box'
   
     },
   ];

@@ -6,6 +6,7 @@ const RecentOrders = [
       date: '13.09.2021',
       status: 'PAID',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
+      email:'test@gmail.com'
     },
     {
       id: 1002,
@@ -14,6 +15,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -23,6 +25,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'REFUNDED',
       image: 'https://t4.ftcdn.net/jpg/02/11/41/93/360_F_211419379_s1YK0JMte7f1y4VRllpzkuUldI35oGlW.jpg', 
+      email:'test@gmail.com'
   
     },
     {
@@ -32,6 +35,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'CANCELED',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
+      email:'test@gmail.com'
   
     },
     {
@@ -41,6 +45,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://cdn.create.vista.com/api/media/small/8803246/stock-photo-asian-college-student', 
+      email:'test@gmail.com'
     },
     {
       id: 1006,
@@ -49,6 +54,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://t4.ftcdn.net/jpg/02/11/41/93/360_F_211419379_s1YK0JMte7f1y4VRllpzkuUldI35oGlW.jpg', 
+      email:'test@gmail.com'
     },
     {
       id: 1007,
@@ -57,6 +63,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://cdn.create.vista.com/api/media/small/8803246/stock-photo-asian-college-student', 
+      email:'test@gmail.com'
     },
     {
       id: 1008,
@@ -65,6 +72,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
+      email:'test@gmail.com'
   
     },
     {
@@ -74,6 +82,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://wac-cdn.atlassian.com/dam/jcr:ba03a215-2f45-40f5-8540-b2015223c918/Max-R_Headshot%20(1).jpg?cdnVersion=1224', 
+      email:'test@gmail.com'
   
     },
     {
@@ -83,6 +92,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -92,6 +102,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -101,6 +112,7 @@ const RecentOrders = [
       date: '13.09.2021',
       status: 'REFUNDED',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -110,6 +122,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PAID',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -119,6 +132,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dXNlcnxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80', 
+      email:'test@gmail.com'
   
     },
     {
@@ -128,6 +142,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PAID',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
+      email:'test@gmail.com'
   
     },
     {
@@ -137,7 +152,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'CANCELED',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10017,
@@ -146,7 +161,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10018,
@@ -155,7 +170,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10019,
@@ -164,7 +179,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PAID',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10020,
@@ -173,7 +188,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PENDING',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10021,
@@ -182,7 +197,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'CANCELED',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
     {
       id: 10022,
@@ -191,7 +206,7 @@ const RecentOrders = [
       date: '14.09.2021',
       status: 'PAID',
       image: 'https://img.freepik.com/free-photo/pretty-woman-with-big-pencil_1187-5568.jpg', 
-  
+      email:'test@gmail.com'
     },
   
     

@@ -7,15 +7,37 @@ import { Row, Col, Button, Dropdown, Form, Card,Badge, Pagination, Tooltip, Over
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
-// import UserFeedbackData from 'data/UserFeedbackData';
-// import UserFeedbackData from 'data/UserFeedbackData';
+import { Table, Tag, Image } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import UserFeedbackData from 'data/UserFeedbackData';
 
+
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const FeedbackManagement = () => {
   const title = 'User Feedback';
   const description = 'Ecommerce Customer List Page';
-
+  const [selectionType, setSelectionType] = useState('checkbox');
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [selectedItems, setSelectedItems] = useState([]);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -40,13 +62,25 @@ const FeedbackManagement = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
- // Track the selected section
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
+
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '40px', 
+    height: '40px', 
+    borderRadius: '50%',
+    overflow: 'hidden', 
   };
 
 
@@ -122,6 +156,112 @@ const displayedData = filteredData.slice(startIndex, endIndex);
     });
 
     doc.save('FeedbackList.pdf');
+  };
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'userId',
+      key: 'userId',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <NavLink to="/support/detail">{record.userId}</NavLink>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>NAME</span> ,
+      dataIndex: 'userName',
+      key: 'userName',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="d-flex">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.userImage} alt={record.userName} />
+          </div>
+          <div>
+            <div className="ms-2">{record.userName}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>CONTENT</span>,
+      dataIndex: 'feedback',
+      key: 'feedback',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      
+    },
+    {
+      title:<span style={tableHeaderStyle}>PURCHASE</span> ,
+      dataIndex: 'typeName',
+      key: 'typeName',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>DATE</span> ,
+      dataIndex: 'date',
+      key: 'date',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title:  <span style={tableHeaderStyle}>TYPE</span>,
+      dataIndex: 'type',
+      key: 'type',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'Restaurant') {
+          color = 'warning';
+        } else if (text === 'Grocery') {
+          color = 'blue';
+        } else if (text === 'Rider') {
+          color = 'pink';
+        } 
+        return <Tag color={color}>{text}</Tag>;
+      },
+      
+    },
+    {
+      title:<span style={tableHeaderStyle}>RATINGS</span> ,
+      dataIndex: 'starRating',
+      key: 'starRating',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const data = displayedData.map((item) => ({ ...item, key: item.userId }));
+
+
+  const handleDeleteConfirmed = () => {    
+    setIsDeleteDialogOpen(false);
   };
 
   return (
@@ -224,94 +364,16 @@ const displayedData = filteredData.slice(startIndex, endIndex);
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">CONTENT</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">PURCHASE</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DATE</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">TYPE</div>
-        </Col>
-        <Col md="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">RATINGS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.userId) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.userId)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/support/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.userId}
-                </NavLink>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.userImage} alt={item.userName} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.userName}</div>
-                </div>
-              </Col>
-
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-              <div className="text-muted text-small d-md-none">Content</div>
-              <div className="text-alternate">
-                  <span>
-                
-                    {item.feedback}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">typeName</div>
-                <div className="text-alternate">
-                  <span>
-                
-                    {item.typeName}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">{item.date}</div>
-              </Col>
-              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Purchase</div>
-                <div>
-                  <Badge bg="outline-primary">{item.type}</Badge>
-                </div>
-              </Col>
-
-              <Col xs="3" md="1" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-              <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">{item.starRating  }</div>
-              </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+     
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
 
       {/* List Items End */}
 
@@ -332,6 +394,22 @@ const displayedData = filteredData.slice(startIndex, endIndex);
         </Pagination>
       </div>
       {/* Pagination End */}
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Feedback?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

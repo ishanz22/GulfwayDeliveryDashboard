@@ -10,8 +10,26 @@ import CheckAll from 'components/check-all/CheckAll';
 import PerformanceChart from 'views/dashboard/components/PerformanceChart';
 import DateRange from 'views/dashboard/components/DateRange';
 import ExcelJS from 'exceljs';
+import { Table, Tag, Image } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+
 import ArrowUpIcon from '../../../assets/arrowwi.png';
 import OrderList from '../../../data/OrderList';
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 
 const OrdersList = () => {
   const title = 'Orders List';
@@ -19,18 +37,23 @@ const OrdersList = () => {
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(OrderList);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
+  const [selectionType, setSelectionType] = useState('checkbox');
   const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedSection, setSelectedSection] = useState('Total Orders'); // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
-    borderRadius: '50%', // Makes the image round
-    overflow: 'hidden', // Ensures the image stays within the round shape
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+  };
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
   };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -63,8 +86,7 @@ const OrdersList = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayedData = filteredData.slice(startIndex, endIndex);
-  
-  
+
   // Rest of your code remains unchanged
   const filterDataByStatus = (status) => {
     setSelectedStatus(status);
@@ -130,8 +152,6 @@ const OrdersList = () => {
   // You can now use these revenue arrays in your component where needed.
 
   const exportToExcel = () => {
-  
-  
     const dataToExport = OrderList.map((item) => ({
       ID: item.id,
       Name: item.name,
@@ -139,11 +159,11 @@ const OrdersList = () => {
       Date: item.date,
       Status: item.status,
     }));
-  
+
     // Create a new Excel workbook and worksheet
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('Orders');
-  
+
     // Define the column headers
     ws.columns = [
       { header: 'ID', key: 'ID', width: 10 },
@@ -152,7 +172,7 @@ const OrdersList = () => {
       { header: 'Date', key: 'Date', width: 15 },
       { header: 'Status', key: 'Status', width: 15 },
     ];
-  
+
     // Set the header row background color to blue
     ws.getRow(1).eachCell((cell) => {
       cell.fill = {
@@ -161,19 +181,19 @@ const OrdersList = () => {
         fgColor: { argb: '5A94C8' }, // Blue color
       };
     });
-  
+
     // Populate the worksheet with data
     dataToExport.forEach((item) => {
       ws.addRow(item);
     });
-  
+
     // Create a buffer for the Excel file
     wb.xlsx.writeBuffer().then((buffer) => {
       const blob = new Blob([buffer], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       });
       const url = URL.createObjectURL(blob);
-  
+
       const a = document.createElement('a');
       a.href = url;
       a.download = 'RiderListData.xlsx';
@@ -226,8 +246,114 @@ const OrdersList = () => {
 
     return `${(number / 1e9).toFixed(1)}B`;
   };
-  // Calculate Total Revenue
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
 
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      sorter: (a, b) => a.id - b.id,
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="d-flex">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>PURCHASE</span>,
+      dataIndex: 'purchase',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text) => (
+        <span>
+          <span className="text-medium">AED </span>
+          {formatNumberToKMB(text)}
+        </span>
+      ),
+      sorter: (a, b) => a.purchase - b.purchase,
+    },
+    {
+      title: <span style={tableHeaderStyle}>DATE</span>,
+      dataIndex: 'date',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      sorter: (a, b) => a.date.localeCompare(b.date),
+    },
+    {
+      title: <span style={tableHeaderStyle}>STATUS</span>,
+      dataIndex: 'status',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'PENDING') {
+          color = 'warning';
+        } else if (text === 'PAID') {
+          color = 'success';
+        } else if (text === 'CANCELED') {
+          color = 'error';
+        } else if (text === 'REFUNDED') {
+          color = 'blue';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+  const handleDeleteConfirmed = () => {
+    
+    setIsDeleteDialogOpen(false);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -284,14 +410,12 @@ const OrdersList = () => {
       <div className="d-flex" style={{ justifyContent: 'space-between' }}>
         <Card className="sh-45 h-xl-100-card w-80 " style={{ padding: '7px' }}>
           <Card.Body className="h-100 d-flex">
-           
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
               onClick={() => TotalOrders('Total Orders')}
             >
               <div style={{ display: 'flex' }}>
-                
                 <div>
                   <div style={{ display: 'flex' }}>
                     <text>{totalOrdersCount}</text>
@@ -311,7 +435,7 @@ const OrdersList = () => {
               </div>
             </div>
 
-{/* paid orders */}
+            {/* paid orders */}
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
@@ -337,7 +461,7 @@ const OrdersList = () => {
               </div>
             </div>
 
-{/* canceled orders */}
+            {/* canceled orders */}
             <div
               className="flex-fill m-1 d-flex flex-column align-items-center justify-content-center"
               style={{ borderRight: '0.1px solid #B5AFAF', cursor: 'pointer' }}
@@ -424,7 +548,7 @@ const OrdersList = () => {
                 <p className="text-small text-muted mb-1">TOTAL REVENUE</p>
                 <div className="cta-2">
                   <span>
-                    <span className="text-small text-muted cta-2">AED</span> {formatNumberToKMB(totalRevenue)}
+                    <span className="cta-2">AED</span> {formatNumberToKMB(totalRevenue)}
                   </span>
                 </div>
               </div>
@@ -474,110 +598,49 @@ const OrdersList = () => {
 
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-  <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-    <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-      {itemsPerPage} Items
-    </Dropdown.Toggle>
-  </OverlayTrigger>
-  <Dropdown.Menu className="shadow dropdown-menu-end">
-    <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-  </Dropdown.Menu>
-</Dropdown>
-
-
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+                {itemsPerPage} Items
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
           <div className="btn-group ms-1 check-all-container">
-      <CheckAll
-        allItems={allItems}
-        selectedItems={selectedItems}
-        onToggle={toggleCheckAll}
-        inputClassName="form-check"
-        className="btn btn-outline-primary btn-custom-control py-0"
-      />
-      <Dropdown align="end">
-        <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-        <Dropdown.Menu>
-          <Dropdown.Item>Move</Dropdown.Item>
-          <Dropdown.Item>Archive</Dropdown.Item>
-          <Dropdown.Item>Delete</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
+            <CheckAll
+              allItems={allItems}
+              selectedItems={selectedItems}
+              onToggle={toggleCheckAll}
+              inputClassName="form-check"
+              className="btn btn-outline-primary btn-custom-control py-0"
+            />
+            <Dropdown align="end">
+              <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
+              <Dropdown.Menu>
+                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item>Archive</Dropdown.Item>
+                <Dropdown.Item>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
-
-      {/* List Header Start */}
-      {/* ... Your list header code ... */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">PURCHASE</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">DATE</div>
-        </Col>
-        <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-              <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/orders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-              <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">{item.name}</div>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                <div className="text-muted text-small d-md-none">Purchase</div>
-                <div className="text-alternate">
-                  <span>
-                    <span className="text-medium">AED </span>
-                    {formatNumberToKMB(item.purchase)}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                <div className="text-muted text-small d-md-none">Date</div>
-                <div className="text-alternate">{item.date}</div>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                <div className="text-muted text-small d-md-none">Status</div>
-                <div>
-                  <Badge bg="outline-primary">{item.status}</Badge>
-                </div>
-              </Col>
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
 
       {/* List Items End */}
 
@@ -598,6 +661,21 @@ const OrdersList = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this order?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

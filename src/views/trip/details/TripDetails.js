@@ -9,17 +9,17 @@ import DatePicker from 'react-datepicker';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
+import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Table,Tag,Image,Checkbox } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
-import { Table,Tag,Image,Checkbox } from 'antd';
-import { gulfwayBlue } from 'layout/colors/Colors';
 import OrderDetailsData from 'data/OrderDetailsData';
-import RiderListData from '../../../data/RiderListData';
+import TripListData from '../../../data/TripListData';
 
 
 const rowSelection = {
@@ -31,8 +31,8 @@ const rowSelection = {
     name: record.name,
   }),
 };
-const RiderDetail = ({ google }) => {
-  const title = 'Rider ID #3848484';
+const TripDetails = ({ google }) => {
+  const title = 'Trip ID #3848484';
   const description = 'Ecommerce Order Detail Page';
 
   const allItems = [1, 2, 3, 4];
@@ -67,7 +67,7 @@ const RiderDetail = ({ google }) => {
   const [startDate, setStartDate] = useState(Date.parse('04 Dec 2021 00:12:00 GMT'));
   const [endDate, setEndDate] = useState(Date.parse('11 Dec 2021 00:12:00 GMT'));
 
-  const [filteredData, setFilteredData] = useState(RiderListData);
+  const [filteredData, setFilteredData] = useState(TripListData);
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -106,10 +106,10 @@ const RiderDetail = ({ google }) => {
     setSelectedStatus(status);
     if (status === 'Total Orders') {
       // Show all data
-      setFilteredData(RiderListData);
+      setFilteredData(TripListData);
     } else {
       // Filter data by status
-      const filteredItems = RiderListData.filter((item) => item.status === status);
+      const filteredItems = TripListData.filter((item) => item.status === status);
       setFilteredData(filteredItems);
     }
   };
@@ -150,7 +150,7 @@ const RiderDetail = ({ google }) => {
     return `${(number / 1e9).toFixed(1)}B`;
   };
   const exportToExcel = () => {
-    const dataToExport = RiderListData.map((item) => ({
+    const dataToExport = TripListData.map((item) => ({
       ID: item.id,
       Name: item.name,
       Purchase: `$${item.purchase}`,
@@ -170,13 +170,13 @@ const RiderDetail = ({ google }) => {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'RiderListData.xlsx';
+    a.download = 'TripListData.xlsx';
     a.click();
     URL.revokeObjectURL(url);
   };
   const exportToPDF = () => {
     const doc = new JsPDF();
-    const tableData = RiderListData.map((item) => [item.id, item.name, `$${item.purchase}`, item.date, item.status]);
+    const tableData = TripListData.map((item) => [item.id, item.name, `$${item.purchase}`, item.date, item.status]);
     const columns = ['ID', 'Name', 'Purchase', 'Date', 'Status'];
 
     doc.autoTable({
@@ -185,7 +185,7 @@ const RiderDetail = ({ google }) => {
       theme: 'striped',
     });
 
-    doc.save('RiderListData.pdf');
+    doc.save('TripListData.pdf');
   };
 
 
@@ -300,9 +300,9 @@ const RiderDetail = ({ google }) => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/riders">
+            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/Trips">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Riders</span>
+              <span className="align-middle text-small ms-1">Trips</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -348,7 +348,7 @@ const RiderDetail = ({ google }) => {
           {/* Cart End */}
 
           {/* Activity Start */}
-          <h5 className="me-3">Rider Details</h5>
+          <h5 className="me-3">Trip Details</h5>
           <Card className="mb-4 flex-grow-1">
             <Card.Body>
               <div className="d-flex justify-content-between align-items-start">
@@ -514,27 +514,27 @@ const RiderDetail = ({ google }) => {
           <Card style={{height:'400px'}} >
           <Card.Body>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours of Service</div>
-                <div className='text-alternate'>2 hr 15 min</div>
+                <div >Pickup Location</div>
+                <div className='text-alternate'>Warehouse A</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours of Break</div>
-                <div className='text-alternate'>1 hr 15 min</div>
+                <div >Delivery Location</div>
+                <div className='text-alternate'>Customer Address B</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Lorem ipsum</div>
-                <div className='text-alternate'>lorem ipsum</div>
+                <div >Delivery Date</div>
+                <div className='text-alternate'>2023-11-05</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours Available Today</div>
-                <div className='text-alternate'>CA-5A32353</div>
+                <div >Delivery Distance</div>
+                <div className='text-alternate'>10 miles</div>
               </div>    <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Lorem</div>
-                <div className='text-alternate'>Ipsum</div>
+                <div >Estimated Delivery Time</div>
+                <div className='text-alternate'>45 minutes</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Total Lorem</div>
-                <div  className='text-alternate'> 2 hr 15 min</div>
+                <div >Delivery Notes</div>
+                <div  className='text-alternate'>  Contact customer on arrival</div>
               </div>
             </Card.Body>
           </Card>
@@ -563,7 +563,7 @@ const RiderDetail = ({ google }) => {
           </Card>
         </Col>
       </Row>
-      <h2 className="small-title">Recent Orders</h2>
+      <h2 className="small-title">Recent Trips</h2>
       <Row className="mb-3">
         <Col md="5" lg="3" xxl="2" className="mb-1">
           {/* Search Start */}
@@ -691,7 +691,7 @@ const RiderDetail = ({ google }) => {
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Rider?</DialogContentText>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Trip?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelDelete} color="primary">
@@ -708,4 +708,4 @@ const RiderDetail = ({ google }) => {
 
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDrI53GlC5-ymZmPKzJq11U36dheMGfeLU',
-})(RiderDetail);
+})(TripDetails);

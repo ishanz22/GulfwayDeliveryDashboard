@@ -64,7 +64,7 @@ let chatData = [
         type: 'response',
         attachments: [],
       },
-      {
+      { 
         text: 'Danish pastry wafer halvah brownie muffin cookie cookie.',
         time: '19:15',
         type: 'response',

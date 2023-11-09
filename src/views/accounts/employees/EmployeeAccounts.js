@@ -9,12 +9,23 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import Select from 'react-select';
 import CheckAll from 'components/check-all/CheckAll';
 import Dialog from '@mui/material/Dialog';
+import { Table, Tag, Image } from 'antd';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { gulfwayBlue } from 'layout/colors/Colors';
 import UserAccountsData from 'data/EmployeeAccountsData';
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const EmployeeAccounts = () => {
   const title = 'Employees Accounts';
   const description = 'Ecommerce Customer List Page';
@@ -26,14 +37,20 @@ const EmployeeAccounts = () => {
   const [filteredData, setFilteredData] = useState(UserAccountsData);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
+  const [selectionType, setSelectionType] = useState('checkbox');
   const [showModalNewUser, setShowModalNewUser] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const smallImageStyle = {
-    width: '30px', 
-    height: '30px', 
-    borderRadius: '50%', 
-    overflow: 'hidden', 
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+  };
+
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
   };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -135,7 +152,6 @@ const EmployeeAccounts = () => {
 
     const columns = ['ID', 'Name', 'Location', 'Earnings', 'LastOrder', 'Status'];
 
-
     const headerRow = columns.map((col) => ({ title: col, dataKey: col }));
 
     doc.autoTable({
@@ -150,13 +166,8 @@ const EmployeeAccounts = () => {
 
   function handleModifyUserClick(id) {
     console.log('Item ID clicked:', id);
- 
   }
 
-  function handleDeleteUserClick() {
-    console.log('Delete user clicked');
-    setIsDeleteDialogOpen(true);
-  }
 
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
@@ -175,10 +186,136 @@ const EmployeeAccounts = () => {
     { value: 'AUDITOR', label: 'Auditor' },
   ];
 
-  const [newStateName, setNewStateName] = useState([
-    userRoleOptions[0], 
-    userRoleOptions[1], 
-  ]);
+  const [newStateName, setNewStateName] = useState([userRoleOptions[0], userRoleOptions[1]]);
+
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
+  const columns = [
+    {
+      title:  <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record) => <NavLink to="/accounts/employee/detail">{text}</NavLink>,
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title:<span style={tableHeaderStyle}>EMPLOYEE</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="d-flex align-items-center">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.userImage} alt={text} />
+          </div>
+          <div>
+            <div className="ms-2">{text}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>CREATED</span>,
+      dataIndex: 'date',
+      key: 'date',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title:<span style={tableHeaderStyle}>STATUS</span> ,
+      dataIndex: 'isActive',
+      key: 'isActive',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (isActive) =>     <Tag color={isActive ? 'success' : 'default'} textColor={isActive ? 'white' : 'black'}>
+      {isActive ? 'Active' : 'Inactive'}
+    </Tag>
+    
+
+    ,
+    },
+    {
+      title:<span style={tableHeaderStyle}>UPDATED</span> ,
+      dataIndex: 'updatedDate',
+      key: 'updatedDate',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>SESSION</span>,
+      dataIndex: 'status',
+      key: 'status',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (status) => <Tag color={status === 'Not Logged in' ? 'warning' : 'success'}>{status}</Tag>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>USER ROLE</span>,
+      dataIndex: 'userRole',
+      key: 'userRole',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (userRole) => {
+        const assignedRoles = userRole.filter((role) => role !== '');
+
+        return (
+          <div>
+            {assignedRoles.slice(0, 2).map((role, index) => (
+              <Tag key={index} color="blue" className="me-2">
+                {role}
+              </Tag>
+            ))}
+            {assignedRoles.length > 2 && <span className="ms-2 text-small text-danger">+ {assignedRoles.length - 2}</span>}
+            {assignedRoles.length === 0 && <Tag color="warning">Not Assigned</Tag>}
+          </div>
+        );
+      },
+    },
+
+    {
+      title: <span style={tableHeaderStyle}>LOG-IN TIME</span> ,
+      dataIndex: 'loginTime',
+      key: 'loginTime',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title:  <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
+      dataIndex: 'logOutTime',
+      key: 'logOutTime',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
 
   return (
     <>
@@ -289,164 +426,15 @@ const EmployeeAccounts = () => {
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EMPLOYEE</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">CREATED</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">UPDATED</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">SESSION</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">USER ROLE</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOG-IN TIME</div>
-        </Col>
-        <Col lg="1" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOG-OUT TIME</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
-          <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-            <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-                <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/accounts/employee/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.userImage} alt={item.name} />
-                  </div>
-                  <div>
-                    <div className=" ms-2">{item.name}</div>
-                    <div className="text-alternate ms-2 text-medium">{item.email}</div>
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Created Date</div>
-                <div>
-           
-                       <div>
-                  <div>{item.date}</div>
-                </div>
-                </div>
-              </Col>
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">isActive</div>
-                <div>
-                  <div>
-                    <div style={{ color: item.isActive ? '#B3B95A' : ' RGB(226, 182, 75)' }}>{item.isActive ? 'Active' : 'Inactive'}</div>
-                  </div>
-                </div>
-              </Col>
-
-              
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Updated Date</div>
-
-                <div>
-                  <div>{item.updatedDate}</div>
-                </div>
-              </Col>
-
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Updated Date</div>
-                <div>
-                  <div style={{ color: item.status === 'Not Logged in' ? '#ebb71a' : '#B3B95A' }}>{item.status}</div>
-                </div>
-             
-              </Col>
-
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Logout Time</div>
-                <div>
-                  <div className='text-alternate'>{item.logOutTime}</div>
-                </div>
-              </Col>
-               <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Login Time</div>
-                <div>
-                  <div className='text-alternate'>{item.loginTime}</div>
-                </div>
-              </Col>
-
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">User Role</div>
-                <div>
-                  {item.userRole.some((role) => role !== '') ? (
-                    item.userRole.slice(0, 2).map((role, index) => (
-                      <Badge key={index} bg="outline-primary" className="me-2">
-                        {role}
-                      </Badge>
-                    ))
-                  ) : (
-                    <Badge bg="outline-warning">Not Assigned</Badge>
-                  )}
-                  {item.userRole.length > 2 && <span className="ms-2 text-small text-danger">+ {item.userRole.length - 2} </span>}
-                </div>
-              </Col>
-
-              <Col xs="6" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Action</div>
-                <div className="text-primary d-flex">
-                  <div
-                    className="d-flex"
-                    style={{ cursor: 'pointer' }}
-         
-                    onClick={handleSelectChange}
-                  >
-                    <CsLineIcons icon="edit" />
-                    &nbsp;
-                  </div>
-                  &nbsp; &nbsp;
-                  <div className="d-flex" style={{ cursor: 'pointer' }} onClick={handleDeleteUserClick}>
-         
-                    <CsLineIcons icon="bin" />
-                    &nbsp;
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <div className="d-flex">
-                  <div>
-                    <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
 
       {/* List Items End */}
 
@@ -468,18 +456,7 @@ const EmployeeAccounts = () => {
       </div>
       {/* Pagination End */}
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Employee ?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button color="primary">Yes</Button>
-        </DialogActions>
-      </Dialog>
+
 
       {/* modify user modal */}
       <Modal
@@ -542,8 +519,7 @@ John Doe"
         </Modal.Header>
         <Modal.Body>
           <Row className="g-3">
-
-          <Col lg="12">
+            <Col lg="12">
               <Form.Label>User Name</Form.Label>
               <Form.Control type="text" />
             </Col>
@@ -565,6 +541,22 @@ John Doe"
           <Button variant="primary">Assign Role</Button>
         </Modal.Footer>
       </Modal>
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this account?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button  color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

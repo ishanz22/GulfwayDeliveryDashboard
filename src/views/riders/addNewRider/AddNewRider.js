@@ -10,6 +10,7 @@ import ExcelJS from 'exceljs';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import ButtonMui from '@mui/material/Button';
+import { Table,Tag,Image } from 'antd';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -19,6 +20,15 @@ import DialogTitle from '@mui/material/DialogTitle';
 import defaultUser from '../../../assets/DefaultUser.jpeg';
 import AddNewRidersData from '../../../data/AddNewRiderData';
 
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const AddNewRider = () => {
   const title = 'Add New Rider';
   const description = 'Ecommerce Storefront Checkout Page';
@@ -68,7 +78,10 @@ const AddNewRider = () => {
     { value: 'Fujairah', label: 'Fujairah' },
     { value: 'Umm Al-Quwain', label: 'Umm Al-Quwain' },
   ];
-
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const [selectVehicle, setSelectVehicle] = useState();
   const optionsVehicle = [{ value: 'Bike', label: 'Bike' }];
 
@@ -542,6 +555,84 @@ const AddNewRider = () => {
     width: '200px',
     borderRadius: '10px',
   };
+
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <NavLink to="/riders/detail">{record.id}</NavLink>
+      ),
+    },
+    {
+      title:  <span style={tableHeaderStyle}>Name</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <div className="d-flex align-items-center">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div className="text-alternate ms-2">
+            {record.firstName} {record.lastName}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>Phone</span> ,
+      dataIndex: 'phone',
+      key: 'phone',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <span>{record.phone}</span>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>Email</span>  ,
+      dataIndex: 'email',
+      key: 'email',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <span>{record.email}</span>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>City</span> ,
+      dataIndex: 'location',
+      key: 'location',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>Rider Type</span> ,
+      dataIndex: 'riderType',
+      key: 'riderType',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>Vehicle Number</span>,
+      dataIndex: 'vehicleNumber',
+      key: 'vehicleNumber',
+      responsive: ['xs','md','lg','sm','xl'],
+    },
+    {
+      title:  <span style={tableHeaderStyle}>Select</span>,
+      dataIndex: 'select',
+      key: 'select',
+      responsive: ['xs','md','lg','sm','xl'],
+      render: (text, record) => (
+        <div className="form-check mt-2" onClick={() => handleSelectChange(record)}>
+          <CsLineIcons icon="bin" className="text-danger" />
+        </div>
+      ),
+    },
+  ];
+
+
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -923,95 +1014,17 @@ const AddNewRider = () => {
       )}
       {/* List Header Start */}
       {displayedData.length > 0 && (
-        <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-          <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">Id</div>
-          </Col>
-          <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">Name</div>
-          </Col>
-          <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">Phone</div>
-          </Col>
-          <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">Email</div>
-          </Col>
-          <Col xs="1" md="1" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">City</div>
-          </Col>
-          <Col xs="1" md="1" className="d-flex flex-column justify-content-center">
-            <div className="text-muted text-small cursor-pointer sort">Rider Type</div>
-          </Col>
-
-          <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end">
-            <div className="text-muted text-small cursor-pointer sort">Vehicle Number</div>
-          </Col>
-        </Row>
+          <Table
+          columns={columns}
+          dataSource={data}
+          rowSelection={rowSelection}
+          onRow={(record) => ({
+            onClick: () => checkItem(record.key),
+          })}
+          pagination={false}
+        />
       )}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-            <Row className="g-0 h-100 align-content-center cursor-default justify-content-between" onClick={() => checkItem(item)}>
-              <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-                <div className="text-muted text-small d-md-none">Id</div>
-                <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-
-              <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.image} alt={item.name} />
-                  </div>
-                  <div className="text-alternate ms-2">
-                    {item.firstName} {item.lastName}
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-                <div className="text-muted text-small d-md-none">Purchase</div>
-                <div className="text-alternate">
-                  <span>{item.phone}</span>
-                </div>
-              </Col>
-
-              <Col xs="2" md="2" className="d-flex flex-column justify-content-center">
-                <div className="text-muted text-small d-md-none">Email</div>
-                <div className="text-alternate">{item.email}</div>
-              </Col>
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center">
-                {/* New Column 1 */}
-                <div className="text-muted text-small d-md-none">City</div>
-                <div className="text-alternate">{item.location}</div>
-              </Col>
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center">
-                {/* New Column 1 */}
-                <div className="text-muted text-small d-md-none">City</div>
-                <div className="text-alternate">{item.riderType}</div>
-              </Col>
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end">
-                <div className="text-muted text-small d-md-none">Vehicle Number</div>
-                <div>
-                  <div className="text-alternate">{item.vehicleNumber}</div>
-                </div>
-              </Col>
-
-              <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end">
-                <div className="text-muted text-small d-md-none">Select</div>
-                <div className="form-check mt-2" onClick={() => handleSelectChange(item)}>
-                  <CsLineIcons icon="bin" className="text-danger" />
-                </div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
+     
 
       {/* List Items End */}
 

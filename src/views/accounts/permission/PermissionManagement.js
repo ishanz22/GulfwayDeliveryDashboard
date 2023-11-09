@@ -9,16 +9,28 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
+import { Table, Tag, Image } from 'antd';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Select from 'react-select';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import userRoles from 'data/UserRoles';
-
+import { gulfwayBlue } from 'layout/colors/Colors';
 import MyComponent from 'components/mulit-select/MultiSelect';
 import userPermissionData from 'data/PermissionData';
 
+
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const PermissionManagement = () => {
   const title = 'Permission Management';
   const description = 'Ecommerce Customer List Page';
@@ -28,6 +40,8 @@ const PermissionManagement = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(userPermissionData);
+  const [selectionType, setSelectionType] = useState('checkbox');
+
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [showModalNewUser, setShowModalNewUser] = useState(false);
@@ -172,12 +186,113 @@ const PermissionManagement = () => {
     borderRadius: '50%', 
     overflow: 'hidden', 
   };
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const [selectValueState, setSelectValueState] = useState();
   const userRoleOptions = [
     { value: 'ADMIN', label: 'Admin' },
     { value: 'MANAGER', label: 'Manager' },
     { value: 'AUDITOR', label: 'Auditor' },
   ];
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
+
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      render: (text) => (
+        <NavLink to={`/vendors/SuperMarket/detail/${text}`}>
+          {text}
+        </NavLink>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+      render: (text, record) => (
+        <div className="d-flex align-items-center">
+        <div className="round-image">
+          <img style={smallImageStyle} src={record.userImage} alt={text} />
+        </div>
+        <div>
+          <div className="ms-2">{text}</div>
+          <div className="text-alternate ms-2 text-medium">{record.email}</div>
+        </div>
+      </div>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>Permission Allowed</span> ,
+      dataIndex: 'permissions',
+      key: 'permissions',
+      render: (permissions) => (
+        <div className="text-alternate">
+          {permissions.slice(0, 3).join(', ')}
+          {permissions.length > 3 && (
+            <span className="text-danger text-small"> + {permissions.length - 3} more</span>
+          )}
+        </div>
+      ),
+    },
+    {
+      title:<span style={tableHeaderStyle}>Created Date</span> ,
+      dataIndex: 'date',
+      key: 'date',
+      render: (text) => (
+        <div className="text-alternate">{text}</div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>Updated Date</span> ,
+      dataIndex: 'updatedDate',
+      key: 'updatedDate',
+      render: (text) => (
+        <div className="text-alternate">{text}</div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+   
+  ];
+
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -287,6 +402,8 @@ const PermissionManagement = () => {
       </Row>
 
       {/* List Header Start */}
+
+{/*       
       <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
         <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
           <div className="text-muted text-small cursor-pointer sort">ID</div>
@@ -310,89 +427,17 @@ const PermissionManagement = () => {
           <div className="text-muted text-small cursor-pointer sort">ACTIONS</div>
         </Col>
       </Row>
-      {/* List Header End */}
+   */}
 
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
-          <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-            <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-                <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/vendors/SuperMarket/detail/" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-              <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                <div className="text-muted text-small d-md-none">Name</div>
-                <div className="d-flex align-items-center">
-                  <div className="round-image">
-                    <img style={smallImageStyle} src={item.userImage} alt={item.name} />
-                  </div>
-                  <div>
-                    <div className=" ms-2">{item.name}</div>
-                    <div className="text-alternate ms-2 text-medium">{item.email}</div>
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs="6" lg="3" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Role</div>
-                <div>
-                  <div className="text-alternate">
-                    {item.permissions.slice(0, 3).join(', ')}
-                    {item.permissions.length > 3 ? <span className="text-danger text-small"> + {item.permissions.length - 3} </span> : ''}
-                  </div>
-                </div>
-              </Col>
-          
-              <Col xs="3" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Permission</div>
-
-                <div className="text-alternate">{item.date}</div>
-              </Col>
-
-              <Col xs="3" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">User Permission</div>
-
-                <div className="text-alternate">{item.updatedDate}</div>
-              </Col>
-
-              <Col xs="3" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Action</div>
-                <div className="text-primary d-flex">
-                  <div
-                    className="d-flex"
-                    style={{ cursor: 'pointer' }}
-                   
-                    onClick={handleSelectChange}
-                  >
-                    <CsLineIcons icon="edit" />
-                    &nbsp;
-                  </div>
-                  &nbsp; &nbsp;
-                  <div className="d-flex" style={{ cursor: 'pointer' }} onClick={handleDeleteUserClick}>
-                    {/* Add margin to create space */}
-                    <CsLineIcons icon="bin" />
-                    &nbsp;
-                  </div>
-                </div>
-              </Col>
-
-              <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <div className="d-flex">
-                  <div>
-                    <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-                  </div>
-                </div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
+<Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
       {/* List Items End */}
 
       {/* Pagination Start */}
@@ -413,18 +458,7 @@ const PermissionManagement = () => {
       </div>
       {/* Pagination End */}
 
-      <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Permission ?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelDelete} color="primary">
-            No
-          </Button>
-          <Button color="primary">Yes</Button>
-        </DialogActions>
-      </Dialog>
+ 
 
       {/* modify user modal */}
       <Modal
@@ -490,6 +524,23 @@ const PermissionManagement = () => {
           <Button variant="primary">Add</Button>
         </Modal.Footer>
       </Modal>
+
+
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this permission ?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button  color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

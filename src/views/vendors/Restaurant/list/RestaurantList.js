@@ -28,10 +28,10 @@ const rowSelection = {
   }),
 };
 const CustomersList = (props) => {
-  const title = 'Restaurant List';
-  const description = 'Ecommerce Customer List Page';
   const { restaurant, error, isAuthenticated, loading } = props;
   const dispatch = useDispatch();
+  const title = 'Restaurant List';
+  const description = 'Ecommerce Customer List Page';
   const [selectionType, setSelectionType] = useState('checkbox');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

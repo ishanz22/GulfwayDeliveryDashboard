@@ -1,5 +1,6 @@
 const UsersData = [
     {
+      key: '1',
       id: 1101,
       name: "John Doe",
       status: "Logged in",
@@ -13,6 +14,7 @@ const UsersData = [
       updatedDate:'2023-03-15'
     },
     {
+      key: '2',
       id: 1102,
       name: "Jane Smith",
       status: "Not Logged in",
@@ -28,6 +30,7 @@ const UsersData = [
 
     },
     {
+      key: '3',
       id: 1103,
       name: "Robert Johnson",
       status: "Logged in",
@@ -41,6 +44,7 @@ const UsersData = [
       updatedDate:'2023-06-25'
     },
     {
+      key: '4',
       id: 1104,
       name: "Emily Wilson",
       status: "Not Logged in",
@@ -54,6 +58,7 @@ const UsersData = [
       updatedDate:'2023-04-22'
     },
     {
+      key: '5',
       id: 1105,
       name: "Emily Wilson",
       status: "Not Logged in",
@@ -67,6 +72,7 @@ const UsersData = [
       updatedDate:'2023-05-11'
     },
     {
+      key: '6',
       id: 1106,
       name: "Emily Wilson",
       status: "Not Logged in",
@@ -80,6 +86,7 @@ const UsersData = [
       updatedDate:'2023-06-01'
     },
     {
+      key: '7',
       id: 1107,
       name: "Emily Wilson",
       status: "Not Logged in",
@@ -93,6 +100,7 @@ const UsersData = [
       updatedDate:'2023-06-02'
     },
     {
+      key: '8',
       id: 1108,
       name: "Emily Wilson",
       status: "Not Logged in",
@@ -104,6 +112,7 @@ const UsersData = [
       loginTime: '13:30:00',
       logOutTime:' 08:30:00',
       updatedDate:'2023-06-17'
-    }
+    },
+    
   ];
   export default UsersData;

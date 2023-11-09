@@ -14,19 +14,34 @@ import CheckAll from 'components/check-all/CheckAll';
 import CashDetails from 'views/storefront/filters/components/CashDetails';
 import FeedbackSubmission from 'views/storefront/filters/components/FeedbackSubmission';
 import { gulfwayBlue } from 'layout/colors/Colors';
+import { Table, Tag, Checkbox } from 'antd';
 import DoughnutChart from 'components/chart/DoughnutChart';
 import RiderListData from '../../../data/RiderListData';
 
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
 const RewardOverview = () => {
   const title = 'Rewards Dashboard';
   const description = 'Ecommerce Storefront Filters Page';
+  const [selectionType, setSelectionType] = useState('checkbox');
 
   const { themeValues } = useSelector((state) => state.settings);
   const lgBreakpoint = parseInt(themeValues.lg.replace('px', ''), 10);
   const { width } = useWindowSize();
   const [isLgScreen, setIsLgScreen] = useState(false);
   const [isOpenFiltersModal, setIsOpenFiltersModal] = useState(false);
-
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   useEffect(() => {
     if (width) {
       if (width >= lgBreakpoint) {
@@ -64,8 +79,8 @@ const RewardOverview = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '30px', // Adjust the width as needed
-    height: '30px', // Adjust the height as needed
+    width: '40px', // Adjust the width as needed
+    height: '40px', // Adjust the height as needed
     borderRadius: '50%', // Makes the image round
     overflow: 'hidden', // Ensures the image stays within the round shape
   };
@@ -167,6 +182,84 @@ const RewardOverview = () => {
 
     doc.save('RiderListData.pdf');
   };
+
+
+
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      render: (text, record) => (
+        <a href="/riders/detail">{text}</a>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+      render: (text, record) => (
+        <div className='d-flex'>
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>PHONE</span>,
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: <span style={tableHeaderStyle}>ASSIGNED ORDERS</span>,
+      dataIndex: 'assignedOrders',
+      key: 'assignedOrders',
+    },
+    {
+      title: <span style={tableHeaderStyle}>STATUS</span>,
+      dataIndex: 'status',
+      key: 'status',
+      render: (text) => {
+        let color = 'default';
+
+        if (text === 'PENDING') {
+          color = 'warning';
+        } else if (text === 'SUCCESS') {
+          color = 'success';
+        } else if (text === 'Declined') {
+          color = 'error';
+        }else if (text === 'ON-TRAVEL') {
+          color = 'blue';
+        }else if (text === 'REDEEMED') {
+          color = 'orange';
+        }else if (text === 'EARNED') {
+          color = 'pink';
+        }
+
+        return <Tag color={color}>{text}</Tag>;
+      },
+    },
+
+  ];
+  
+  // Assuming displayedData is an array of your data
+  const data = displayedData.map(item => ({
+    key: item.id, // Make sure to set a unique key for each row
+    id: item.id,
+    name: item.name,
+    phone: item.phone,
+    assignedOrders: item.assignedOrders,
+    status: item.status,
+    image:item.image,
+    email:item.email
+  }));
+  
+  
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -280,70 +373,15 @@ const RewardOverview = () => {
             </Col>
           </Row>
          
-          <Row className="g-0  align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-            <Col md="2" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-              <div className="text-muted text-small cursor-pointer sort">ID</div>
-            </Col>
-            <Col md="3" className="d-flex flex-column pe-1 justify-content-center">
-              <div className="text-muted text-small cursor-pointer sort">NAME</div>
-            </Col>
-            <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-              <div className="text-muted text-small cursor-pointer sort">PHONE</div>
-            </Col>
-            <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-              <div className="text-muted text-small cursor-pointer sort">ASSIGNED ORDERS</div>
-            </Col>
-            <Col md="2" className="d-flex flex-column pe-1 justify-content-center">
-              <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-            </Col>
-          </Row>
-
-          {displayedData.map((item) => (
-            <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-              <Card.Body className="pt-0 pb-0 sh-21 sh-md-8">
-                <Row className="g-0 h-100 align-content-center cursor-default" onClick={() => checkItem(item.id)}>
-                  <Col xs="11" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-1 order-md-1 h-md-100 position-relative">
-                    <div className="text-muted text-small d-md-none">Id</div>
-                    <NavLink to="/riders/detail" className="text-truncate h-100 d-flex align-items-center">
-                      {item.id}
-                    </NavLink>
-                  </Col>
-
-                  <Col xs="6" md="3" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-3 order-md-2">
-                    <div className="text-muted text-small d-md-none">Name</div>
-                    <div className="d-flex align-items-center">
-                      <div className="round-image">
-                        <img style={smallImageStyle} src={item.image} alt={item.name} />
-                      </div>
-                      <div className="text-alternate ms-2">{item.name}</div>
-                    </div>
-                  </Col>
-
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-4 order-md-3">
-                    <div className="text-muted text-small d-md-none">Purchase</div>
-                    <div className="text-alternate">
-                      <span>{item.phone}</span>
-                    </div>
-                  </Col>
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-5 order-md-4">
-                    <div className="text-muted text-small d-md-none">Assigned Orders</div>
-                    <div className="text-alternate">{item.assignedOrders}</div>
-                  </Col>
-
-                  <Col xs="6" md="2" className="d-flex flex-column justify-content-center mb-2 mb-md-0 order-last order-md-5">
-                    <div className="text-muted text-small d-md-none">Status</div>
-                    <div>
-                      <Badge bg="outline-primary">{item.status}</Badge>
-                    </div>
-                  </Col>
-
-                  <Col xs="1" md="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                    <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          ))}
+          <Table
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
+          columns={columns}
+          dataSource={data}
+          pagination={false}
+        />
           <div className="d-flex justify-content-center mt-5">
             <Pagination>
               <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>

@@ -3,20 +3,19 @@ import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { utils, write } from 'xlsx';
-import { Row, Col, Button, Dropdown, Card, Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { Table, Tag, Image } from 'antd';
+import { gulfwayBlue } from 'layout/colors/Colors';
+import ExcelJS from 'exceljs';
 import Dialog from '@mui/material/Dialog';
-import Select from 'react-select';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Form, Input, InputNumber, Popconfirm, Table, Typography, Tag } from 'antd';
-import { gulfwayBlue } from 'layout/colors/Colors';
-import ExcelJS from 'exceljs';
-import NotificationData from 'data/NotificationsData';
+import TripListData from '../../../data/TripListData';
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -27,94 +26,9 @@ const rowSelection = {
     name: record.name,
   }),
 };
-
-const originData = [
-  {
-    key: '1',
-    title: 'Welcome to the Chat App',
-    message: 'Hello there! This is a test message.',
-    type: 'text',
-    sender: 'User123',
-    recipients: ['User456', 'User789'],
-    status: 'NEW',
-  },
-  {
-    key: '2',
-    title: 'Important Announcement',
-    message: "Don't forget the meeting tomorrow at 10 AM.",
-    type: 'announcement',
-    sender: 'User789',
-    recipients: ['User123', 'User456'],
-    status: 'NEW',
-  },
-  {
-    key: '3',
-    title: 'New Feature Update',
-    message: "We've added some exciting new features to the app!",
-    type: 'text',
-    sender: 'User456',
-    recipients: ['User123'],
-    status: 'READ',
-  },
-  {
-    key: '4',
-    title: 'Holiday Greetings',
-    message: 'Wishing you a Merry Christmas and a Happy New Year!',
-    type: 'greeting',
-    sender: 'User123',
-    recipients: ['User789'],
-    status: 'READ',
-  },
-  {
-    key: '5',
-    title: 'Holiday Greetings',
-    message: 'Wishing you a Merry Christmas and a Happy New Year!',
-    type: 'greeting',
-    sender: 'User123',
-    recipients: ['User789'],
-    status: 'READ',
-  },
-  {
-    key: '6',
-    title: 'Holiday Greetings',
-    message: 'Wishing you a Merry Christmas and a Happy New Year!',
-    type: 'greeting',
-    sender: 'User123',
-    recipients: ['User789'],
-    status: 'READ',
-  },
- 
-];
-
-const EditableCell = ({ editing, dataIndex, title, inputType, record, index, children, ...restProps }) => {
-  const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
-
-  return (
-    <td {...restProps}>
-      {editing ? (
-        <Form.Item
-          name={dataIndex}
-          style={{ margin: 0 }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >
-          {inputNode}
-        </Form.Item>
-      ) : (
-        children
-      )}
-    </td>
-  );
-};
-
-const Notifications = () => {
-  const title = 'Notifications';
+const TripList = () => {
+  const title = 'Trip List';
   const description = 'Ecommerce Customer List Page';
- 
 
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -139,12 +53,21 @@ const Notifications = () => {
     color: 'grey',
     fontSize: '10px',
   };
-
-  const [filteredData, setFilteredData] = useState(originData);
+  const [selectedStatus, setSelectedStatus] = useState('Total Orders');
+  const [filteredData, setFilteredData] = useState(TripListData);
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Track the selected section
+
+  const smallImageStyle = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
+  };
 
   const nextPage = () => {
     if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
@@ -163,9 +86,24 @@ const Notifications = () => {
   const displayedData = filteredData.slice(startIndex, endIndex);
 
   // making K,M,B Format
+  const formatNumberToKMB = (number) => {
+    if (number < 1e3) {
+      return number.toString();
+    }
+
+    if (number < 1e6) {
+      return `${(number / 1e3).toFixed(1)}k`;
+    }
+
+    if (number < 1e9) {
+      return `${(number / 1e6).toFixed(1)}M`;
+    }
+
+    return `${(number / 1e9).toFixed(1)}B`;
+  };
 
   const exportToExcel = () => {
-    const dataToExport = NotificationData.map((item) => ({
+    const dataToExport = TripListData.map((item) => ({
       ID: item.id,
       Name: item.name,
       Purchase: `$${item.purchase}`,
@@ -209,7 +147,7 @@ const Notifications = () => {
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'RiderListData.xlsx';
+      a.download = 'TripListData.xlsx';
       a.click();
       URL.revokeObjectURL(url);
     });
@@ -217,7 +155,7 @@ const Notifications = () => {
 
   const exportToPDF = () => {
     const doc = new JsPDF();
-    const tableData = NotificationData.map((item) => [item.id, item.name, `$${item.phone}`, item.assignedOrders, item.status]);
+    const tableData = TripListData.map((item) => [item.id, item.name, `$${item.phone}`, item.assignedOrders, item.status]);
     const columns = ['ID', 'Name', 'Phone', 'Assigned Orders', 'Status'];
 
     doc.autoTable({
@@ -226,7 +164,7 @@ const Notifications = () => {
       theme: 'striped',
     });
 
-    doc.save('RiderListData.pdf');
+    doc.save('TripListData.pdf');
   };
 
   const handleView = (id) => {
@@ -241,72 +179,62 @@ const Notifications = () => {
     console.log(`Delete Item ID ${id}`);
     setIsDeleteDialogOpen(true);
   };
-
-  const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
-  const [editingKey, setEditingKey] = useState('');
-
-  const isEditing = (record) => record.key === editingKey;
-
-  const edit = (record) => {
-    form.setFieldsValue({ name: '', age: '', address: '', ...record });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey('');
-  };
-
-  const save = async (key) => {
-    try {
-      const row = await form.validateFields();
-
-      const newData = [...data];
-      
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setData(newData);
-        setEditingKey('');
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey('');
-      }
-    } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
-    }
-  };
-
   const columns = [
     {
-      title: <span style={tableHeaderStyle}>TITLE</span>,
-      dataIndex: 'title',
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      editable: true,
+      render: (text, record) => <NavLink to={`/riders/detail/${record.id}`}>{record.id}</NavLink>,
     },
     {
-      title: <span style={tableHeaderStyle}>MESSAGE</span>,
-      dataIndex: 'message',
+      title: <span style={tableHeaderStyle}>RIDER NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      editable: true,
+      render: (text, record) => (
+        <div className="d-flex">
+          <div className="round-image">
+            <img style={smallImageStyle} src={record.image} alt={record.name} />
+          </div>
+          <div>
+            <div className="ms-2">{record.name}</div>
+            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+          </div>
+        </div>
+      ),
     },
     {
-      title: <span style={tableHeaderStyle}>TYPE</span>,
-      dataIndex: 'type',
+      title: <span style={tableHeaderStyle}>PHONE</span>,
+      dataIndex: 'phone',
+      key: 'phone',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      editable: true,
+
+
     },
     {
-      title: <span style={tableHeaderStyle}>SENDER</span>,
-      dataIndex: 'sender',
+      title: <span style={tableHeaderStyle}>DELIVERY DATE</span>,
+      dataIndex: 'deliveryDate',
+      key: 'deliveryDate',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      editable: true,
+      render: (text, record) => (
+        <span className="text-alternate">{text}</span>
+      ),
     },
+    {
+        title: <span style={tableHeaderStyle}>PICKUP LOCATION</span>,
+        dataIndex: 'pickupLocation',
+        key: 'pickupLocation',
+        responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      },
+      {
+        title: <span style={tableHeaderStyle}>DELIVERY LOCATION</span>,
+        dataIndex: 'deliveryLocation',
+        key: 'deliveryLocation',
+        responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      },
+
+  
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
@@ -315,76 +243,69 @@ const Notifications = () => {
       render: (text) => {
         let color = 'default';
 
-        if (text === 'READ') {
-          color = 'yellow';
-        } else if (text === 'NEW') {
+        if (text === 'AVAILABLE') {
+          color = 'warning';
+        } else if (text === 'SUCCESS') {
+          color = 'success';
+        } else if (text === 'NOT-AVAILABLE') {
+          color = 'error';
+        } else if (text === 'ON-TRAVEL') {
+          color = 'blue';
+        } else if (text === 'CANCELED') {
           color = 'orange';
+        } else if (text === 'DELIVERED') {
+          color = 'pink';
         }
 
         return <Tag color={color}>{text}</Tag>;
       },
     },
     {
-      title: <span style={tableHeaderStyle}>OPERATION</span>,
-      dataIndex: 'operation',
-      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (_, record) => {
-        
-        const editable = isEditing(record);
-        return editable ? (
-          
-          <span>
-            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <span>
-          <Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
-          <span onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f',marginLeft:10 }}>
-              <CsLineIcons icon="bin" />
-            </span>
-
-          </span>
-        );
-
-     
+        title: <span style={tableHeaderStyle}>BIKE NUMBER</span>,
+        dataIndex: 'bikeNumber',
+        key: 'bikeNumber',
+        responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       },
-      
+
+    {
+        title: <span style={tableHeaderStyle}>PACKAGE DESCRIPTION</span>,
+        dataIndex: 'packageDescription',
+        key: 'packageDescription',
+        responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      },
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record.id)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
     },
   ];
-
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === 'age' ? 'number' : 'text',
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
-
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
   };
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
 
-  const handleDeleteConfirmed = () => {
+  const handleDeleteConfirmed = () => {    
     setIsDeleteDialogOpen(false);
   };
-
-
-
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -432,7 +353,15 @@ const Notifications = () => {
       <Row className="mb-3">
         <Col md="5" lg="3" xxl="2" className="mb-1">
           {/* Search Start */}
-
+          <div className="d-inline-block float-md-start me-1 mb-1 search-input-container w-100 shadow bg-foreground">
+            <Form.Control type="text" placeholder="Search" />
+            <span className="search-magnifier-icon">
+              <CsLineIcons icon="search" />
+            </span>
+            <span className="search-delete-icon d-none">
+              <CsLineIcons icon="close" />
+            </span>
+          </div>
           {/* Search End */}
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
@@ -477,31 +406,19 @@ const Notifications = () => {
         </Col>
       </Row>
 
-      <Form form={form} component={false}>
-        <Table
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          bordered
-          dataSource={data}
-          columns={mergedColumns}
-          rowSelection={rowSelection}
-          rowClassName="editable-row"
-          pagination={{
-            onChange: cancel,
-          }}
-        />
-      </Form>
- 
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowSelection={rowSelection}
+        onRow={(record) => ({
+          onClick: () => checkItem(record.key),
+        })}
+        pagination={false}
+      />
+      {/* List Items End */}
 
-  {/* 
-  This is a custom Pagination that is not working and has been removed.
-  However, there's an antd Pagination  in use.
-*/}
-
-      {/* <div className="d-flex justify-content-center mt-5">
+      {/* Pagination Start */}
+      <div className="d-flex justify-content-center mt-5">
         <Pagination>
           <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
             <CsLineIcons icon="chevron-left" />
@@ -515,13 +432,13 @@ const Notifications = () => {
             <CsLineIcons icon="chevron-right" />
           </Pagination.Next>
         </Pagination>
-      </div> */}
+      </div>
       {/* Pagination End */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Notification?</DialogContentText>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this Trip?</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancelDelete} color="primary">
@@ -536,4 +453,4 @@ const Notifications = () => {
   );
 };
 
-export default Notifications;
+export default TripList;
