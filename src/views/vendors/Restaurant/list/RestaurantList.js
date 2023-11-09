@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -7,18 +7,50 @@ import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { Table, Tag } from 'antd';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { useDispatch, connect } from 'react-redux';
+import { getRestaurantDetails } from 'actions/restaurant';
 import VendorListData from 'data/VendorListData';
+import { gulfwayBlue } from 'layout/colors/Colors';
 
-const CustomersList = () => {
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
+const CustomersList = (props) => {
   const title = 'Restaurant List';
   const description = 'Ecommerce Customer List Page';
-
+  const { restaurant, error, isAuthenticated, loading } = props;
+  const dispatch = useDispatch();
+  const [selectionType, setSelectionType] = useState('checkbox');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(VendorListData);
+  // const [restaurant, setrestaurant] = useState(restaurant);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  useEffect(() => {
+    dispatch(getRestaurantDetails({}));
+    console.log(restaurant);
+    // setrestaurant(restaurant);
+  }, []);
+
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -38,15 +70,15 @@ const CustomersList = () => {
 
     // Filter data by status
     const filteredItems = VendorListData.filter((item) => item.status === status);
-    setFilteredData(filteredItems);
+    // setrestaurant(filteredItems);
   };
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
+  const displayedData = restaurant && restaurant.slice(startIndex, endIndex);
 
   const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
+    if (restaurant && currentPage < Math.ceil(restaurant.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -132,8 +164,112 @@ const CustomersList = () => {
     doc.save('RefundList.pdf');
   };
 
-  // Rest of your code remains unchanged
+  const handleView = (id) => {
+    console.log(`View Item ID ${id}`);
+  };
 
+  const handleEdit = (id) => {
+    console.log(`Edit Item ID ${id}`);
+  };
+
+  const handleDelete = (id) => {
+    console.log(`Delete Item ID ${id}`);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>ID</span>,
+      dataIndex: 'id',
+      key: 'id',
+      // render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${text}`}>{text}</NavLink>,
+      render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${record?.restaurant?.customId}`}>{record?.restaurant?.customId}</NavLink>,
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+    },
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.restaurant?.name}</div>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>LOCATION</span>,
+      dataIndex: 'location',
+      key: 'location',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div style={{ wordBreak: ' break-all' }}>
+          {record?.restaurant?.zone}, {record?.restaurant?.city}
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>EARNING</span>,
+      dataIndex: 'earnings',
+      key: 'earnings',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.amount}</div>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>LAST ORDER</span>,
+      dataIndex: 'lastOrder',
+      key: 'lastOrder',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.order[0]?.customId}</div>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>STATUS</span>,
+      dataIndex: 'status',
+      key: 'status',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => {
+        let color = 'default';
+
+        if (record?.restaurant?.status === 'pending') {
+          color = 'warning';
+        } else if (record?.restaurant?.status === 'approved') {
+          color = 'success';
+        } else if (record?.restaurant?.status === 'declined') {
+          color = 'error';
+        }
+
+        return <Tag color={color}>{record?.restaurant?.status}</Tag>;
+      },
+    },
+
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
+      key: 'action',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <span className="d-flex">
+          <div
+            onClick={() => handleView(record?.restaurant?.customId)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="eye" />
+          </div>
+          <div
+            onClick={() => handleEdit(record?.restaurant?.customId)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div onClick={() => handleDelete(record?.restaurant?.customId)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
+      ),
+    },
+  ];
+
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const handleDeleteConfirmed = () => {
+    setIsDeleteDialogOpen(false);
+  };
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -141,7 +277,7 @@ const CustomersList = () => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-NavLink pb-1 d-inline-block hidden breadcrumb-back" to="/">
               <CsLineIcons icon="chevron-left" size="13" />
               <span className="align-middle text-small ms-1">Home</span>
             </NavLink>
@@ -233,108 +369,58 @@ const CustomersList = () => {
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">EARNINGS</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LAST ORDER</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      {displayedData.map((item) => (
-        <Card key={item.id} className={`mb-2 ${selectedItems.includes(item.id) && 'selected'}`}>
-          {/* Rest of your JSX code for rendering a single item */}
-          {/* You can use 'item' to access data properties */}
-          <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-            <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(item.id)}>
-              <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-                <div className="text-muted text-small d-lg-none">Id</div>
-                <NavLink to="/vendors/Restaurant/detail/" className="text-truncate h-100 d-flex align-items-center">
-                  {item.id}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-                <div className="text-muted text-small d-lg-none">Name</div>
-                <div className="text-alternate">{item.name}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-                <div className="text-muted text-small d-lg-none">Location</div>
-                <div className="text-alternate">{item.location}</div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Earnings</div>
-                <div className="text-alternate">
-                  <span>
-                    <span className="text-medium">AED</span> {item.earnings}
-                  </span>
-                </div>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-                <div className="text-muted text-small d-lg-none">Last Order</div>
-                <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                  {item.lastOrder}
-                </NavLink>
-              </Col>
-              <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-                <div className="text-muted text-small d-lg-none mb-1">Status</div>
-                <div>
-                  {item.status.map((status, index) => (
-                    <OverlayTrigger key={index} placement="top" overlay={<Tooltip id={`tooltip-${index}`}>{status.name}</Tooltip>}>
-                      <div className={`d-inline-block me-2 ${status.disabled ? 'text-muted' : ''}`}>
-                        {status.name === 'Restaurant' && <CsLineIcons icon="shop" className={`text-${status.disabled ? 'muted' : 'warning'}`} size="17" />}
-                        {status.name === 'Purchased' && <CsLineIcons icon="boxes" className={`text-${status.disabled ? 'muted' : 'info'}`} size="17" />}
-                        {status.name === 'Trusted' && <CsLineIcons icon="check-square" className={`text-${status.disabled ? 'muted' : 'success'}`} size="17" />}
-                        {status.name === 'Phone' && <CsLineIcons icon="phone" className={`text-${status.disabled ? 'muted' : 'danger'}`} size="17" />}
-                      </div>
-                    </OverlayTrigger>
-                  ))}
-                </div>
-              </Col>
-              <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-                <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(item.id)} onChange={() => {}} />
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      ))}
-
-      {/* List Items End */}
-
-      {/* Pagination Start */}
+      <div>
+        <Table
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
+          columns={columns}
+          dataSource={displayedData}
+          pagination={false}
+        />
+      </div>
       <div className="d-flex justify-content-center mt-5">
         <Pagination>
           <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
             <CsLineIcons icon="chevron-left" />
           </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
+          {restaurant &&
+            Array.from({ length: Math.ceil(restaurant.length / itemsPerPage) }, (_, i) => (
+              <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
+                {i + 1}
+              </Pagination.Item>
+            ))}
+          <Pagination.Next className="shadow" onClick={nextPage} disabled={restaurant && currentPage === Math.ceil(restaurant.length / itemsPerPage)}>
             <CsLineIcons icon="chevron-right" />
           </Pagination.Next>
         </Pagination>
       </div>
-      {/* Pagination End */}
+
+      <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">Are you sure you want to delete this item?</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="primary">
+            No
+          </Button>
+          <Button onClick={handleDeleteConfirmed} color="primary">
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
 
-export default CustomersList;
+function mapStateToProps(state) {
+  console.log(state.restaurant);
+  return {
+    error: state.auth.error,
+    isAuthenticated: state.auth.isAuthenticated,
+    restaurant: state?.restaurant?.restaurant,
+  };
+}
+export default connect(mapStateToProps)(CustomersList);

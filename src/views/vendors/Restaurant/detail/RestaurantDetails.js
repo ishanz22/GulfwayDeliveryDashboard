@@ -1,18 +1,39 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useParams } from 'react-router-dom';
 import ReactTags from 'react-tag-autocomplete';
 import { Row, Col, Button, Dropdown, Card, Badge, Form } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { restaurantById } from 'actions/restaurant';
+
 import cashImage from '../../../../assets/money.png';
-import withdrawImage from '../../../../assets/money-withdrawal.png'
-import withdrawBalanceImage from '../../../../assets/withdrawal.png'
-import totalEarningImage from '../../../../assets/salary.png'
+import withdrawImage from '../../../../assets/money-withdrawal.png';
+import withdrawBalanceImage from '../../../../assets/withdrawal.png';
+import totalEarningImage from '../../../../assets/salary.png';
 
 const CustomersDetail = ({ google }) => {
   const title = 'Restaurant Detail';
   const description = 'Ecommerce Customer Detail Page';
+
+  const { restaurantId } = useParams();
+  const dispatch = useDispatch();
+
+  console.log(restaurantId);
+
+  const getRestaurantbyId = () => {
+    console.log(restaurantId);
+    dispatch(restaurantById({ id: restaurantId }));
+  };
+
+  const { restaurant } = useSelector((state) => state.restaurant);
+
+  useEffect(() => {
+    getRestaurantbyId();
+    console.log(restaurant);
+    // setrestaurant(restaurant);
+  }, []);
 
   // Tags
   const [tags, setTags] = useState([
@@ -54,8 +75,6 @@ const CustomersDetail = ({ google }) => {
         </Row>
       </div>
 
-
-
       <Row className="g-2 row-cols-1 row-cols-md-2 row-cols-xl-2 row-cols-xxl-3">
         {/* Merged Cards on the Left */}
         <Col md={6}>
@@ -67,14 +86,14 @@ const CustomersDetail = ({ google }) => {
                   <div className="d-flex h6">
                     <img src={cashImage} alt="Image Description" style={{ maxWidth: 'auto', height: '35px', marginRight: '10px' }} />
 
-                    <div className="mb-3 fw-bold fs-0" style={{ fontWeight: 'bold', fontSize: '24px',color:"#47566B" }}>
+                    <div className="mb-3 fw-bold fs-0" style={{ fontWeight: 'bold', fontSize: '24px', color: '#47566B' }}>
                       1000 AED
                     </div>
                   </div>
                   <NavLink to="/vendors/Restaurant/collection" className="w-100">
-                  <button type="submit" className="btn btn-primary w-100 btn-block">
-                    Collect cash from restaurant
-                  </button>
+                    <button type="submit" className="btn btn-primary w-100 btn-block">
+                      Collect cash from restaurant
+                    </button>
                   </NavLink>
                 </Card.Body>
               </Col>
@@ -90,26 +109,24 @@ const CustomersDetail = ({ google }) => {
               <Col>
                 <Card.Body className="d-flex align-items-center py-3">
                   <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <div className="mb-2 h6">
-                  <div className="card-text mb-2">
-  <div className="text-muted text-overline text-small sh-2" />
-  <div className="fw-bold fs-6" style={{ color: '#388F6D' }}>2300 AED</div>
-
-</div>
+                    <div className="mb-2 h6">
+                      <div className="card-text mb-2">
+                        <div className="text-muted text-overline text-small sh-2" />
+                        <div className="fw-bold fs-6" style={{ color: '#388F6D' }}>
+                          2300 AED
+                        </div>
+                      </div>
 
                       <div>
-                      <div className=" d-inline-block  align-text-top">Pending withdraw</div>
-              
+                        <div className=" d-inline-block  align-text-top">Pending withdraw</div>
                       </div>
                     </div>
                     <div className="mb-0 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <img src={withdrawImage} alt="Image Description" style={{ maxWidth: "30px", height: "auto" }} />
+                        <img src={withdrawImage} alt="Image Description" style={{ maxWidth: '30px', height: 'auto' }} />
                       </div>
                     </div>
-
-                   
                   </div>
                 </Card.Body>
               </Col>
@@ -121,25 +138,24 @@ const CustomersDetail = ({ google }) => {
             <Row className="g-0 custom-card-body">
               <Col>
                 <Card.Body className="d-flex align-items-center py-3">
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <div className="mb-2 h6">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <div className="mb-2 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <div className="fw-bold fs-6" style={{ color: '#394052' }}>2300 AED</div>
+                        <div className="fw-bold fs-6" style={{ color: '#394052' }}>
+                          2300 AED
+                        </div>
                       </div>
                       <div>
-                      <div className=" d-inline-block  align-text-top">Withdraw able balance</div>
-              
+                        <div className=" d-inline-block  align-text-top">Withdraw able balance</div>
                       </div>
                     </div>
                     <div className="mb-0 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <img src={withdrawBalanceImage} alt="Image Description" style={{ maxWidth: "30px", height: "auto" }} />
+                        <img src={withdrawBalanceImage} alt="Image Description" style={{ maxWidth: '30px', height: 'auto' }} />
                       </div>
                     </div>
-
-                   
                   </div>
                 </Card.Body>
               </Col>
@@ -154,26 +170,24 @@ const CustomersDetail = ({ google }) => {
             <Row className="g-0 custom-card-body">
               <Col>
                 <Card.Body className="d-flex align-items-center py-3">
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <div className="mb-2 h6">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <div className="mb-2 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <div className="fw-bold fs-6" style={{ color: '#F39067' }}>2300 AED</div>
-
+                        <div className="fw-bold fs-6" style={{ color: '#F39067' }}>
+                          2300 AED
+                        </div>
                       </div>
                       <div>
-                      <div className=" d-inline-block  align-text-top">Total withdrawn amount</div>
-              
+                        <div className=" d-inline-block  align-text-top">Total withdrawn amount</div>
                       </div>
                     </div>
                     <div className="mb-0 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <img src={withdrawBalanceImage} alt="Image Description" style={{ maxWidth: "30px", height: "auto" }} />
+                        <img src={withdrawBalanceImage} alt="Image Description" style={{ maxWidth: '30px', height: 'auto' }} />
                       </div>
                     </div>
-
-                   
                   </div>
                 </Card.Body>
               </Col>
@@ -185,25 +199,24 @@ const CustomersDetail = ({ google }) => {
             <Row className="g-0 custom-card-body">
               <Col>
                 <Card.Body className="d-flex align-items-center py-3">
-                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                  <div className="mb-2 h6">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <div className="mb-2 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-medium sh-2" />
-                        <div className="fw-bold fs-6" style={{ color: '#106BA4' }}>2300 AED</div>
+                        <div className="fw-bold fs-6" style={{ color: '#106BA4' }}>
+                          2300 AED
+                        </div>
                       </div>
                       <div>
-                      <div className=" d-inline-block  align-text-top">Total earning</div>
-              
+                        <div className=" d-inline-block  align-text-top">Total earning</div>
                       </div>
                     </div>
                     <div className="mb-0 h6">
                       <div className="card-text mb-2">
                         <div className="text-muted text-overline text-small sh-2" />
-                        <img src={totalEarningImage} alt="Image Description" style={{ maxWidth: "30px", height: "auto" }} />
+                        <img src={totalEarningImage} alt="Image Description" style={{ maxWidth: '30px', height: 'auto' }} />
                       </div>
                     </div>
-
-                   
                   </div>
                 </Card.Body>
               </Col>
@@ -377,6 +390,7 @@ const CustomersDetail = ({ google }) => {
     </>
   );
 };
+
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDrI53GlC5-ymZmPKzJq11U36dheMGfeLU',
 })(CustomersDetail);
