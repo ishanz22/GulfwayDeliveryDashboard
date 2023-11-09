@@ -163,7 +163,7 @@ const routesAndMenuItems = {
           subs: [
             { path: '/list', label: 'List', component: restaurant.list },
             { path: '/addnew', label: 'Add new', component: restaurant.addnew },
-            { path: '/detail', label: 'Detail', component: restaurant.detail },
+            { path: '/detail/:restaurantId', label: 'Detail', component: restaurant.detail },
             { path: '/logs', label: 'Activity', component: restaurant.logs },
             { path: '/permission', label: 'Permissions', component: restaurant.collection },
             { path: '/collection',  component: restaurant.collection },
@@ -293,6 +293,19 @@ const routesAndMenuItems = {
         { path: '/addnew', label: 'Add New', component: rider.addNewRider },
         { path: '/detail', label: 'Detail', component: rider.detail },
         { path: '/allriders', label: 'All Riders', component: rider.allRiders },
+      ],
+    },
+    {
+      path: `${appRoot}/trip`,
+      exact: true,
+      redirect: true,
+      to: `${appRoot}/trip/list`,
+      label: 'Trip',
+      icon: 'pin',
+      subs: [
+        { path: '/list', label: 'List', component: trip.list },
+
+        { path: '/detail', label: 'Detail', component: trip.details },
       ],
     },
     {

@@ -43,6 +43,7 @@ const authSlice = createSlice({
     [logoutUser.rejected]: (state, { payload }) => {
       state.loading = false;
       state.error = payload;
+      
     },
 
     // forgot password

@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+/* eslint-disable no-plusplus */
+/* eslint-disable react/self-closing-comp */
+/* eslint-disable jsx-a11y/no-onchange */
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -15,7 +18,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { useDispatch, useSelector } from 'react-redux';
+
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { newRestaurant } from 'actions/restaurant';
+import { getCities, getRestaurantCategories } from 'actions/admin';
 
 const AddItemOption = { value: 'AddCategory', label: 'Add Category' };
 
@@ -52,7 +62,7 @@ const AddNewRestaurant = ({ google }) => {
   const [showDeleteSuccessToast, setShowDeleteSuccessToast] = useState(false);
   const [showAddedItem, setShowAddedItem] = useState(false);
   const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false);
-  const [toast, setToast] = useState('');
+  // const [toast, setToast] = useState('');
   const [selectedItemIndex, setSelectedItemIndex] = useState('');
   const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
   const [selectedImage, setSelectedImage] = useState('');
@@ -61,6 +71,7 @@ const AddNewRestaurant = ({ google }) => {
   const [selectedLicensedImage, setSelectedLicensedImage] = useState('');
   const [ItemList, setItemList] = useState([]);
   const [selectedPassport, setSelectedPassport] = useState('');
+  const [selectedZone, setSelectedZone] = useState([]);
   const [formData, setFormData] = useState({
     RestaurantName: '',
     RestaurantAddress: '',
@@ -70,11 +81,7 @@ const AddNewRestaurant = ({ google }) => {
     estimatedDeliveryTime: '',
     openTime: '',
     closeTime: '',
-
-    name: '',
-    price: '',
-    description: '',
-    category: 'null',
+    minimumOrderAmount: '',
 
     city: '',
     zone: '',
@@ -85,10 +92,32 @@ const AddNewRestaurant = ({ google }) => {
     lastName: '',
     ownerPhone: '',
 
-    discount: '',
+    bankName: '',
+    accountNumber: '',
+    IBAN: '',
+    accountName: '',
   });
 
   const [buttonText, setButtonText] = useState('Add Item');
+
+  const dispatch = useDispatch();
+
+  const { restaurant, error } = useSelector((state) => state.restaurant);
+  const { cities, restaurantCategories } = useSelector((state) => state.admin);
+
+  useEffect(() => {
+    dispatch(getCities({}));
+    dispatch(getRestaurantCategories({}));
+
+    if (error) {
+      // Show a toast message with the error message
+      toast.error(error, {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
+    }
+    // console.log(restaurantCategories);
+  }, [error]);
 
   const coverImageStyle = {
     border: '1px dashed #ced4da',
@@ -127,6 +156,11 @@ const AddNewRestaurant = ({ google }) => {
       formData.estimatedDeliveryTime === '' ||
       formData.openTime === '' ||
       formData.closeTime === '' ||
+      formData.bankName === '' ||
+      formData.accountNumber === '' ||
+      formData.IBAN === '' ||
+      formData.accountName === '' ||
+      formData.minimumOrderAmount === '' ||
       !selectedEmiratesID ||
       !selectedLicensedImage ||
       !selectedPassport ||
@@ -134,111 +168,148 @@ const AddNewRestaurant = ({ google }) => {
       !selectedCoverImage
     ) {
       setIsValid(false); // Form is invalid
-      setToast('Please fill in all the required fields.');
+      // setToast('Please fill in all the required fields.');
       setShowErrorFieldsToast(true);
     } else if (ItemList.length === 0) {
       setIsValid(false); // Form is invalid
-      setToast('Cannot add Restaurant without at least one Item');
+      toast.error('Cannot add Restaurant without at least one Item', {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
       setShowErrorFieldsToast(true);
     } else {
       setIsValid(true); // Form is valid
 
       console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, ItemList });
+      const data = [selectedImage, selectedCoverImage, selectedEmiratesID, selectedLicensedImage, selectedPassport];
+      for (let index = 0; index < ItemList.length; index++) {
+        data.push(ItemList[index]?.selectedItemImage);
+      }
+      const formdata = new FormData();
+      // Append each image to the FormData object
+      data.forEach((image) => {
+        formdata.append('images', image);
+      });
 
-      setToast('Restaurant added successfully');
+      console.log(data);
+
+      formdata.append('RestaurantName', formData.RestaurantName);
+      formdata.append('RestaurantAddress', formData.RestaurantAddress);
+      formdata.append('firstName', formData.firstName);
+      formdata.append('lastName', formData.lastName);
+      formdata.append('email', formData.email);
+      formdata.append('ownerPhone', formData.ownerPhone);
+      formdata.append('mobile', formData.phone);
+
+      formdata.append('vatTax', formData.vatTax);
+      formdata.append('estimatedDeliveryTime', formData.estimatedDeliveryTime);
+      formdata.append('openTime', formData.openTime);
+      formdata.append('closeTime', formData.closeTime);
+      formdata.append('minimumOrderAmount', formData.minimumOrderAmount);
+
+      formdata.append('menu', JSON.stringify(ItemList));
+
+      // ItemList.forEach((item, index) => {
+      //   formdata.append(`menu[${index}].description`, item.description);
+      //   formdata.append(`menu[${index}].discount`, item.discount);
+      //   formdata.append(`menu[${index}].name`, item.name);
+      //   formdata.append(`menu[${index}].price`, item.price);
+      //   formdata.append(`menu[${index}].image`, item.selectedItemImage);
+      // });
+      formdata.append('city', formData.city);
+      formdata.append('zone', formData.zone);
+      formdata.append('lat', formData.latitude);
+      formdata.append('long', formData.longitude);
+
+      formdata.append('bankName', formData.bankName);
+      formdata.append('accountNumber', formData.accountNumber);
+      formdata.append('IBAN', formData.IBAN);
+      formdata.append('accountName', formData.accountName);
+
+      console.log('FormData:', JSON.stringify(formdata));
+      dispatch(newRestaurant(formdata));
+      toast.success('Restaurant added successfully', {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
       setShowAddedItem(true);
 
-      setFormData({
-        RestaurantName: '',
-        RestaurantAddress: '',
-        phone: '',
-        email: '',
-        vatTax: '',
-        estimatedDeliveryTime: '',
-        openTime: '',
-        closeTime: '',
+      // setFormData({
+      //   RestaurantName: '',
+      //   RestaurantAddress: '',
+      //   phone: '',
+      //   email: '',
+      //   vatTax: '',
+      //   estimatedDeliveryTime: '',
+      //   openTime: '',
+      //   closeTime: '',
+      //   minimumOrderAmount: '',
 
-        name: '',
-        price: '',
-        description: '',
-        category: '',
+      //   city: '',
+      //   zone: '',
+      //   latitude: '',
+      //   longitude: '',
 
-        city: '',
-        zone: '',
-        latitude: '',
-        longitude: '',
+      //   firstName: '',
+      //   lastName: '',
+      //   ownerPhone: '',
 
-        firstName: '',
-        lastName: '',
-        ownerPhone: '',
-
-        discount: '',
-      });
-      setSelectValueCity('');
-      setSelectedEmiratesID('');
-      setSelectedImage('');
-      setSelectedImage('');
-      setSelectedCoverImage('');
-      setSelectedLicensedImage('');
-      setSelectedPassport('');
-      setItemList([]);
+      //   bankName: '',
+      //   accountNumber: '',
+      //   IBAN: '',
+      //   accountName: '',
+      // });
+      // setSelectValueCity('');
+      // setSelectedEmiratesID('');
+      // setSelectedImage('');
+      // setSelectedImage('');
+      // setSelectedCoverImage('');
+      // setSelectedLicensedImage('');
+      // setSelectedPassport('');
+      // setItemList([]);
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    setSelectedImage(file);
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
   const handleImageItem = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedItemImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    setSelectedItemImage(file);
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedItemImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setSelectedCoverImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
+    setSelectedCoverImage(file);
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedCoverImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
 
-  const [selectZone, setSelectZone] = useState();
-  const optionsZone = [
-    { value: 'North', label: 'North' },
-    { value: 'South', label: 'South' },
-    { value: 'East', label: 'East' },
-    { value: 'West', label: 'West' },
-    { value: 'Central', label: 'Central' },
-    { value: 'Downtown', label: 'Downtown' },
-  ];
-
-  const [cityMap, setCityMap] = useState();
-  const optionsCityMap = [
-    { value: 'Bur Dubai', label: 'Bur Dubai' },
-    { value: 'Deira', label: 'Deira' },
-    { value: 'Marina', label: 'Marina' },
-    { value: 'Jumeirah', label: 'Jumeirah' },
-    { value: 'Downtown', label: 'Downtown' },
-    { value: 'Jumeirah', label: 'Jumeirah' },
-  ];
+  const optionsCityMap = cities && cities.map((cityData) => cityData.name);
 
   const handleLicenseUpload = (e) => {
     const file = e.target.files[0];
+    console.log(file);
     setSelectedLicensedImage(file);
   };
 
@@ -254,19 +325,18 @@ const AddNewRestaurant = ({ google }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    console.log(name, value);
     setFormData({ ...formData, [name]: value });
+    console.log(formData);
   };
 
   const updateIsFormEmpty = () => {
     const isEmpty = Object.values(formData).every((value) => value === '');
     setIsFormEmpty(isEmpty);
   };
-  const handleSelectChange = (newValue, actionMeta) => {
-    if (actionMeta.action === 'select-option' && newValue.value === 'AddCategory') {
-      setShowModal(true);
-    } else {
-      setSelectValueCity(newValue);
-    }
+  const handleSelectChange = (e) => {
+    setSelectValueCity(e.target.value);
+
     updateIsFormEmpty();
   };
 
@@ -286,7 +356,7 @@ const AddNewRestaurant = ({ google }) => {
       price: formData.price,
       description: formData.description,
       category: formData.category,
-      selectedDropdownValue: selectValueCity.label,
+      selectedDropdownValue: selectValueCity,
       discount: formData.discount,
       selectedItemImage, // Add the selectedItemImage to the object
     };
@@ -299,12 +369,19 @@ const AddNewRestaurant = ({ google }) => {
       const updatedList = [...ItemList];
       updatedList[existingIndex] = ItemObject;
       setItemList(updatedList);
-      setToast('Item updated successfully');
+      console.log(updatedList);
+      toast.success('Item updated successfully', {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
       setButtonText('Add Item');
     } else {
       // If the Item doesn't exist, add it to the list
+      toast.success('Item added successfully', {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
       setItemList([...ItemList, ItemObject]);
-      setToast('Item added successfully');
     }
 
     // Reset the form data for the next entry
@@ -337,8 +414,10 @@ const AddNewRestaurant = ({ google }) => {
       const updatedItemList = ItemList.filter((_, index) => index !== selectedItemIndex);
 
       setItemList(updatedItemList);
-
-      setToast('Item removed');
+      toast.success('Item removed', {
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+      });
       setShowDeleteSuccessToast(true);
       setButtonText('Add Item');
 
@@ -356,7 +435,7 @@ const AddNewRestaurant = ({ google }) => {
 
     setIsDeleteDialogOpen(false);
     setSelectedItemIndex(null);
-    setSelectedItemImage('')
+    setSelectedItemImage('');
   };
 
   const checkItem = (Item) => {
@@ -385,14 +464,18 @@ const AddNewRestaurant = ({ google }) => {
     setSelectedItemImage(Item.selectedItemImage);
   };
 
-  const handleSelectCityChange = (selectedOption) => {
-    setSelectCityMap(selectedOption);
-    setFormData({ ...formData, city: selectedOption ? selectedOption.value : '' });
+  const handleSelectCityChange = (e) => {
+    console.log(e.target.value);
+    setSelectCityMap(e.target.value);
+    setFormData({ ...formData, city: e.target.value ? e.target.value : '' });
+    console.log(formData.city);
+    cities.map((cityData) => (cityData.name === e.target.value ? setSelectedZone(cityData.zone) : []));
   };
+  // console.log(selectedZone);
 
-  const handleSelectZoneChange = (selectedOption) => {
-    setSelectZoneMap(selectedOption);
-    setFormData({ ...formData, zone: selectedOption ? selectedOption.value : '' });
+  const handleSelectZoneChange = (e) => {
+    setSelectZoneMap(e.target.value);
+    setFormData({ ...formData, zone: e.target.value ? e.target.value : '' });
   };
 
   return (
@@ -472,30 +555,42 @@ const AddNewRestaurant = ({ google }) => {
                   <Form.Label>Logo</Form.Label>
                   <div>
                     <label htmlFor="imageInput">
-                      <div
-                        style={{
-                          ...logoStyle,
-                          borderColor: !selectedImage && !isValid ? '#dc3545' : logoStyle.border,
-                        }}
-                      >
-                        {selectedImage ? (
-                          <img src={selectedImage} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
-                        ) : (
+                      <div>
+                        <label htmlFor="licenseInput">
                           <div
                             style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              justifyContent: 'center',
-                              alignItems: 'center',
-                              width: '100%',
-                              height: '100%',
-                              color: '#ced4da',
+                              ...logoStyle,
+                              borderColor: !selectedImage && !isValid ? '#dc3545' : logoStyle.border,
                             }}
                           >
-                            <CsLineIcons icon="cloud-upload" size={30} />
-                            <div style={{ textAlign: 'center' }}>Upload Image</div>
+                            {selectedImage ? (
+                              <img src={URL.createObjectURL(selectedImage)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
+                            ) : (
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  height: '100%',
+                                  color: '#ced4da',
+                                }}
+                              >
+                                <CsLineIcons icon="cloud-upload" size={30} />
+                                <div style={{ textAlign: 'center' }}>Upload Image</div>
+                              </div>
+                            )}
                           </div>
-                        )}
+                        </label>
+                        <input
+                          type="file"
+                          id="licenseInput"
+                          accept="image/*"
+                          className="form-control-file"
+                          style={{ display: 'none' }}
+                          onChange={handleImageChange}
+                        />
                       </div>
                     </label>
                     <input
@@ -519,7 +614,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedCoverImage ? (
-                          <img src={selectedCoverImage} alt="Selected Cover" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
+                          <img src={URL.createObjectURL(selectedCoverImage)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                         ) : (
                           <div
                             style={{
@@ -571,7 +666,7 @@ const AddNewRestaurant = ({ google }) => {
                   />
                 </Col>
                 <Col lg="6">
-                  <Form.Label>Estimated Delivery Time ( Min & Maximum Time)</Form.Label>
+                  <Form.Label>Estimated Delivery Time </Form.Label>
                   <Form.Control
                     type="text"
                     name="estimatedDeliveryTime"
@@ -598,6 +693,16 @@ const AddNewRestaurant = ({ google }) => {
                     name="closeTime"
                     value={formData.closeTime}
                     className={`mb-3 ${!formData.closeTime && !isValid ? 'is-invalid' : ''}`}
+                    onChange={handleInputChange}
+                  />
+                </Col>
+                <Col lg="6">
+                  <Form.Label>Minimum Order Amount</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="minimumOrderAmount"
+                    value={formData.minimumOrderAmount}
+                    className={`mb-3 ${!formData.minimumOrderAmount && !isValid ? 'is-invalid' : ''}`}
                     onChange={handleInputChange}
                   />
                 </Col>
@@ -634,13 +739,21 @@ const AddNewRestaurant = ({ google }) => {
                     <Col lg="3">
                       <Form.Group>
                         <Form.Label>Category</Form.Label>
-                        <Select
+                        <Form.Select
                           classNamePrefix="react-select"
-                          options={[...optionsCity, AddItemOption]}
+                          // options={[...optionsCity, AddItemOption]}
                           value={selectValueCity}
                           onChange={handleSelectChange}
                           placeholder=""
-                        />
+                        >
+                          <option>Select Categories</option>
+                          {restaurantCategories &&
+                            restaurantCategories?.map((item, index) => (
+                              <option key={index} value={item.name}>
+                                {item.name}
+                              </option>
+                            ))}
+                        </Form.Select>
                       </Form.Group>
 
                       <Modal show={showModal} onHide={() => setShowModal(false)}>
@@ -683,7 +796,11 @@ const AddNewRestaurant = ({ google }) => {
                             }}
                           >
                             {selectedItemImage ? (
-                              <img src={selectedItemImage} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
+                              <img
+                                src={URL.createObjectURL(selectedItemImage)}
+                                alt="Selected"
+                                style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+                              />
                             ) : (
                               <div
                                 style={{
@@ -735,37 +852,37 @@ const AddNewRestaurant = ({ google }) => {
             </Form>
 
             <div>
-            {ItemList.length > 0 && (
-  <Row className="g-1 p-3">
-    <Col lg="1">
-      <div className="text-muted text-small d-lg-none">Name</div>
-      <div className="text-muted text-small cursor-pointer sort">NAME</div>
-    </Col>
-    <Col lg="2">
-      <div className="text-muted text-small d-lg-none">Price</div>
-      <div className="text-muted text-small cursor-pointer sort">PRICE</div>
-    </Col>
-    <Col lg="2">
-      <div className="text-muted text-small d-lg-none">Description</div>
-      <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
-    </Col>
-    <Col lg="2">
-      <div className="text-muted text-small d-lg-none">Discount</div>
-      <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
-    </Col>
-    <Col lg="2">
-      <div className="text-muted text-small d-lg-none">Category</div>
-      <div className="text-muted text-small cursor-pointer sort">CATEGORY</div>
-    </Col>
-    <Col lg="1">
-      <div className="text-muted text-small d-lg-none">Image</div>
-      <div className="text-muted text-small cursor-pointer sort">IMAGE</div>
-    </Col>
-    <Col lg="2">
-      <div className="text-muted text-small d-md-none">Actions</div>
-    </Col>
-  </Row>
-)}
+              {ItemList.length > 0 && (
+                <Row className="g-1 p-3">
+                  <Col lg="1">
+                    <div className="text-muted text-small d-lg-none">Name</div>
+                    <div className="text-muted text-small cursor-pointer sort">NAME</div>
+                  </Col>
+                  <Col lg="2">
+                    <div className="text-muted text-small d-lg-none">Price</div>
+                    <div className="text-muted text-small cursor-pointer sort">PRICE</div>
+                  </Col>
+                  <Col lg="2">
+                    <div className="text-muted text-small d-lg-none">Description</div>
+                    <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
+                  </Col>
+                  <Col lg="2">
+                    <div className="text-muted text-small d-lg-none">Discount</div>
+                    <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
+                  </Col>
+                  <Col lg="2">
+                    <div className="text-muted text-small d-lg-none">Category</div>
+                    <div className="text-muted text-small cursor-pointer sort">CATEGORY</div>
+                  </Col>
+                  <Col lg="1">
+                    <div className="text-muted text-small d-lg-none">Image</div>
+                    <div className="text-muted text-small cursor-pointer sort">IMAGE</div>
+                  </Col>
+                  <Col lg="2">
+                    <div className="text-muted text-small d-md-none">Actions</div>
+                  </Col>
+                </Row>
+              )}
 
               {ItemList.map((Item, index) => (
                 <>
@@ -794,19 +911,17 @@ const AddNewRestaurant = ({ google }) => {
                           <div className="text-alternate">{Item.selectedDropdownValue}</div>
                         </Col>
                         <Col lg="1">
-                          <img style={{ width: 35, height: 20,borderRadius:'4px' }} src={Item.selectedItemImage} alt={Item.selectedItemImage} />
+                          <img
+                            style={{ width: 35, height: 20, borderRadius: '4px' }}
+                            src={URL.createObjectURL(Item.selectedItemImage)}
+                            alt={Item.selectedItemImage}
+                          />
                         </Col>
                         <Col lg="2">
                           <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
                             <div className="text-muted text-small d-md-none">Select</div>
                             <div onClick={() => handleDeleteItem(index)}>
-                              <CsLineIcons
-                                // Pass the index to identify the object
-
-                                icon="bin"
-                                className="text-danger cursor-pointer"
-                                style={{ fontSize: '14px' }}
-                              />
+                              <CsLineIcons icon="bin" className="text-danger cursor-pointer" style={{ fontSize: '14px' }} />
                             </div>
                           </Col>
                         </Col>
@@ -832,27 +947,48 @@ const AddNewRestaurant = ({ google }) => {
                 <Form.Group controlId="textInput1">
                   <Form.Label>City</Form.Label>
                   {/* <Select classNamePrefix="react-select" options={optionsCityMap} value={selectCityMap} onChange={setSelectCityMap} placeholder="" /> */}
-                  <Select
+                  <Form.Select
                     classNamePrefix="react-select"
                     className={`mb-3 ${!formData.city && !isValid ? 'is-invalid' : ''}`}
-                    options={optionsCityMap}
-                    value={{ label: formData.city, value: formData.city }}
+                    // options={optionsCityMap}
+                    value={selectCityMap}
                     onChange={handleSelectCityChange}
-                    placeholder=""
-                  />
+                  >
+                    <option value="">Select City</option>
+                    {optionsCityMap?.map((zone, index) => (
+                      <option key={index} value={zone}>
+                        {zone}
+                      </option>
+                    ))}
+                  </Form.Select>
                 </Form.Group>
                 <text>&nbsp; &nbsp;</text>
                 <Form.Group controlId="textInput1">
                   <Form.Label>Zone</Form.Label>
-                  {/* <Select classNamePrefix="react-select" options={optionsZone} value={selectZone} onChange={setSelectZone} placeholder="" /> */}
-                  <Select
+
+                  <Form.Select
                     classNamePrefix="react-select"
                     className={`mb-3 ${!formData.zone && !isValid ? 'is-invalid' : ''}`}
-                    options={optionsZone}
+                    value={selectZoneMap}
+                    onChange={handleSelectZoneChange}
+                  >
+                    <option value="">Select Zone</option>
+                    {selectedZone?.map((zone, index) => (
+                      <option key={index} value={zone}>
+                        {zone}
+                      </option>
+                    ))}
+                  </Form.Select>
+
+                  {/* <Select classNamePrefix="react-select" options={optionsZone} value={selectZone} onChange={setSelectZone} placeholder="" /> */}
+                  {/* <Select
+                    classNamePrefix="react-select"
+                    className={`mb-3 ${!formData.zone && !isValid ? 'is-invalid' : ''}`}
+                    options={selectedZone}
                     value={{ label: formData.zone, value: formData.zone }}
                     onChange={handleSelectZoneChange}
                     placeholder=""
-                  />
+                  /> */}
                 </Form.Group>
 
                 {/* Add more text inputs here */}
@@ -942,48 +1078,41 @@ const AddNewRestaurant = ({ google }) => {
                 <Col lg="4">
                   <Form.Label>license</Form.Label>
                   <div>
-                    <label htmlFor="imageInput">
-                      <div>
-                        <label htmlFor="licenseInput">
+                    <label htmlFor="liecenceImage">
+                      <div
+                        style={{
+                          ...OwnerInfoImages,
+                          borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                        }}
+                      >
+                        {selectedLicensedImage ? (
+                          <img
+                            src={URL.createObjectURL(selectedLicensedImage)}
+                            alt="Selected"
+                            style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+                          />
+                        ) : (
                           <div
                             style={{
-                              ...OwnerInfoImages,
-                              borderColor: !selectedLicensedImage && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              width: '100%',
+                              height: '100%',
+                              color: '#ced4da',
                             }}
                           >
-                            {selectedLicensedImage ? (
-                              <img src={URL.createObjectURL(selectedLicensedImage)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
-                            ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Image</div>
-                              </div>
-                            )}
+                            <div>{/* Icon or text for upload */}</div>
+                            <div style={{ textAlign: 'center' }}>Upload Image</div>
                           </div>
-                        </label>
-                        <input
-                          type="file"
-                          id="licenseInput"
-                          accept="image/*"
-                          className="form-control-file"
-                          style={{ display: 'none' }}
-                          onChange={handleLicenseUpload}
-                        />
+                        )}
                       </div>
                     </label>
+
                     <input
                       type="file"
-                      id="imageInput"
+                      id="liecenceImage"
                       accept="image/*"
                       className="form-control-file"
                       style={{ display: 'none' }}
@@ -1003,7 +1132,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedEmiratesID ? (
-                          <img src={URL.createObjectURL(selectedEmiratesID)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
+                          <img src={URL.createObjectURL(selectedEmiratesID)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                         ) : (
                           <div
                             style={{
@@ -1044,7 +1173,7 @@ const AddNewRestaurant = ({ google }) => {
                         }}
                       >
                         {selectedPassport ? (
-                          <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%',borderRadius:'10px' }} />
+                          <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                         ) : (
                           <div
                             style={{
@@ -1072,6 +1201,57 @@ const AddNewRestaurant = ({ google }) => {
                       onChange={handlePassportUpload}
                     />
                   </div>
+                </Col>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
+      </div>
+      <div style={{ paddingTop: '60px' }}>
+        <h2 className="small-title">Bank Info</h2>
+        <Card className="mb-5">
+          <Card.Body>
+            <Form>
+              <Row className="g-3">
+                <Col lg="6">
+                  <Form.Label>Account Number</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="accountNumber"
+                    value={formData.accountNumber}
+                    className={`mb-3 ${!formData.accountNumber && !isValid ? 'is-invalid' : ''}`}
+                    onChange={handleInputChange}
+                  />
+                </Col>
+                <Col lg="6">
+                  <Form.Label>IBAN </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="IBAN"
+                    value={formData.IBAN}
+                    className={`mb-3 ${!formData.IBAN && !isValid ? 'is-invalid' : ''}`}
+                    onChange={handleInputChange}
+                  />
+                </Col>
+                <Col lg="6">
+                  <Form.Label>Account Holder name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="accountName"
+                    value={formData.accountName}
+                    className={`mb-3 ${!formData.accountName && !isValid ? 'is-invalid' : ''}`}
+                    onChange={handleInputChange}
+                  />
+                </Col>
+                <Col lg="6">
+                  <Form.Label>Bank Name </Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="bankName"
+                    value={formData.bankName}
+                    className={`mb-3 ${!formData.bankName && !isValid ? 'is-invalid' : ''}`}
+                    onChange={handleInputChange}
+                  />
                 </Col>
               </Row>
             </Form>
