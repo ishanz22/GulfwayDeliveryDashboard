@@ -20,6 +20,8 @@ const users = {
   detail: lazy(() => import('views/users/detail/UsersDetail')),
   logs: lazy(() => import('views/users/logs/ActivityLogs')),
   analytics: lazy(() => import('views/users/analytics/Analytics')),
+  edit: lazy(() => import('views/users/edit/UserEdit')),
+  activity: lazy(() => import('views/users/logs/ActivityLogs')),
 };
 const VendorDashboard = lazy(() => import('views/vendors/dashboard/VendorDashboard'));
 
@@ -191,9 +193,12 @@ const routesAndMenuItems = {
       icon: 'user',
       subs: [
         { path: '/list', label: 'List', component: users.list },
-        { path: '/detail', label: 'Detail', component: users.detail },
-        { path: '/status', label: 'Status', component: users.logs },
-        { path: '/analytics', label: 'Analytics', component: users.analytics },
+        { path: '/detail',  component: users.detail },
+       
+        // { path: '/analytics', label: 'Analytics', component: users.analytics },
+        { path: '/edit',  component: users.edit },
+        { path: '/activity', label: 'Activity', component: users.logs },
+   
       ],
     },
     {
@@ -205,7 +210,7 @@ const routesAndMenuItems = {
       icon: 'cart',
       subs: [
         { path: '/list', label: 'List', component: orders.list },
-        { path: '/detail', label: 'Detail', component: orders.detail },
+        { path: '/detail', component: orders.detail },
         { path: '/status', label: 'Status', component: orders.status },
         { path: '/analytics', label: 'Analytics', component: orders.analytics },
       ],

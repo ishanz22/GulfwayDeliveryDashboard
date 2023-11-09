@@ -11,6 +11,7 @@ import NavMobileButtons from './NavMobileButtons';
 import { menuChangeAttrMenuAnimate, menuChangeCollapseAll } from './main-menu/menuSlice';
 import NavLanguageSwitcher from './NavLanguageSwitcher';
 
+
 const DELAY = 80;
 
 const Nav = () => {
@@ -65,7 +66,8 @@ const Nav = () => {
       >
         <NavLogo />
 
-      
+      <NavIconMenu/>
+      <view style={{paddingTop:'10px'}}/>
         <MainMenu />
         <NavMobileButtons />
       </div>

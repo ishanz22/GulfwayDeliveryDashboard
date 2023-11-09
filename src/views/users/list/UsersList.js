@@ -17,6 +17,8 @@ import { Table, Tag } from 'antd';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import { gulfwayBlue } from 'layout/colors/Colors';
 
+import moment from 'moment';
+
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -49,7 +51,8 @@ const UsersList = () => {
   };
 
   const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
+    color: 'grey',
+    fontSize: '10px',
   };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
@@ -183,8 +186,6 @@ const UsersList = () => {
     setShowModalNewUser(true);
   };
 
-
-
   const [selectValueState, setSelectValueState] = useState();
   const userRoleOptions = [
     { value: 'ADMIN', label: 'Admin' },
@@ -194,8 +195,8 @@ const UsersList = () => {
 
   const [newStateName, setNewStateName] = useState([userRoleOptions[0], userRoleOptions[1]]);
 
-  const handleView = (id) => {
-    console.log(`View User ID ${id}`);
+  const handleView = (record) => {
+    console.log('View User Details', record);
   };
 
   const handleEdit = (id) => {
@@ -208,19 +209,27 @@ const UsersList = () => {
   };
   const columns = [
     {
-      title: <span style={{ color: 'grey',fontSize:'10px' }}>ID</span>,
+      title: <span style={{ color: 'grey', fontSize: '10px' }}>ID</span>,
       dataIndex: 'id',
       sorter: (a, b) => a.id - b.id,
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text, record) => <NavLink to="/users/detail">{text}</NavLink>,
-
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <NavLink
+          to={{
+            pathname: `/users/detail/${record.id}`,
+            state: { user: record },
+          }}
+        >
+          {text}
+        </NavLink>
+      ),
     },
     {
-      title: <span style={{ color: 'grey',fontSize:'10px' }}>USER</span>,
+      title: <span style={{ color: 'grey', fontSize: '10px' }}>USER</span>,
       dataIndex: 'user',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="round-image">
             <img style={smallImageStyle} src={record.userImage} alt={record.name} />
           </div>
@@ -231,66 +240,111 @@ const UsersList = () => {
         </div>
       ),
     },
+
     {
       title: <span style={tableHeaderStyle}>CREATED</span>,
       dataIndex: 'date',
-      responsive: ['xs','md','lg','sm','xl'],
-      sorter: (a, b) => a.date.localeCompare(b.date),
+      
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
+
+    },
+    {
+      title: <span style={tableHeaderStyle}>PHONE</span>,
+      dataIndex: 'phone',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+   
     },
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'isActive',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (isActive) => <div style={{ color: isActive ? '#B3B95A' : 'RGB(226, 182, 75)' }}>{isActive ? 'Active' : 'Inactive'}</div>,
     },
     {
       title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
-      responsive: ['xs','md','lg','sm','xl'],
-      sorter: (a, b) => a.updatedDate.localeCompare(b.updatedDate),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
+
     },
     {
-      title: <span style={tableHeaderStyle}>SESSION</span>,
-      dataIndex: 'status',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (status) => <div style={{ color: status === 'Not Logged in' ? '#ebb71a' : '#B3B95A' }}>{status}</div>,
+      title: <span style={tableHeaderStyle}>LOGGED-IN</span>,
+      dataIndex: 'loggedIn',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (loggedIn) => {
+        const textClass = loggedIn ? 'text-alternate' : 'text-alternate';
+        return <span className={textClass}>{loggedIn ? 'Yes' : 'No'}</span>;
+      },
     },
     {
       title: <span style={tableHeaderStyle}>LOG-IN TIME</span>,
       dataIndex: 'loginTime',
-      responsive: ['xs','md','lg','sm','xl'],
+      
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
+
     },
     {
-      title:  <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
+      title: <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
       dataIndex: 'logOutTime',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
+
     },
+
     {
-      title:  <span style={tableHeaderStyle}>ACTION</span>,
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       dataIndex: 'id',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
-        <div
-          onClick={() => handleView(record.id)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
-        >
-          <CsLineIcons icon="eye" />
-        </div>
-        <div
-          onClick={() => handleEdit(record.id)}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
-        >
-          <CsLineIcons icon="pen" />
-        </div>
-        <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
-          <CsLineIcons icon="bin" />
-        </div>
-      </span>
+          <NavLink
+            to={{
+              pathname: `/users/detail/${record.id}`,
+              state: { user: record },
+            }}
+          >
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="eye" />
+            </div>
+          </NavLink>
+
+          <NavLink
+            to={{
+              pathname: `/users/edit/${record.id}`,
+              state: { user: record },
+            }}
+          >
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="pen" />
+            </div>
+          </NavLink>
+
+          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+            <CsLineIcons icon="bin" />
+          </div>
+        </span>
       ),
     },
   ];
- 
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -328,12 +382,7 @@ const UsersList = () => {
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
+   
 
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
@@ -369,14 +418,14 @@ const UsersList = () => {
 
       {/* List Header Start */}
       <Table
-    columns={columns}
-    dataSource={displayedData}
-    rowSelection={{
-      type: selectionType,
-      ...rowSelection,
-    }}
-    pagination={false}
-  />
+        columns={columns}
+        dataSource={displayedData}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+        pagination={false}
+      />
 
       {/* List Items End */}
 
@@ -410,9 +459,6 @@ const UsersList = () => {
           <Button color="primary">Yes</Button>
         </DialogActions>
       </Dialog>
-
-            
-
     </>
   );
 };

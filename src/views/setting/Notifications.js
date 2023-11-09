@@ -501,7 +501,7 @@ const Notifications = () => {
   However, there's an antd Pagination  in use.
 */}
 
-      {/* <div className="d-flex justify-content-center mt-5">
+      <div className="d-flex justify-content-center mt-5">
         <Pagination>
           <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
             <CsLineIcons icon="chevron-left" />
@@ -515,7 +515,8 @@ const Notifications = () => {
             <CsLineIcons icon="chevron-right" />
           </Pagination.Next>
         </Pagination>
-      </div> */}
+      </div>
+
       {/* Pagination End */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
