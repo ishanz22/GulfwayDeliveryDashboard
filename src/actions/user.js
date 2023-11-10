@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const getCities = createAsyncThunk('city/all', async ({ rejectWithValue }) => {
+export const getUserDetails = createAsyncThunk('user/details-all', async ({ rejectWithValue }) => {
   try {
     const config = {
       headers: {
@@ -9,7 +9,7 @@ export const getCities = createAsyncThunk('city/all', async ({ rejectWithValue }
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     };
-    const response = await axios.get(`/api/admin/get-city`, config);
+    const response = await axios.get(`/api/user/list`, config);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -18,15 +18,16 @@ export const getCities = createAsyncThunk('city/all', async ({ rejectWithValue }
   }
 });
 
-export const getRestaurantCategories = createAsyncThunk('restaurant-category/all', async ({ rejectWithValue }) => {
+export const editUser = createAsyncThunk('user/edit', async ({ id, data }, { rejectWithValue }) => {
+  console.log(id, data);
   try {
     const config = {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'multipart/form-data',
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     };
-    const response = await axios.get(`/api/admin/get-restaurant-category`, config);
+    const response = await axios.post(`/api/user/edit/${id}`, data, config);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -35,7 +36,7 @@ export const getRestaurantCategories = createAsyncThunk('restaurant-category/all
   }
 });
 
-export const getGroceryCategories = createAsyncThunk('grocery-category/all', async ({ rejectWithValue }) => {
+export const deleteUser = createAsyncThunk('user/delete', async ({ id }, { rejectWithValue }) => {
   try {
     const config = {
       headers: {
@@ -43,7 +44,7 @@ export const getGroceryCategories = createAsyncThunk('grocery-category/all', asy
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     };
-    const response = await axios.get(`/api/admin/get-grocery-category`, config);
+    const response = await axios.post(`/api/user/delete/${id}`, {}, config);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -52,16 +53,16 @@ export const getGroceryCategories = createAsyncThunk('grocery-category/all', asy
   }
 });
 
-export const getLogFile = createAsyncThunk('log-file/all', async ({ module }, { rejectWithValue }) => {
-  console.log(module);
+export const userById = createAsyncThunk('user/id', async ({ id }, { rejectWithValue }) => {
   try {
+    console.log(id);
     const config = {
       headers: {
         'Content-Type': 'application/json',
         authorization: `Bearer ${localStorage.getItem('token')}`,
       },
     };
-    const response = await axios.post(`/api/admin/log-file`, { module }, config);
+    const response = await axios.post(`/api/user/list-user/${id}`, {}, config);
     console.log(response.data);
     return response.data;
   } catch (error) {

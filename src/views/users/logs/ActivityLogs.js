@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -7,9 +7,12 @@ import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
-import { Table, Tag } from 'antd';
+import { Table, Spin } from 'antd';
 import UserLogsData from 'data/UserLogs';
+import { useDispatch, connect } from 'react-redux';
 import moment from 'moment';
+import { getLogFile } from 'actions/admin';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -20,7 +23,7 @@ const rowSelection = {
     name: record.name,
   }),
 };
-const ActivityLogs = () => {
+const ActivityLogs = (props) => {
   const title = 'Activity Logs';
   const description = 'Ecommerce Customer List Page';
   const [selectionType, setSelectionType] = useState('checkbox');
@@ -31,6 +34,10 @@ const ActivityLogs = () => {
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(UserLogsData);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const dispatch = useDispatch();
+
+  const { logs, loading, error } = props;
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -39,8 +46,14 @@ const ActivityLogs = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(getLogFile({ module: 'User' }));
+    console.log(logs);
+  }, []);
+
   const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
+    color: 'grey',
+    fontSize: '10px',
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -147,48 +160,42 @@ const ActivityLogs = () => {
     doc.save('RefundList.pdf');
   };
 
-
   const columns = [
     {
       title: <span style={tableHeaderStyle}>IDENTIFIER</span>,
       dataIndex: 'identifier',
       key: 'identifier',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       // render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
-      render: (text, record) => <NavLink to="/vendors/Grocery/detail">{text}</NavLink>,
-
+      render: (text, record) => <NavLink to="/vendors/Grocery/detail">{record?.identifier}</NavLink>,
     },
     {
       title: <span style={tableHeaderStyle}>ACTIVITY</span>,
       dataIndex: 'activity',
       key: 'activity',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text) => (
-        <div style={{ wordBreak: ' break-all' }}>{text}</div>
-      ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.activity}</div>,
     },
     {
       title: <span style={tableHeaderStyle}>MODULE</span>,
       dataIndex: 'module',
       key: 'module',
-      responsive: ['xs','md','lg','sm','xl'],
-        render: (text) => (
-    <div style={{ wordBreak: ' break-all' }}>{text}</div>
-  ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.module}</div>,
     },
     {
       title: <span style={tableHeaderStyle}>DATE / TIME</span>,
       dataIndex: 'dateTime',
       key: 'dateTime',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (date) => {
-        const formattedDate = moment(date).format('MMM D, YYYY');
-        const formattedTime = moment(date).format('h:mm A');
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => {
+        const formattedDate = moment(record?.dateTime).format('MMM D, YYYY');
+        const formattedTime = moment(record?.dateTime).format('h:mm A');
 
         return (
           <div>
             <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate} 
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
             </div>
             <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
               <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
@@ -197,17 +204,20 @@ const ActivityLogs = () => {
         );
       },
     },
-
-
-
   ];
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
   };
   const handleDeleteConfirmed = () => {
-    
     setIsDeleteDialogOpen(false);
   };
+
+  const customLoader = (
+    <div style={{ textAlign: 'center', margin: '50px auto' }}>
+      <Spin indicator={<LoadingOutlined style={{ fontSize: 48, color: '#1890ff' }} spin />} />
+      <p style={{ marginTop: '10px' }}>Loading...</p>
+    </div>
+  );
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -269,7 +279,6 @@ const ActivityLogs = () => {
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
 
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -284,57 +293,34 @@ const ActivityLogs = () => {
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
-
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-          {/* Length End */}
         </Col>
       </Row>
 
       <div>
-        <Table
-          rowSelection={{
-            type: selectionType,
-            ...rowSelection,
-          }}
-          columns={columns}
-          dataSource={displayedData}
-          pagination={false}
-        />
+        {loading ? (
+          customLoader // Use the custom loader
+        ) : (
+          <Table
+            rowSelection={{
+              type: selectionType,
+              ...rowSelection,
+            }}
+            columns={columns}
+            dataSource={logs}
+          />
+        )}
       </div>
-
-      {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div>
-      {/* Pagination End */}
-
-
     </>
   );
 };
 
-export default ActivityLogs  ;
+function mapStateToProps(state) {
+  console.log(typeof state.admin.logs);
+  return {
+    error: state.admin.error,
+    loading: state.admin.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+    logs: state?.admin?.logs,
+  };
+}
+export default connect(mapStateToProps)(ActivityLogs);

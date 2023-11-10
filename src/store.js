@@ -18,6 +18,7 @@ import { REDUX_PERSIST_KEY } from 'config.js';
 import authReducer from './reducers/auth';
 import restaurantReducer from './reducers/restaurant';
 import adminReducer from './reducers/admin';
+import userReducer from './reducers/user';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
@@ -34,6 +35,7 @@ const persistedReducer = persistReducer(
     lang: langReducer,
     auth: authReducer,
     admin: adminReducer,
+    user: userReducer,
     restaurant: restaurantReducer,
     menu: menuReducer,
     notification: notificationReducer,

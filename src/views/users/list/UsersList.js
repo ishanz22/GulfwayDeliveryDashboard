@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -13,11 +13,14 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Table, Tag } from 'antd';
+import { Table, Spin } from 'antd';
 import UserAccountsData from 'data/EmployeeAccountsData';
 import { gulfwayBlue } from 'layout/colors/Colors';
+import { useDispatch, connect } from 'react-redux';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import moment from 'moment';
+import { deleteUser, getUserDetails } from 'actions/user';
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -29,19 +32,28 @@ const rowSelection = {
   }),
 };
 
-const UsersList = () => {
+const UsersList = (props) => {
   const title = 'Users List';
   const description = 'Ecommerce Customer List Page';
+  const { user, error, isAuthenticated, loading } = props;
   const [selectionType, setSelectionType] = useState('checkbox');
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(UserAccountsData);
+  const [filteredData, setFilteredData] = useState(user);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [showModalNewUser, setShowModalNewUser] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const [deletedId, setDeletedId] = useState('');
+
+  const dispatch = useDispatch();
+
+  const getImage = (image) => {
+    return `${process.env.REACT_APP_BASE_URL}/${image}`;
+  };
 
   const smallImageStyle = {
     width: '40px',
@@ -54,6 +66,10 @@ const UsersList = () => {
     color: 'grey',
     fontSize: '10px',
   };
+  useEffect(() => {
+    dispatch(getUserDetails({}));
+    console.log(user);
+  }, []);
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -72,24 +88,8 @@ const UsersList = () => {
     setSelectedStatus(status);
 
     // Filter data by status
-    const filteredItems = UserAccountsData.filter((item) => item.status === status);
+    const filteredItems = user.filter((item) => item.status === status);
     setFilteredData(filteredItems);
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
-
-  const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
   };
 
   const exportToExcel = () => {
@@ -177,6 +177,7 @@ const UsersList = () => {
 
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
+    setDeletedId('');
   };
 
   const handleSelectChange = () => {
@@ -205,7 +206,15 @@ const UsersList = () => {
 
   const handleDelete = (id) => {
     console.log(`Delete User ID ${id}`);
+    setDeletedId(id);
     setIsDeleteDialogOpen(true);
+  };
+
+  const userDelete = () => {
+    console.log(deletedId);
+    dispatch(deleteUser({ id: deletedId }));
+    setDeletedId('');
+    setIsDeleteDialogOpen(false);
   };
   const columns = [
     {
@@ -216,11 +225,10 @@ const UsersList = () => {
       render: (text, record) => (
         <NavLink
           to={{
-            pathname: `/users/detail/${record.id}`,
-            state: { user: record },
+            pathname: `/users/detail/${record.customId}`,
           }}
         >
-          {text}
+          {record?.customId}
         </NavLink>
       ),
     },
@@ -231,11 +239,13 @@ const UsersList = () => {
       render: (text, record) => (
         <div className="d-flex">
           <div className="round-image">
-            <img style={smallImageStyle} src={record.userImage} alt={record.name} />
+            <img style={smallImageStyle} src={getImage(record?.image)} alt={record.name} />
           </div>
           <div>
-            <div className="ms-2">{record.name}</div>
-            <div className="text-alternate ms-2 text-medium">{record.email}</div>
+            <div className="ms-2">
+              {record?.firstName} {record?.lastName}
+            </div>
+            <div className="text-alternate ms-2 text-medium">{record?.email}</div>
           </div>
         </div>
       ),
@@ -244,53 +254,69 @@ const UsersList = () => {
     {
       title: <span style={tableHeaderStyle}>CREATED</span>,
       dataIndex: 'date',
-      
-      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {moment(record?.createdAt).format('h:mm A')}&nbsp;|&nbsp;{moment(record?.createdAt).format('MMM D, YYYY')}
+        </div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>PHONE</span>,
-      dataIndex: 'phone',
+      dataIndex: 'mobile',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-   
+      render: (text, record) => <div className="text-alternate ms-2 text-medium">{record?.mobile}</div>,
     },
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
-      dataIndex: 'isActive',
+      dataIndex: 'isActivated',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (isActive) => <div style={{ color: isActive ? '#B3B95A' : 'RGB(226, 182, 75)' }}>{isActive ? 'Active' : 'Inactive'}</div>,
+      render: (text, record) => (
+        <div style={{ color: record?.isActivated ? '#B3B95A' : 'RGB(226, 182, 75)' }}>{record?.isActivated ? 'Active' : 'Inactive'}</div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
-
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {moment(record?.updatedAt).format('h:mm A')}&nbsp;|&nbsp;{moment(record?.updatedAt).format('MMM D, YYYY')}
+        </div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>LOGGED-IN</span>,
       dataIndex: 'loggedIn',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (loggedIn) => {
-        const textClass = loggedIn ? 'text-alternate' : 'text-alternate';
-        return <span className={textClass}>{loggedIn ? 'Yes' : 'No'}</span>;
+      render: (text, record) => {
+        const textClass = record?.loggedIn ? 'text-alternate' : 'text-alternate';
+        return <span className={textClass}>{record?.loggedIn ? 'Yes' : 'No'}</span>;
       },
     },
     {
       title: <span style={tableHeaderStyle}>LOG-IN TIME</span>,
       dataIndex: 'loginTime',
-      
-      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
 
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('h:mm A')} {record?.lastLoggedInTime === null ? '' : ` | `}
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('MMM D, YYYY')}{' '}
+        </div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
       dataIndex: 'logOutTime',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (date) => <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>{moment(date).format('h:mm A')}&nbsp;|&nbsp;{moment(date).format('MMM D, YYYY')}</div>
-
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('h:mm A')} {record?.lastLoggedOutTime === null ? '' : ` | `}
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('MMM D, YYYY')}
+        </div>
+      ),
     },
 
     {
@@ -301,8 +327,7 @@ const UsersList = () => {
         <span className="d-flex">
           <NavLink
             to={{
-              pathname: `/users/detail/${record.id}`,
-              state: { user: record },
+              pathname: `/users/detail/${record?.customId}`,
             }}
           >
             <div
@@ -320,8 +345,7 @@ const UsersList = () => {
 
           <NavLink
             to={{
-              pathname: `/users/edit/${record.id}`,
-              state: { user: record },
+              pathname: `/users/edit/${record?.customId}`,
             }}
           >
             <div
@@ -337,13 +361,20 @@ const UsersList = () => {
             </div>
           </NavLink>
 
-          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+          <div onClick={() => handleDelete(record?.customId)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
             <CsLineIcons icon="bin" />
           </div>
         </span>
       ),
     },
   ];
+
+  const customLoader = (
+    <div style={{ textAlign: 'center', margin: '50px auto' }}>
+      <Spin indicator={<LoadingOutlined style={{ fontSize: 48, color: '#1890ff' }} spin />} />
+      <p style={{ marginTop: '10px' }}>Loading...</p>
+    </div>
+  );
 
   return (
     <>
@@ -382,7 +413,6 @@ const UsersList = () => {
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
-   
 
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
@@ -398,54 +428,25 @@ const UsersList = () => {
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
-
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-          {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
-      <Table
-        columns={columns}
-        dataSource={displayedData}
-        rowSelection={{
-          type: selectionType,
-          ...rowSelection,
-        }}
-        pagination={false}
-      />
+      {loading ? (
+        customLoader // Use the custom loader
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={user}
+          rowSelection={{
+            type: selectionType,
+            ...rowSelection,
+          }}
+          // pagination={true}
+        />
+      )}
 
       {/* List Items End */}
-
-      {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div>
-      {/* Pagination End */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleCancelDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
@@ -456,11 +457,22 @@ const UsersList = () => {
           <Button onClick={handleCancelDelete} color="primary">
             No
           </Button>
-          <Button color="primary">Yes</Button>
+          <Button color="primary" onClick={() => userDelete()}>
+            Yes
+          </Button>
         </DialogActions>
       </Dialog>
     </>
   );
 };
 
-export default UsersList;
+function mapStateToProps(state) {
+  console.log(state.user);
+  return {
+    error: state.user.error,
+    loading: state.user.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state?.user?.user,
+  };
+}
+export default connect(mapStateToProps)(UsersList);

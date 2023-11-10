@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@ant-design/icons-svg": "^4.3.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",

@@ -1,18 +1,37 @@
-import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useLocation, useParams } from 'react-router-dom';
 import { Card, Col, Form, Row } from 'react-bootstrap';
 
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { userById } from 'actions/user';
+import moment from 'moment';
 
-
-const UsersDetail = () => {
-  const location = useLocation();
-  const { user } = location.state; 
-  console.log(user);
-  const title = `User ID #${user.id}`;
+const UsersDetail = (props) => {
+  const { userId } = useParams();
+  console.log(userId);
+  const title = `User ID # ${userId}`;
   const description = 'Ecommerce Storefront Checkout Page';
 
+  const dispatch = useDispatch();
+
+  const getUser = () => {
+    console.log(userId);
+    dispatch(userById({ id: userId }));
+  };
+
+  const { user, error, loading } = props;
+
+  useEffect(() => {
+    getUser();
+    console.log(user);
+    // setrestaurant(restaurant);
+  }, []);
+
+  const getImage = (image) => {
+    return `${process.env.REACT_APP_BASE_URL}/${image}`;
+  };
 
   return (
     <>
@@ -41,19 +60,19 @@ const UsersDetail = () => {
                 <Row className="g-3">
                   <Col lg="6">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly />
+                    <Form.Control type="text" value={`${user?.firstName}`} readOnly />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.name}`} readOnly />
+                    <Form.Control type="text" value={`${user?.lastName}`} readOnly />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.phone}`} readOnly />
+                    <Form.Control type="text" value={`${user?.mobile}`} readOnly />
                   </Col>
                   <Col lg="6">
                     <Form.Label>Email</Form.Label>
-                    <Form.Control type="text" defaultValue={`${user.email}`} readOnly />
+                    <Form.Control type="text" value={`${user?.email}`} readOnly />
                   </Col>
                 </Row>
               </Form>
@@ -71,7 +90,7 @@ const UsersDetail = () => {
                   <div className="text-center">
                     <div className="position-relative d-inline-block">
                       <img
-                        src={user.userImage}
+                        src={getImage(user?.image)}
                         alt="Profile"
                         className="rounded-circle"
                         style={{
@@ -84,7 +103,7 @@ const UsersDetail = () => {
                       <div className="position-absolute bottom-0 end-0 bg-white rounded-circle" style={{ width: '25px', height: '25px' }}>
                         <div
                           className="position-absolute top-50 start-50 translate-middle"
-                          style={{ width: '20px', height: '20px', background: user.loggedIn ? 'green' : 'grey', borderRadius: '50%' }}
+                          style={{ width: '20px', height: '20px', background: user?.loggedIn ? 'green' : 'grey', borderRadius: '50%' }}
                         />
                       </div>
                     </div>
@@ -94,8 +113,8 @@ const UsersDetail = () => {
                 <text>&nbsp;</text>
               </Col>
 
-              <h5 className="me-3 text-center">{`${user.name}`}</h5>
-              <Form.Label style={{ display: 'block', margin: '0 auto', textAlign: 'center' }}>{`${user.email}`}</Form.Label>
+              <h5 className="me-3 text-center">{`${user?.firstName} ${user?.lastName}`}</h5>
+              <Form.Label style={{ display: 'block', margin: '0 auto', textAlign: 'center' }}>{`${user?.email}`}</Form.Label>
             </Card.Body>
           </Card>
         </Col>
@@ -109,21 +128,18 @@ const UsersDetail = () => {
           <Card.Body>
             <Form>
               <Row className="g-3">
-                <Col lg="3">
+                <Col lg="4">
                   <Form.Label>Address </Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.address}`} readOnly />
+                  <Form.Control type="text" value={`${user?.address}`} readOnly />
                 </Col>
-                <Col lg="3">
-                  <Form.Label>City</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.city}`} readOnly />
-                </Col>
-                <Col lg="3">
+
+                <Col lg="4">
                   <Form.Label>Latitude</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.latitude}`} readOnly />
+                  <Form.Control type="text" value={`${user?.lat}`} readOnly />
                 </Col>
-                <Col lg="3">
+                <Col lg="4">
                   <Form.Label>Longitude</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.longitude}`} readOnly />
+                  <Form.Control type="text" value={`${user?.long}`} readOnly />
                 </Col>
               </Row>
             </Form>
@@ -138,19 +154,19 @@ const UsersDetail = () => {
               <Row className="g-3">
                 <Col lg="3">
                   <Form.Label>Created Date </Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.createdDate}`} readOnly />
+                  <Form.Control type="text" value={`${moment(user?.createdAt).format('LLL')}`} readOnly />
                 </Col>
                 <Col lg="3">
                   <Form.Label>Updated Date</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.updatedDate}`} readOnly />
+                  <Form.Control type="text" value={`${moment(user?.updatedAt).format('LLL')}`} readOnly />
                 </Col>
                 <Col lg="3">
                   <Form.Label>Logged Time</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.loginTime}`} readOnly />
+                  <Form.Control type="text" value={`${moment(user?.lastLoggedInTime).format('LLL')}`} readOnly />
                 </Col>
                 <Col lg="3">
                   <Form.Label>Logout Time</Form.Label>
-                  <Form.Control type="text" defaultValue={`${user.logOutTime}`} readOnly />
+                  <Form.Control type="text" value={`${moment(user?.lastLoggedOutTime).format('LLL')}`} readOnly />
                 </Col>
               </Row>
             </Form>
@@ -162,4 +178,13 @@ const UsersDetail = () => {
   );
 };
 
-export default UsersDetail;
+function mapStateToProps(state) {
+  console.log(state.user);
+  return {
+    user: state.user.userDetails,
+    error: state.user.error,
+    loading: state.user.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+  };
+}
+export default connect(mapStateToProps)(UsersDetail);

@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getCities, getGroceryCategories, getRestaurantCategories } from 'actions/admin';
+import { getCities, getGroceryCategories, getLogFile, getRestaurantCategories } from 'actions/admin';
 
 const authSlice = createSlice({
   name: 'restaurant',
@@ -9,6 +9,7 @@ const authSlice = createSlice({
     cities: null,
     groceryCategories: null,
     restaurantCategories: null,
+    logs: null,
   },
   reducers: {},
   extraReducers: {
@@ -55,6 +56,21 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = payload;
       state.groceryCategories = null;
+    },
+
+    // get logs
+    [getLogFile.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [getLogFile.fulfilled]: (state, { payload }) => {
+      state.loading = false;
+      state.logs = payload.data;
+    },
+    [getLogFile.rejected]: (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+      state.logs = null;
     },
   },
 });

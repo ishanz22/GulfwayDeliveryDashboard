@@ -7,7 +7,7 @@ import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, Ove
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
-import { Table,Tag,Image } from 'antd';
+import { Table, Tag, Image } from 'antd';
 import { gulfwayBlue } from 'layout/colors/Colors';
 import ExcelJS from 'exceljs';
 import Dialog from '@mui/material/Dialog';
@@ -16,7 +16,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import RewardListData from '../../../data/RewardListData';
-
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -63,10 +62,10 @@ const RewardList = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '40px', 
-    height: '40px', 
-    borderRadius: '50%', 
-    overflow: 'hidden', 
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
   };
 
   const nextPage = () => {
@@ -185,19 +184,17 @@ const RewardList = () => {
       dataIndex: 'id',
       key: 'id',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text, record) => (
-        <a href={`/users/detail/${record.id}`}>{text}</a>
-      ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <a href={`/users/detail/${record.id}`}>{text}</a>,
     },
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="round-image">
             <img style={smallImageStyle} src={record.image} alt={record.name} />
           </div>
@@ -213,35 +210,35 @@ const RewardList = () => {
       dataIndex: 'orderId',
       key: 'orderId',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
       title: <span style={tableHeaderStyle}>Points</span>,
       dataIndex: 'points',
       key: 'points',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
       title: <span style={tableHeaderStyle}>Transaction Date</span>,
       dataIndex: 'transactionDate',
       key: 'transactionDate',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
     {
-      title:<span style={tableHeaderStyle}>Amount</span> ,
+      title: <span style={tableHeaderStyle}>Amount</span>,
       dataIndex: 'transactionAmount',
       key: 'transactionAmount',
       sorter: true,
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => `AED ${text}`,
     },
     {
       title: <span style={tableHeaderStyle}>Status</span>,
       dataIndex: 'status',
       key: 'status',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => {
         let color = 'default';
 
@@ -251,20 +248,19 @@ const RewardList = () => {
           color = 'success';
         } else if (text === 'Declined') {
           color = 'error';
-        }else if (text === 'ON-TRAVEL') {
+        } else if (text === 'ON-TRAVEL') {
           color = 'blue';
-        }else if (text === 'REDEEMED') {
+        } else if (text === 'REDEEMED') {
           color = 'orange';
-        }else if (text === 'EARNED') {
+        } else if (text === 'EARNED') {
           color = 'pink';
         }
 
         return <Tag color={color}>{text}</Tag>;
       },
-      
     },
     {
-      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
       render: (text, record) => (
         <span className="d-flex">
@@ -293,7 +289,6 @@ const RewardList = () => {
   };
   const data = displayedData.map((item) => ({ ...item, key: item.id }));
   const handleDeleteConfirmed = () => {
-    
     setIsDeleteDialogOpen(false);
   };
   return (
@@ -423,7 +418,6 @@ const RewardList = () => {
         </Pagination>
       </div>
       {/* Pagination End */}
-
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>

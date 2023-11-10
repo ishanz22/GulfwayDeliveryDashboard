@@ -193,10 +193,10 @@ const routesAndMenuItems = {
       icon: 'user',
       subs: [
         { path: '/list', label: 'List', component: users.list },
-        { path: '/detail',  component: users.detail },
+        { path: '/detail/:userId',  component: users.detail },
        
         // { path: '/analytics', label: 'Analytics', component: users.analytics },
-        { path: '/edit',  component: users.edit },
+        { path: '/edit/:userId',  component: users.edit },
         { path: '/activity', label: 'Activity', component: users.logs },
    
       ],
