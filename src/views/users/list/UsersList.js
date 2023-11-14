@@ -239,7 +239,7 @@ const UsersList = (props) => {
       render: (text, record) => (
         <div className="d-flex">
           <div className="round-image">
-            <img style={smallImageStyle} src={getImage(record?.image)} alt={record.name} />
+            <img style={smallImageStyle} src={getImage(record?.image)} alt={record.firstName} />
           </div>
           <div>
             <div className="ms-2">
@@ -251,17 +251,6 @@ const UsersList = (props) => {
       ),
     },
 
-    {
-      title: <span style={tableHeaderStyle}>CREATED</span>,
-      dataIndex: 'date',
-
-      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (text, record) => (
-        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-          {moment(record?.createdAt).format('h:mm A')}&nbsp;|&nbsp;{moment(record?.createdAt).format('MMM D, YYYY')}
-        </div>
-      ),
-    },
     {
       title: <span style={tableHeaderStyle}>PHONE</span>,
       dataIndex: 'mobile',
@@ -277,17 +266,33 @@ const UsersList = (props) => {
       ),
     },
     {
+      title: <span style={tableHeaderStyle}>CREATED</span>,
+      dataIndex: 'date',
+
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {record?.createdAt === null ? '' : moment(record?.createdAt).format('MMM D, YYYY')} {record?.createdAt === null ? '' : `  `}
+          <br />
+          {record?.createdAt === null ? '' : moment(record?.createdAt).format('h:mm A')}{' '}
+        </div>
+      ),
+    },
+
+    {
       title: <span style={tableHeaderStyle}>UPDATED</span>,
       dataIndex: 'updatedDate',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-          {moment(record?.updatedAt).format('h:mm A')}&nbsp;|&nbsp;{moment(record?.updatedAt).format('MMM D, YYYY')}
+          {record?.updatedAt === null ? '' : moment(record?.updatedAt).format('MMM D, YYYY')} {record?.updatedAt === null ? '' : `  `}
+          <br />
+          {record?.updatedAt === null ? '' : moment(record?.updatedAt).format('h:mm A')}{' '}
         </div>
       ),
     },
     {
-      title: <span style={tableHeaderStyle}>LOGGED-IN</span>,
+      title: <span style={tableHeaderStyle}>LOGGEDIN</span>,
       dataIndex: 'loggedIn',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => {
@@ -296,25 +301,27 @@ const UsersList = (props) => {
       },
     },
     {
-      title: <span style={tableHeaderStyle}>LOG-IN TIME</span>,
+      title: <span style={tableHeaderStyle}>LOGIN TIME</span>,
       dataIndex: 'loginTime',
 
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('h:mm A')} {record?.lastLoggedInTime === null ? '' : ` | `}
-          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('MMM D, YYYY')}{' '}
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('MMM D, YYYY')} {record?.lastLoggedInTime === null ? '' : `  `}
+          <br />
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('h:mm A')}{' '}
         </div>
       ),
     },
     {
-      title: <span style={tableHeaderStyle}>LOG-OUT TIME</span>,
+      title: <span style={tableHeaderStyle}>LOGOUT TIME</span>,
       dataIndex: 'logOutTime',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
-          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('h:mm A')} {record?.lastLoggedOutTime === null ? '' : ` | `}
-          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('MMM D, YYYY')}
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('MMM D, YYYY')} {record?.lastLoggedOutTime === null ? '' : `  `}
+          <br />
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('h:mm A')}{' '}
         </div>
       ),
     },

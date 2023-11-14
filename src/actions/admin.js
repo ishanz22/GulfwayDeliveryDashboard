@@ -69,3 +69,20 @@ export const getLogFile = createAsyncThunk('log-file/all', async ({ module }, { 
     return rejectWithValue(error.response.data.message);
   }
 });
+
+export const getSalesData = createAsyncThunk('sales-data/all', async ({ rejectWithValue }) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    };
+    const response = await axios.get(`/api/admin/daily-sales`, config);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error.response.data);
+    return rejectWithValue(error.response.data.message);
+  }
+});

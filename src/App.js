@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 // import layout
 
 import Layout from 'layout/Layout';
+import 'react-toastify/dist/ReactToastify.css';
 
 // import routing modules
 import RouteIdentifier from 'routing/components/RouteIdentifier';

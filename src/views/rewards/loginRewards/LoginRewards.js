@@ -10,6 +10,10 @@ import CheckAll from 'components/check-all/CheckAll';
 import ExcelJS from 'exceljs';
 import { gulfwayBlue } from 'layout/colors/Colors';
 import { Table, Tag, Image } from 'antd';
+import moment from 'moment';
+import { getUserDetails } from 'actions/user';
+import { connect, useDispatch } from 'react-redux';
+
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -17,21 +21,21 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import RewardListData from '../../../data/RewardListData';
 
-
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
   getCheckboxProps: (record) => ({
-    disabled: record.name === 'Disabled User',
-    name: record.name,
+    disabled: record.firstName === 'Disabled User',
+    firstName: record.firstName,
   }),
 };
-const LoginRewards = () => {
+const LoginRewards = (props) => {
   const title = 'Login Rewards';
   const description = 'Ecommerce Customer List Page';
+  const dispatch = useDispatch();
   const [selectionType, setSelectionType] = useState('checkbox');
-
+  const { user, error, isAuthenticated, loading } = props;
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -44,8 +48,14 @@ const LoginRewards = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(getUserDetails({}));
+    console.log(user);
+  }, []);
+
   const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
+    color: 'grey',
+    fontSize: '10px',
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -56,7 +66,7 @@ const LoginRewards = () => {
   };
 
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(RewardListData);
+  const [filteredData, setFilteredData] = useState(user);
 
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -65,27 +75,11 @@ const LoginRewards = () => {
   // Track the selected section
 
   const smallImageStyle = {
-    width: '40px', 
-    height: '40px', 
-    borderRadius: '50%', 
-    overflow: 'hidden', 
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
   };
-
-  const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
 
   // making K,M,B Format
   const formatNumberToKMB = (number) => {
@@ -105,7 +99,7 @@ const LoginRewards = () => {
   };
 
   const exportToExcel = () => {
-    const dataToExport = RewardListData.map((item) => ({
+    const dataToExport = user.map((item) => ({
       ID: item.id,
       Name: item.name,
       Purchase: `$${item.purchase}`,
@@ -157,7 +151,7 @@ const LoginRewards = () => {
 
   const exportToPDF = () => {
     const doc = new JsPDF();
-    const tableData = RewardListData.map((item) => [item.id, item.name, `$${item.phone}`, item.assignedOrders, item.status]);
+    const tableData = user.map((item) => [item.id, item.name, `$${item.phone}`, item.assignedOrders, item.status]);
     const columns = ['ID', 'Name', 'Phone', 'Assigned Orders', 'Status'];
 
     doc.autoTable({
@@ -182,63 +176,81 @@ const LoginRewards = () => {
     setIsDeleteDialogOpen(true);
   };
 
-  
+  const getImage = (image) => {
+    return `${process.env.REACT_APP_BASE_URL}/${image}`;
+  };
+
   const columns = [
     {
-      title:  <span style={tableHeaderStyle}>INVOICE ID</span>,
+      title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       sorter: (a, b) => a.id - b.id,
-      render: (text, record) => (
-        <a href={`/riders/detail/${record.id}`}>{text}</a>
-      ),
+      render: (text, record) => <a href={`/riders/detail/${record.customId}`}>{record.customId}</a>,
     },
     {
-      title:  <span style={tableHeaderStyle}>NAME</span>,
+      title: <span style={tableHeaderStyle}>USER</span>,
       dataIndex: 'name',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="round-image">
-            <img style={smallImageStyle} src={record.image} alt={record.name} />
+            <img style={smallImageStyle} src={getImage(record?.image)} alt={record.firstName} />
           </div>
           <div>
-            <div className="ms-2">{record.name}</div>
+            <div className="ms-2">
+              {' '}
+              {record?.firstName} {record?.lastName}
+            </div>
             <div className="text-alternate ms-2 text-medium">{record.email}</div>
           </div>
         </div>
       ),
     },
-    {
-      title: <span style={tableHeaderStyle}>TOTAL AMOUNT</span>,
-      dataIndex: 'transactionAmount',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text) => (
-        <span>AED {text}</span>
-      ),
-      sorter: (a, b) => a.transactionAmount - b.transactionAmount,
-    },
-    {
-      title:<span style={tableHeaderStyle}>DISCOUNTED AMOUNT</span>, 
-      dataIndex: 'points',
-      responsive: ['xs','md','lg','sm','xl'],
-      sorter: (a, b) => a.points - b.points,
-    },
+
     {
       title: <span style={tableHeaderStyle}>POINTS</span>,
       dataIndex: 'points',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <span className="text-alternate ms-2 text-medium">{record.touchPoint}</span>,
     },
     {
       title: <span style={tableHeaderStyle}>RECEIVED</span>,
       dataIndex: 'received',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <span className="text-alternate ms-2 text-medium">1</span>,
     },
 
     {
-      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      title: <span style={tableHeaderStyle}>LOGIN TIME</span>,
+      dataIndex: 'loginTime',
+
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('MMM D, YYYY')} {record?.lastLoggedInTime === null ? '' : `  `}
+          <br />
+          {record?.lastLoggedInTime === null ? '' : moment(record?.lastLoggedInTime).format('h:mm A')}{' '}
+        </div>
+      ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>LOGOUT TIME</span>,
+      dataIndex: 'logOutTime',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('MMM D, YYYY')} {record?.lastLoggedOutTime === null ? '' : `  `}
+          <br />
+          {record?.lastLoggedOutTime === null ? '' : moment(record?.lastLoggedOutTime).format('h:mm A')}{' '}
+        </div>
+      ),
+    },
+
+    {
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div
@@ -263,12 +275,11 @@ const LoginRewards = () => {
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
   };
-  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+  const data = user && user.map((item) => ({ ...item, key: item.id }));
   const handleDeleteConfirmed = () => {
-    
     setIsDeleteDialogOpen(false);
   };
-  
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -329,14 +340,6 @@ const LoginRewards = () => {
           {/* Search End */}
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
-          {/* Print Button Start */}
-          {/* <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-                  <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-                    <CsLineIcons icon="print" />
-                  </Button>
-                </OverlayTrigger> */}
-          {/* Print Button End */}
-
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Export</Tooltip>}>
@@ -351,55 +354,20 @@ const LoginRewards = () => {
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
-
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                {itemsPerPage} Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-
-          {/* Length End */}
         </Col>
       </Row>
 
       {/* List Header Start */}
       <Table
-    columns={columns}
-    dataSource={data}
-    rowSelection={{
-      type: selectionType,
-      ...rowSelection,     
-    }}
-    pagination={false}
-  />
+        columns={columns}
+        dataSource={data}
+        rowSelection={{
+          type: selectionType,
+          ...rowSelection,
+        }}
+      />
 
       {/* List Items End */}
-
-      {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div>
-      {/* Pagination End */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
@@ -415,9 +383,17 @@ const LoginRewards = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
     </>
   );
 };
 
-export default LoginRewards;
+function mapStateToProps(state) {
+  console.log(state.user);
+  return {
+    error: state.user.error,
+    loading: state.user.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+    user: state?.user?.user,
+  };
+}
+export default connect(mapStateToProps)(LoginRewards);

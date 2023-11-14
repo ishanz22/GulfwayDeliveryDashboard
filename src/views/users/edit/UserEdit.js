@@ -7,14 +7,16 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { editUser, userById } from 'actions/user';
 import moment from 'moment';
+import { toast } from 'react-toastify';
 
 // import { profile } from '../../../../public/img/profile/profile-11.webp';
 
 const UserEdit = (props) => {
   const [isFormModified, setIsFormModified] = useState(false);
+  const [edited, setEdited] = useState(false);
   const [isImageUploaded, setIsImageUploaded] = useState(false);
 
-  const { userDetails, error, isAuthenticated, loading } = props;
+  const { userDetails, error, success, loading } = props;
 
   const { userId } = useParams();
   console.log(userId);
@@ -24,6 +26,7 @@ const UserEdit = (props) => {
   const getUser = () => {
     console.log(userId);
     dispatch(userById({ id: userId }));
+    setEdited(true);
   };
 
   // const { user } = useSelector((state) => state.user);
@@ -107,8 +110,9 @@ const UserEdit = (props) => {
     getUser();
     console.log(userDetails);
     setFormData(userDetails);
+
     // setrestaurant(restaurant);
-  }, []);
+  }, [formData]);
 
   const result = profileImageSrc
     ? URL.createObjectURL(profileImageSrc)
@@ -295,7 +299,7 @@ function mapStateToProps(state) {
     userDetails: state.user.userDetails,
     error: state.auth.error,
     loading: state.auth.loading,
-    isAuthenticated: state.auth.isAuthenticated,
+    success: state.user.success,
   };
 }
 export default connect(mapStateToProps)(UserEdit);

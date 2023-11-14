@@ -9,16 +9,20 @@ const BarChart = () => {
 
   useEffect(() => {
     const labels = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul' // Add more months as needed
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul', // Add more months as needed
     ];
     const data = {
       labels,
       datasets: [
         {
           label: 'Dataset 1',
-          data: Array.from({ length: DATA_COUNT }, () =>
-            Math.floor(Math.random() * 100)
-          ),
+          data: Array.from({ length: DATA_COUNT }, () => Math.floor(Math.random() * 100)),
           borderColor: '#212529',
           backgroundColor: `rgba(90, 148, 200, 0.2)`,
         },
