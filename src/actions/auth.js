@@ -35,7 +35,7 @@ export const logoutUser = createAsyncThunk('auth/logout', async ({ rejectWithVal
   }
 });
 
-export const forgotPassword = createAsyncThunk('auth/forgotpassword', async ({ email }, { rejectWithValue }) => {
+export const resetPassword = createAsyncThunk('auth/reset-password', async ({ email }, { rejectWithValue }) => {
   try {
     const config = {
       headers: {
@@ -43,6 +43,23 @@ export const forgotPassword = createAsyncThunk('auth/forgotpassword', async ({ e
       },
     };
     const response = await axios.post(`/api/auth/reset-password`, { email }, config);
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error.response.data);
+    return rejectWithValue(error.response.data.message);
+  }
+});
+
+export const resetPasswordToken = createAsyncThunk('auth/reset-password-token', async ({ password, token }, { rejectWithValue }) => {
+  console.log(password, token);
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    const response = await axios.post(`/api/auth/reset-password/${token}`, { password, token }, config);
     console.log(response.data);
     return response.data;
   } catch (error) {

@@ -2,6 +2,7 @@
 import { lazy } from 'react';
 import { USER_ROLE } from 'constants.js';
 import { DEFAULT_PATHS } from 'config.js';
+import Logout from 'views/default/Logout';
 
 const dashboard = lazy(() => import('views/dashboard/Dashboard'));
 // const products = {
@@ -129,7 +130,7 @@ const accounts = {
   detail: lazy(() => import('views/accounts/detail/EmployeeDetails')),
 };
 
-const logout = lazy(() => import('views/default/Login'));
+const logout = lazy(() => import('views/default/Logout'));
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
 
 const routesAndMenuItems = {
@@ -412,8 +413,8 @@ const routesAndMenuItems = {
     //   subs: [{ path: '/general', component: settings.general, hideInMenu: true }],
     // },
     {
-      path: `/login`,
-      component: logout,
+      path: `/logout`,
+      component: Logout,
       label: 'Logout',
       icon: 'logout',
     },

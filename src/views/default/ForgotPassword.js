@@ -7,7 +7,7 @@ import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { useDispatch, connect } from 'react-redux';
-import { forgotPassword } from 'actions/auth';
+import { resetPassword } from 'actions/auth';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -31,7 +31,7 @@ const ForgotPassword = (props) => {
     if (formik.isValid) {
       const { email } = values;
       if (email) {
-        dispatch(forgotPassword({ email }));
+        dispatch(resetPassword({ email }));
       }
     }
   };

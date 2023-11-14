@@ -14,9 +14,10 @@ export const REACT_HELMET_PROPS = {
 export const DEFAULT_PATHS = {
   APP: '/',
   LOGIN: '/login',
+  LOGOUT: '/logout',
   REGISTER: '/register',
   FORGOT_PASSWORD: '/forgot-password',
-  RESET_PASSWORD: '/reset-password',
+  RESET_PASSWORD: '/reset-password/:token',
   USER_WELCOME: '/dashboards/default',
   NOTFOUND: '/page-not-found',
   UNAUTHORIZED: '/unauthorized',

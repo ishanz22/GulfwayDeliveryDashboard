@@ -18,11 +18,6 @@ const Dashboard = (props) => {
   const history = useHistory();
   const description = 'Ecommerce Dashboard Page';
   const { user, error, isAuthenticated, loading } = props;
-  const logout = (e) => {
-    e.preventDefault();
-    console.log('hi 1');
-    dispatch(logoutUser({}));
-  };
 
   useEffect(() => {
     if (error) {
@@ -48,10 +43,6 @@ const Dashboard = (props) => {
         <h1 className="mb-0 pb-0 display-4" id="title">
           Welcome, {user?.firstName}!
         </h1>
-        <button type="button" onClick={logout}>
-          {' '}
-          Logout
-        </button>
       </div>
       {/* Title End */}
 

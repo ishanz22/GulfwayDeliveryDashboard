@@ -1,16 +1,24 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, useParams } from 'react-router-dom';
 import { Button, Form } from 'react-bootstrap';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { connect, useDispatch } from 'react-redux';
+import { resetPasswordToken } from 'actions/auth';
+import { toast } from 'react-toastify';
+
 import LayoutFullpage from 'layout/LayoutFullpage';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import HtmlHead from 'components/html-head/HtmlHead';
-import DeliveryLogo from '../../assets/Delivery.png'; 
+import DeliveryLogo from '../../assets/Delivery.png';
+import 'react-toastify/dist/ReactToastify.css';
 
-const ResetPassword = () => {
+const ResetPassword = (props) => {
   const title = 'Reset Password';
   const description = 'Reset Password Page';
+  const dispatch = useDispatch();
+  const { token } = useParams();
+  const { user, error, success } = props;
   const validationSchema = Yup.object().shape({
     password: Yup.string().min(6, 'Must be at least 6 chars!').required('Password is required'),
     passwordConfirm: Yup.string()
@@ -22,6 +30,34 @@ const ResetPassword = () => {
 
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors } = formik;
+
+  useEffect(() => {
+    console.log(error);
+    if (error) {
+      toast.error(error, {
+        autoClose: 3000,
+      });
+    }
+
+    if (success) {
+      toast.success('Reset Password Successfully', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+    }
+  }, [error, user, success]);
+
+  const onClick = (e) => {
+    e.preventDefault();
+
+    if (formik.isValid) {
+      const { password } = values;
+      console.log(token, password);
+      if (password) {
+        dispatch(resetPasswordToken({ token, password }));
+      }
+    }
+  };
   const leftSide = (
     <div className="min-h-100 d-flex align-items-center">
       <div className="w-100 w-lg-75 w-xxl-50">
@@ -48,11 +84,9 @@ const ResetPassword = () => {
     <div className="sw-lg-70 min-h-100 bg-foreground d-flex justify-content-center align-items-center shadow-deep py-5 full-page-content-right-border">
       <div className="sw-lg-50 px-5">
         <div className="sh-11">
-
-            <div style={{ width: '170px', paddingBottom: '20px' }}>
-              <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
-            </div>
-         
+          <div style={{ width: '170px', paddingBottom: '20px' }}>
+            <img src={DeliveryLogo} alt="Delivery Logo" style={{ width: '100%', height: '100%' }} />
+          </div>
         </div>
         <div className="mb-5">
           <h2 className="cta-1 mb-0 text-primary">Password trouble?</h2>
@@ -76,8 +110,7 @@ const ResetPassword = () => {
               <Form.Control type="password" name="passwordConfirm" onChange={handleChange} value={values.passwordConfirm} placeholder="Verify Password" />
               {errors.passwordConfirm && touched.passwordConfirm && <div className="d-block invalid-tooltip">{errors.passwordConfirm}</div>}
             </div>
-            <Button size="lg" type="submit">
-              
+            <Button size="lg" type="submit" onClick={onClick}>
               Reset Password
             </Button>
           </form>
@@ -94,4 +127,12 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+function mapStateToProps(state) {
+  console.log(state.auth);
+  return {
+    user: state.auth.user,
+    success: state.auth.success,
+    error: state.auth.error,
+  };
+}
+export default connect(mapStateToProps)(ResetPassword);
