@@ -35,7 +35,7 @@ const GroceryList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
   const [filteredData, setFilteredData] = useState(VendorListData);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
@@ -62,12 +62,9 @@ const GroceryList = () => {
     setFilteredData(filteredItems);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
 
   const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
+    if (currentPage < Math.ceil(filteredData.length )) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -344,7 +341,7 @@ const GroceryList = () => {
           {/* Export Dropdown End */}
 
           {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
+          {/* <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
             <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
               <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
                 10 Items
@@ -355,7 +352,7 @@ const GroceryList = () => {
               <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
               <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
             </Dropdown.Menu>
-          </Dropdown>
+          </Dropdown> */}
           {/* Length End */}
         </Col>
       </Row>
@@ -367,13 +364,13 @@ const GroceryList = () => {
             ...rowSelection,
           }}
           columns={columns}
-          dataSource={displayedData}
-          pagination={false}
+          dataSource={VendorListData}
+          // pagination={false}
         />
       </div>
 
       {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
+      {/* <div className="d-flex justify-content-center mt-5">
         <Pagination>
           <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
             <CsLineIcons icon="chevron-left" />
@@ -387,7 +384,7 @@ const GroceryList = () => {
             <CsLineIcons icon="chevron-right" />
           </Pagination.Next>
         </Pagination>
-      </div>
+      </div> */}
       {/* Pagination End */}
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink,useParams } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -27,9 +27,11 @@ const rowSelection = {
     name: record.name,
   }),
 };
-const CustomersList = (props) => {
+const RestaurantList = (props) => {
+  const { userId } = useParams();
   const { restaurant, error, isAuthenticated, loading } = props;
   const dispatch = useDispatch();
+  
   const title = 'Restaurant List';
   const description = 'Ecommerce Customer List Page';
   const [selectionType, setSelectionType] = useState('checkbox');
@@ -41,11 +43,15 @@ const CustomersList = (props) => {
   // const [restaurant, setrestaurant] = useState(restaurant);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
+
+  // 1 step 🩸
+  /*
   useEffect(() => {
     dispatch(getRestaurantDetails({}));
     console.log(restaurant);
     // setrestaurant(restaurant);
   }, []);
+  */
 
   const tableHeaderStyle = {
     color: 'grey',
@@ -73,12 +79,12 @@ const CustomersList = (props) => {
     // setrestaurant(filteredItems);
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = restaurant && restaurant.slice(startIndex, endIndex);
+
+  // 2 step 🩸
+
 
   const nextPage = () => {
-    if (restaurant && currentPage < Math.ceil(restaurant.length / itemsPerPage)) {
+    if (VendorListData && currentPage < Math.ceil(VendorListData.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -178,21 +184,27 @@ const CustomersList = (props) => {
   };
 
   const columns = [
+    // 3 step 🩸
     {
       title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       key: 'id',
       // render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${text}`}>{text}</NavLink>,
-      render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${record?.restaurant?.customId}`}>{record?.restaurant?.customId}</NavLink>,
+      render: (text, record) => <NavLink to={`/vendors/Restaurant/detail/${record?.VendorListData?.customId}`}>{record?.VendorListData?.customId}</NavLink>,
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
+
+    // 4 step
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.restaurant?.name}</div>,
+      // render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.VendorListData?.name}</div>,
+      render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.name}</div>,
     },
+
+    // 5  step
     {
       title: <span style={tableHeaderStyle}>LOCATION</span>,
       dataIndex: 'location',
@@ -216,8 +228,13 @@ const CustomersList = (props) => {
       dataIndex: 'lastOrder',
       key: 'lastOrder',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
-      render: (text, record) => <div>{record?.order[0]?.customId}</div>,
+
+
+    // last step 🩸
+      // render: (text, record) => <div>{record?.order[0]?.customId}</div>,
     },
+
+    // 6 step 🩸
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
@@ -234,29 +251,41 @@ const CustomersList = (props) => {
           color = 'error';
         }
 
-        return <Tag color={color}>{record?.restaurant?.status}</Tag>;
+        return <Tag color={color}>{record?.VendorListData?.status}</Tag>;
       },
     },
-
+ // 7 step 🩸
     {
       title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
+                   <NavLink to={{ pathname: `/vendors/Restaurant/detail/${record.id}`, state: { record } }}>
+
+
+          
           <div
-            onClick={() => handleView(record?.restaurant?.customId)}
+            // onClick={() => handleView(record?.restaurant?.customId)}
+            onClick={() => handleView(record.id)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
           >
             <CsLineIcons icon="eye" />
           </div>
+          </NavLink>
+
+          <NavLink to={{ pathname: `/vendors/Restaurant/edit/${record.id}`, state: { record } }}>
+
+
           <div
-            onClick={() => handleEdit(record?.restaurant?.customId)}
+            // onClick={() => handleEdit(record?.restaurant?.customId)}
+            onClick={() => handleEdit(record.id)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
           >
             <CsLineIcons icon="pen" />
           </div>
-          <div onClick={() => handleDelete(record?.restaurant?.customId)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
+          </NavLink>
+          <div onClick={() => handleDelete(record?.VendorListData?.customId)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
             <CsLineIcons icon="bin" />
           </div>
         </span>
@@ -277,7 +306,7 @@ const CustomersList = (props) => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-NavLink pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
               <CsLineIcons icon="chevron-left" size="13" />
               <span className="align-middle text-small ms-1">Home</span>
             </NavLink>
@@ -285,32 +314,6 @@ const CustomersList = (props) => {
               {title}
             </h1>
           </Col>
-          {/* Title End */}
-
-          {/* Top Buttons Start */}
-          <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-            <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
-            </Button>
-            <div className="btn-group ms-1 check-all-container">
-              <CheckAll
-                allItems={allItems}
-                selectedItems={selectedItems}
-                onToggle={toggleCheckAll}
-                inputClassName="form-check"
-                className="btn btn-outline-primary btn-custom-control py-0"
-              />
-              <Dropdown align="end">
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item>Move</Dropdown.Item>
-                  <Dropdown.Item>Archive</Dropdown.Item>
-                  <Dropdown.Item>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </Col>
-          {/* Top Buttons End */}
         </Row>
       </div>
 
@@ -353,18 +356,7 @@ const CustomersList = (props) => {
           {/* Export Dropdown End */}
 
           {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+    
           {/* Length End */}
         </Col>
       </Row>
@@ -376,26 +368,13 @@ const CustomersList = (props) => {
             ...rowSelection,
           }}
           columns={columns}
-          dataSource={displayedData}
-          pagination={false}
+          dataSource={VendorListData}
+
         />
       </div>
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {restaurant &&
-            Array.from({ length: Math.ceil(restaurant.length / itemsPerPage) }, (_, i) => (
-              <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-                {i + 1}
-              </Pagination.Item>
-            ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={restaurant && currentPage === Math.ceil(restaurant.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div>
+      
+      {/* 8 step 🩸 */}
+
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
@@ -423,4 +402,4 @@ function mapStateToProps(state) {
     restaurant: state?.restaurant?.restaurant,
   };
 }
-export default connect(mapStateToProps)(CustomersList);
+export default connect(mapStateToProps)(RestaurantList);

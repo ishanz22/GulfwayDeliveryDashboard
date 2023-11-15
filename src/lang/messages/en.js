@@ -173,5 +173,6 @@ const enMessages = {
   'menu.player': 'Player',
   'menu.material': 'Material',
   'menu.syllabus': 'Syllabus',
+  'menu.request':'Requests',
 };
 export default enMessages;

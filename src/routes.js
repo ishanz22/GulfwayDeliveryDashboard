@@ -33,6 +33,7 @@ const restaurant = {
   logs: lazy(() => import('views/vendors/Restaurant/logs/RestaurantLogs')),
   Permission: lazy(() => import('views/vendors/Restaurant/permissions/Permission')),
   collection: lazy(() => import('views/vendors/Restaurant/cashCollection/CashCollection')),
+  edit: lazy(() => import('views/vendors/Restaurant/edit/RestaurantEdit')),
 };
 
 const grocery = {
@@ -164,10 +165,11 @@ const routesAndMenuItems = {
           subs: [
             { path: '/list', label: 'List', component: restaurant.list },
             { path: '/addnew', label: 'Add new', component: restaurant.addnew },
-            { path: '/detail/:restaurantId', label: 'Detail', component: restaurant.detail },
+            { path: '/detail/:restaurantId',  component: restaurant.detail },
             { path: '/logs', label: 'Activity', component: restaurant.logs },
-            { path: '/permission', label: 'Permissions', component: restaurant.collection },
+            // { path: '/permission', label: 'Permissions', component: restaurant.collection },
             { path: '/collection', component: restaurant.collection },
+            { path: '/edit', component: restaurant.edit },
           ],
         },
 

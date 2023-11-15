@@ -1,22 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import JsPDF from 'jspdf';
+import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { utils, write } from 'xlsx';
 import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
+import { Table, Spin } from 'antd';
+import UserLogsData from 'data/UserLogs';
+import { useDispatch, connect } from 'react-redux';
+import moment from 'moment';
+import { getLogFile } from 'actions/admin';
+import { LoadingOutlined } from '@ant-design/icons';
 
-const CustomersList = () => {
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  getCheckboxProps: (record) => ({
+    disabled: record.name === 'Disabled User',
+    name: record.name,
+  }),
+};
+const ActivityLogs = (props) => {
   const title = 'Restaurant Activity Logs';
   const description = 'Ecommerce Customer List Page';
-
+  const [selectionType, setSelectionType] = useState('checkbox');
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const allItems = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [selectedItems, setSelectedItems] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState('Total Orders');
+  const [filteredData, setFilteredData] = useState(UserLogsData);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  const dispatch = useDispatch();
+
+  const { logs, loading, error } = props;
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
     } else {
       setSelectedItems([...selectedItems, item]);
     }
+  };
+
+  useEffect(() => {
+    dispatch(getLogFile({ module: 'User' }));
+    console.log(logs);
+  }, []);
+
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -25,7 +62,162 @@ const CustomersList = () => {
       setSelectedItems([]);
     }
   };
+  const filterDataByStatus = (status) => {
+    setSelectedStatus(status);
 
+    // Filter data by status
+    const filteredItems = UserLogsData.filter((item) => item.status === status);
+    setFilteredData(filteredItems);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedData = filteredData.slice(startIndex, endIndex);
+
+  const nextPage = () => {
+    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const exportToExcel = () => {
+    const dataToExport = UserLogsData.map((item) => ({
+      ID: item.id,
+      Name: item.name,
+      Location: item.location,
+      Earnings: `$${item.earnings}`,
+      LastOrder: item.lastOrder,
+      Status: item.status
+        .filter((statusItem) => !statusItem.disabled)
+        .map((statusItem) => statusItem.name)
+        .join(', '), // Join status names
+    }));
+
+    const ws = utils.json_to_sheet(dataToExport);
+
+    ws['!cols'] = [{ wch: 10 }, { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 20 }, { wch: 30 }]; // Set column widths as needed
+    ws['!header'] = [];
+    ws['!header'][0] = {
+      style: {
+        fill: {
+          fgColor: { rgb: '0000FF' },
+        },
+        font: {
+          color: { rgb: 'FFFFFF' },
+        },
+      },
+    };
+
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, 'Orders');
+    const excelBuffer = write(wb, { bookType: 'xlsx', type: 'array' });
+
+    const blob = new Blob([excelBuffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'RefundList.xlsx';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToPDF = () => {
+    const doc = new JsPDF();
+
+    const tableData = UserLogsData.map((item) => ({
+      ID: item.id,
+      Name: item.name,
+      Location: item.location,
+      Earnings: `$${item.earnings}`,
+      LastOrder: item.lastOrder,
+      Status: item.status
+        .filter((statusItem) => !statusItem.disabled)
+        .map((statusItem) => statusItem.name)
+        .join(', '), // Join status names
+    }));
+
+    const columns = ['ID', 'Name', 'Location', 'Earnings', 'LastOrder', 'Status'];
+
+    // Create a header row
+    const headerRow = columns.map((col) => ({ title: col, dataKey: col }));
+
+    doc.autoTable({
+      head: [headerRow],
+      body: tableData.map((row) => Object.values(row)),
+      theme: 'striped',
+      margin: { top: 15 },
+    });
+
+    doc.save('RefundList.pdf');
+  };
+
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>IDENTIFIER</span>,
+      dataIndex: 'identifier',
+      key: 'identifier',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      // render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
+      render: (text, record) => <NavLink to="/vendors/Grocery/detail">{record?.identifier}</NavLink>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>ACTIVITY</span>,
+      dataIndex: 'activity',
+      key: 'activity',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.activity}</div>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>MODULE</span>,
+      dataIndex: 'module',
+      key: 'module',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.module}</div>,
+    },
+    {
+      title: <span style={tableHeaderStyle}>DATE / TIME</span>,
+      dataIndex: 'dateTime',
+      key: 'dateTime',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => {
+        const formattedDate = moment(record?.dateTime).format('MMM D, YYYY');
+        const formattedTime = moment(record?.dateTime).format('h:mm A');
+
+        return (
+          <div>
+            <div className="text-medium" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="clock" size="11" /> &nbsp;{formattedDate}
+            </div>
+            <div className="text-alternate text-small" style={{ display: 'flex', alignItems: 'center' }}>
+              <CsLineIcons icon="calendar" size="11" /> &nbsp;{formattedTime}
+            </div>
+          </div>
+        );
+      },
+    },
+  ];
+  const handleCancelDelete = () => {
+    setIsDeleteDialogOpen(false);
+  };
+  const handleDeleteConfirmed = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
+  const customLoader = (
+    <div style={{ textAlign: 'center', margin: '50px auto' }}>
+      <Spin indicator={<LoadingOutlined style={{ fontSize: 48, color: '#1890ff' }} spin />} />
+      <p style={{ marginTop: '10px' }}>Loading...</p>
+    </div>
+  );
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -86,12 +278,6 @@ const CustomersList = () => {
         </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
-          <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
-            <Button variant="foreground-alternate" className="btn-icon btn-icon-only shadow">
-              <CsLineIcons icon="print" />
-            </Button>
-          </OverlayTrigger>
-          {/* Print Button End */}
 
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
@@ -101,683 +287,40 @@ const CustomersList = () => {
               </Dropdown.Toggle>
             </OverlayTrigger>
             <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">Copy</Dropdown.Item>
-              <Dropdown.Item href="#">Excel</Dropdown.Item>
-              <Dropdown.Item href="#">Cvs</Dropdown.Item>
+              <Dropdown.Item onClick={exportToExcel}>Excel</Dropdown.Item>
+
+              <Dropdown.Item onClick={exportToPDF}>PDF</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           {/* Export Dropdown End */}
-
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item href="#">5 Items</Dropdown.Item>
-              <Dropdown.Item href="#">10 Items</Dropdown.Item>
-              <Dropdown.Item href="#">20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-          {/* Length End */}
         </Col>
       </Row>
 
-      {/* List Header Start */}
-      <Row className="g-0 h-100 align-content-center d-none d-lg-flex ps-5 pe-5 mb-2 custom-sort">
-        <Col lg="1" className="d-flex flex-column mb-lg-0 pe-3 d-flex">
-          <div className="text-muted text-small cursor-pointer sort">ID</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">NAME</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LOCATION</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">SPENT</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">LAST ORDER</div>
-        </Col>
-        <Col lg="2" className="d-flex flex-column pe-1 justify-content-center">
-          <div className="text-muted text-small cursor-pointer sort">STATUS</div>
-        </Col>
-      </Row>
-      {/* List Header End */}
-
-      {/* List Items Start */}
-      <Card className={`mb-2 ${selectedItems.includes(1) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(1)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                245
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Joisse Kaycee</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Leipzig, DE</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 321.75
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5323
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(1)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(2) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(2)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                244
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Kathleen Bertha</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Salvador, BR</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 284.20
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                608
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(2)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(3) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(3)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                243
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Mickey Fianna</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">San Antonio, US</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">-</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                -
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(3)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(4) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(4)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                242
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Emilia Antoine</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Los Angeles, US</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">-</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                -
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(4)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(5) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(5)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                242
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Alicia Shannah</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Stuttgart, DE</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 29.30
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5321
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(5)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(6) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(6)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                242
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Sixte Tera</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Berlin, DE</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 462.20
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5320
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(6)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(7) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(7)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                239
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Gresham Jeanette</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Naples, IT</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">-</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                -
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(7)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(8) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(8)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                239
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Elsie Pernilla</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Paris, FR</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 85.20
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5318
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(8)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(9) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(9)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                237
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Winry Rockbell</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Seul, KR</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 104.65
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5317
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(9)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      <Card className={`mb-2 ${selectedItems.includes(10) && 'selected'}`}>
-        <Card.Body className="pt-0 pb-0 sh-30 sh-lg-8">
-          <Row className="g-0 h-100 align-content-center" onClick={() => checkItem(10)}>
-            <Col xs="11" lg="1" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-1 order-lg-1 h-lg-100 position-relative">
-              <div className="text-muted text-small d-lg-none">Id</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center">
-                237
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-3 order-lg-2">
-              <div className="text-muted text-small d-lg-none">Name</div>
-              <div className="text-alternate">Joisse Kaycee</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-3">
-              <div className="text-muted text-small d-lg-none">Location</div>
-              <div className="text-alternate">Rome, IT</div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-4 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Spent</div>
-              <div className="text-alternate">
-                <span>
-                  <span className="text-small">$</span> 72.50
-                </span>
-              </div>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-5 order-lg-4">
-              <div className="text-muted text-small d-lg-none">Last Order</div>
-              <NavLink to="/customers/detail" className="text-truncate h-100 d-flex align-items-center body-link">
-                5316
-              </NavLink>
-            </Col>
-            <Col xs="6" lg="2" className="d-flex flex-column justify-content-center mb-2 mb-lg-0 order-last order-lg-5">
-              <div className="text-muted text-small d-lg-none mb-1">Status</div>
-              <div>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Newsletter</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="content" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Purchased</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="boxes" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Trusted</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="check-square" className="text-separator" size="17" />
-                  </div>
-                </OverlayTrigger>
-                <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Phone</Tooltip>}>
-                  <div className="d-inline-block me-2">
-                    <CsLineIcons icon="phone" className="text-primary" size="17" />
-                  </div>
-                </OverlayTrigger>
-              </div>
-            </Col>
-            <Col xs="1" lg="1" className="d-flex flex-column justify-content-center align-items-md-end mb-2 mb-md-0 order-2 text-end order-md-last">
-              <Form.Check className="form-check mt-2 ps-5 ps-md-2" type="checkbox" checked={selectedItems.includes(10)} onChange={() => {}} />
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
-      {/* List Items End */}
-
-      {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" disabled>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          <Pagination.Item className="shadow" active>
-            1
-          </Pagination.Item>
-          <Pagination.Item className="shadow">2</Pagination.Item>
-          <Pagination.Item className="shadow">3</Pagination.Item>
-          <Pagination.Next className="shadow">
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
+      <div>
+        {loading ? (
+          customLoader // Use the custom loader
+        ) : (
+          <Table
+            rowSelection={{
+              type: selectionType,
+              ...rowSelection,
+            }}
+            columns={columns}
+            dataSource={logs}
+          />
+        )}
       </div>
-      {/* Pagination End */}
     </>
   );
 };
 
-export default CustomersList;
+function mapStateToProps(state) {
+  console.log(typeof state.admin.logs);
+  return {
+    error: state.admin.error,
+    loading: state.admin.loading,
+    isAuthenticated: state.auth.isAuthenticated,
+    logs: state?.admin?.logs,
+  };
+}
+export default connect(mapStateToProps)(ActivityLogs);

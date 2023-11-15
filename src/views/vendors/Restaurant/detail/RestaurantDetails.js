@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
+
 import ReactTags from 'react-tag-autocomplete';
 import { Row, Col, Button, Dropdown, Card, Badge, Form } from 'react-bootstrap';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -7,33 +8,47 @@ import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { restaurantById } from 'actions/restaurant';
-
 import cashImage from '../../../../assets/money.png';
 import withdrawImage from '../../../../assets/money-withdrawal.png';
 import withdrawBalanceImage from '../../../../assets/withdrawal.png';
 import totalEarningImage from '../../../../assets/salary.png';
 
 const CustomersDetail = ({ google }) => {
+  const googleImageUrl =
+    'https://hips.hearstapps.com/hmg-prod/images/2024-lamborghini-revuelto-127-641a1d518802b.jpg?crop=0.566xw:1.00xh;0.184xw,0&resize=640:*';
+
+  const location = useLocation();
+  const { record } = location.state;
+
+  if (!record) {
+    return <p>Vendor not found</p>;
+  }
+  console.log('record Details:', record);
+
   const title = 'Restaurant Detail';
+
   const description = 'Ecommerce Customer Detail Page';
 
-  const { restaurantId } = useParams();
-  const dispatch = useDispatch();
+  // 🩸
+  // const { restaurantId } = useParams();
 
-  console.log(restaurantId);
+  // const dispatch = useDispatch();
 
-  const getRestaurantbyId = () => {
-    console.log(restaurantId);
-    dispatch(restaurantById({ id: restaurantId }));
-  };
+  // 🩸
+  // console.log(restaurantId);
 
-  const { restaurant } = useSelector((state) => state.restaurant);
+  // const getRestaurantbyId = () => {
+  //   console.log(restaurantId);
+  //   dispatch(restaurantById({ id: restaurantId }));
+  // };
 
-  useEffect(() => {
-    getRestaurantbyId();
-    console.log(restaurant);
-    // setrestaurant(restaurant);
-  }, []);
+  // const { restaurant } = useSelector((state) => state.restaurant);
+
+  // useEffect(() => {
+  //   getRestaurantbyId();
+  //   console.log(restaurant);
+  //   // setrestaurant(restaurant);
+  // }, []);
 
   // Tags
   const [tags, setTags] = useState([
@@ -52,6 +67,39 @@ const CustomersDetail = ({ google }) => {
     });
   };
 
+  const dummyData = [
+    {
+      id: 1,
+      name: 'Kommissbrot',
+      description: 'Whole Wheat',
+      category: "Chinese",
+      pricePerUnit: 1.1,
+      total: 13.2,
+      image: '/img/product/small/product-1.webp',
+      discount:'30%'
+    },
+    {
+      id: 2,
+      name: 'Ruisreikäleipä',
+      description: 'Multigrain',
+      category: "Japanese",
+      pricePerUnit: 2.75,
+      total: 8.25,
+      image: '/img/product/small/product-2.webp',
+      discount:'10%'
+    },
+    {
+      id: 3,
+      name: 'Cornbread',
+      description: 'Sourdough',
+      category: "Korean",
+      pricePerUnit: 7.5,
+      total: 15.0,
+      image: '/img/product/small/product-3.webp',
+      discount:'20%'
+    },
+  ];
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -59,9 +107,9 @@ const CustomersDetail = ({ google }) => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/vendors/Restaurant/list/">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Home</span>
+              <span className="align-middle text-small ms-1">Restaurant</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -236,8 +284,8 @@ const CustomersDetail = ({ google }) => {
 
               <Col lg="6" className="p-5">
                 <Row className="g-3">
-                  <Col lg="15">
-                    <div>
+                  <Col lg="15" className="d-flex">
+                    <div style={{ width: '90%', display: 'flex' }}>
                       <div style={{ display: 'flex' }}>
                         <div className="profile-box" style={{ paddingRight: '10px' }}>
                           {/* Add your box image for the profile here */}
@@ -246,20 +294,28 @@ const CustomersDetail = ({ google }) => {
                             alt="Profile Box"
                             className="profile-box-image "
                             width="120"
-                            height="120"
+                            height="140"
                             style={{ borderRadius: '10px' }}
                           />
                         </div>
 
                         <div>
-                          <p className="text-small text-muted mb-2">SHIPPING ADDRESS</p>
                           <Row className="g-0 mb-2">
                             <Col xs="auto">
                               <div className="sw-3 me-1">
                                 <CsLineIcons icon="user" size="17" className="text-primary" />
                               </div>
                             </Col>
-                            <Col className="text-alternate">Blaine Cottrell</Col>
+                            <Col className="text-alternate">{record.name}</Col>
+                          </Row>
+
+                          <Row className="g-0 mb-2">
+                            <Col xs="auto">
+                              <div className="sw-3 me-1">
+                                <CsLineIcons icon="email" size="17" className="text-primary" />
+                              </div>
+                            </Col>
+                            <Col className="text-alternate">{record.email}</Col>
                           </Row>
                           <Row className="g-0 mb-2">
                             <Col xs="auto">
@@ -267,17 +323,89 @@ const CustomersDetail = ({ google }) => {
                                 <CsLineIcons icon="pin" size="17" className="text-primary" />
                               </div>
                             </Col>
-                            <Col className="text-alternate">4 Glamis Avenue, Strathmore Park, Wellington 6022, New Zealand</Col>
+                            <Col className="text-alternate">
+                              <div>{record.location}</div>
+                              <div>
+                                <span style={{ fontWeight: 'bold' }}>Lat</span> {record.latitude} - <span style={{ fontWeight: 'bold' }}>Long</span>{' '}
+                                {record.longitude}
+                              </div>
+                            </Col>
                           </Row>
+                          {/* 
+                          <Row className="g-0 mb-2">
+                            <Col xs="auto">
+                              <div className="sw-3 me-1">
+                                <CsLineIcons icon="pin" size="17" className="text-primary" />
+                              </div>
+                            </Col>
+                            <Col className="text-alternate">
+                              <div>{record.location}</div>
+                         
+                            </Col>
+                            
+                          </Row> */}
                           <Row className="g-0 mb-2">
                             <Col xs="auto">
                               <div className="sw-3 me-1">
                                 <CsLineIcons icon="phone" size="17" className="text-primary" />
                               </div>
                             </Col>
-                            <Col className="text-alternate">+6443884455</Col>
+                            <Col className="text-alternate">{record.phone}</Col>
                           </Row>
                         </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div
+                        style={{
+                          padding: 5,
+                          borderRadius: 5,
+
+                          backgroundColor: (() => {
+                            switch (record.status) {
+                              case 'APPROVED':
+                                return '#E1F2E8';
+                              case 'PENDING':
+                                return '#FEF4EB';
+                              case 'DECLINED':
+                                return '#FFF2F0';
+                              default:
+                                return '';
+                            }
+                          })(),
+
+                          color: (() => {
+                            switch (record.status) {
+                              case 'APPROVED':
+                                return '#388F6D';
+                              case 'PENDING':
+                                return '#F39067';
+                              case 'DECLINED':
+                                return '#FF4D4F';
+                              default:
+                                return '';
+                            }
+                          })(),
+                          borderColor: (() => {
+                            switch (record.status) {
+                              case 'Approved':
+                                return '#388F6D';
+                              case 'Pending':
+                                return '#F39067';
+                              case 'Decline':
+                                return 'darkblue';
+                              default:
+                                return '';
+                            }
+                          })(),
+                          borderWidth: 1, // You can adjust the border width as needed
+                          borderStyle: 'solid',
+                        }}
+                        className="text-small"
+                      >
+                        {' '}
+                        {record.status}
                       </div>
                     </div>
                   </Col>
@@ -330,14 +458,21 @@ const CustomersDetail = ({ google }) => {
                             </div>
 
                             <div>
-                              <p className="text-small text-muted mb-2">SHIPPING ADDRESS</p>
                               <Row className="g-0 mb-2">
                                 <Col xs="auto">
                                   <div className="sw-3 me-1">
                                     <CsLineIcons icon="user" size="17" className="text-primary" />
                                   </div>
                                 </Col>
-                                <Col className="text-alternate">Blaine Cottrell</Col>
+                                <Col className="text-alternate">{record.ownerName}</Col>
+                              </Row>
+                              <Row className="g-0 mb-2">
+                                <Col xs="auto">
+                                  <div className="sw-3 me-1">
+                                    <CsLineIcons icon="email" size="17" className="text-primary" />
+                                  </div>
+                                </Col>
+                                <Col className="text-alternate">{record.email}</Col>
                               </Row>
                               <Row className="g-0 mb-2">
                                 <Col xs="auto">
@@ -345,7 +480,13 @@ const CustomersDetail = ({ google }) => {
                                     <CsLineIcons icon="pin" size="17" className="text-primary" />
                                   </div>
                                 </Col>
-                                <Col className="text-alternate">4 Glamis Avenue, Strathmore Park, Wellington 6022, New Zealand</Col>
+                                <Col className="text-alternate">
+                                  <div>{record.ownerAddress}</div>
+                                  <div>
+                                    <span style={{ fontWeight: 'bold' }}>Lat</span> {record.latitude} - <span style={{ fontWeight: 'bold' }}>Long</span>{' '}
+                                    {record.longitude}
+                                  </div>
+                                </Col>{' '}
                               </Row>
                               <Row className="g-0 mb-2">
                                 <Col xs="auto">
@@ -353,7 +494,7 @@ const CustomersDetail = ({ google }) => {
                                     <CsLineIcons icon="phone" size="17" className="text-primary" />
                                   </div>
                                 </Col>
-                                <Col className="text-alternate">+6443884455</Col>
+                                <Col className="text-alternate">{record.ownerPhone}</Col>
                               </Row>
                             </div>
                           </div>
@@ -369,19 +510,132 @@ const CustomersDetail = ({ google }) => {
         <Col>
           <h2 className="small-title">Bank Info</h2>
           <Card className="h-100">
-            <Card.Body style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-              <text style={{ color: 'grey' }}>NO DATA FOUND</text>
+            <Card.Body>
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div>Bank Name</div>
+                <div className="text-alternate">{record.bank}</div>
+              </div>
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div>Account Holder Name</div>
+                <div className="text-alternate">{record.accountHolder}</div>
+              </div>
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div>Account Number</div>
+                <div className="text-alternate">{record.AccountNumber}</div>
+              </div>
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div>IBAN </div>
+                <div className="text-alternate">{record.IBAN}</div>
+              </div>
             </Card.Body>
           </Card>
         </Col>
       </Row>
-      <Row className="row-cols-1 row-cols-md-2 g-2 pt-5 mb-6">
+
+      <Row>
         <Col>
-          <h2 className="small-title">Restaurant Modal</h2>
-          <Card className=" h-100">
+          <h2 className="small-title mt-5">Restaurant modal</h2>
+          <Card>
             <Card.Body>
-              <Form className="mb-n3">
-                <></>
+              <Form>
+                <Row className="g-3">
+                  {/* Search Input on the Right */}
+
+                  <Col className="p-0">
+                    <Row className="g-3">
+                      <Col lg="15">
+                        <div className="mb-5">
+                          {dummyData.map((item) => (
+               <Row key={item.id} className="g-0 sh-9 mb-3">
+               <Col xs="auto">
+                 <img src={item.image} className="card-img rounded-md h-100 sw-13" alt="thumb" />
+               </Col>
+               <Col>
+                 <div className="ps-4 pt-0 pb-0 pe-0 h-100">
+                   <Row className="g-0 h-100 align-items-start align-content-center">
+                     <Col xs="12" className="d-flex flex-column mb-2">
+                       <div>{item.name}</div>
+                       <div className="text-muted text-small d-flex justify-content-between">
+                         <span>{item.description}</span>
+                         <span>{item.discount} Discount</span>
+                       </div>
+                     </Col>
+             
+                     <Col xs="12" className="d-flex flex-column mb-md-0 pt-1">
+                       <Row className="g-0">
+                         <Col xs="6" className="d-flex flex-row pe-2 align-items-end text-alternate">
+                           <span>{item.category}</span>
+                           <span>
+                             &nbsp;
+                             {item.pricePerUnit.toFixed(2)}
+                           </span>
+                         </Col>
+             
+                         <Col xs="6">
+                           <span className="d-flex flex-row align-items-end justify-content-end text-alternate">
+                          <text >AED</text> &nbsp;
+                             {item.total.toFixed(2)}
+                           </span>
+                         </Col>
+                       </Row>
+                     </Col>
+                   </Row>
+                 </div>
+               </Col>
+             </Row>
+             
+                          ))}
+                        </div>
+                      </Col>
+                    </Row>
+                  </Col>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+
+      <Row>
+        <Col>
+          <h2 className="small-title mt-5">Identification Info</h2>
+          <Card className="mb-5">
+            <Card.Body>
+              <Form>
+                <Row className="g-4">
+                  <Col lg="4">
+                    <Form.Label>Emirates ID</Form.Label>
+                    <div>
+                      <img src={record.emiratesID} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                            &nbsp;
+                    <div>
+                      <img src={record.emiratesIdBack} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                  </Col>
+
+                  <Col lg="4">
+                    <Form.Label>License</Form.Label>
+                    <div>
+                      <img src={record.license} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                            &nbsp;
+                    <div>
+                      <img src={record.licenseBack} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                  </Col>
+
+                  <Col lg="4">
+                    <Form.Label>Passport</Form.Label>
+                    <div>
+                      <img src={record.Passport} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                            &nbsp;
+                    <div>
+                      <img src={record.PassportBack} alt="Google Image" style={{ borderRadius: '10px', height: '120px', width: '200px' }} />
+                    </div>
+                  </Col>
+                </Row>
               </Form>
             </Card.Body>
           </Card>
