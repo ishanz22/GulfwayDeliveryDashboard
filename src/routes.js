@@ -40,8 +40,9 @@ const grocery = {
   list: lazy(() => import('views/vendors/Grocery/list/GroceryList')),
   addnew: lazy(() => import('views/vendors/Grocery/addNew/AddNewGrocery')),
   detail: lazy(() => import('views/vendors/Grocery/detail/GroceryDetails')),
-  logs: lazy(() => import('views/vendors/Grocery/logs/GrocertLogs')),
+  logs: lazy(() => import('views/vendors/Grocery/logs/GroceryLogs')),
   Permission: lazy(() => import('views/vendors/Grocery/permissions/Permission')),
+  edit: lazy(() => import('views/vendors/Grocery/edit/GroceryEdit')),
 };
 const payments = {
   transaction: lazy(() => import('views/payments/transactions/PaymentTransactions')),
@@ -180,9 +181,10 @@ const routesAndMenuItems = {
           subs: [
             { path: '/list', label: 'List', component: grocery.list },
             { path: '/addnew', label: 'Add new', component: grocery.addnew },
-            { path: '/detail', label: 'Detail', component: grocery.detail },
+            { path: '/detail',  component: grocery.detail },
+            { path: '/edit',  component: grocery.edit },
             { path: '/logs', label: 'Activity', component: grocery.logs },
-            { path: '/permission', label: 'Permissions', component: grocery.Permission },
+            { path: '/permission',  component: grocery.Permission },
           ],
         },
       ],

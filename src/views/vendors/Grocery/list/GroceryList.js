@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, useParams } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -8,13 +8,15 @@ import HtmlHead from 'components/html-head/HtmlHead';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import CheckAll from 'components/check-all/CheckAll';
 import { Table, Tag } from 'antd';
-import VendorListData from 'data/VendorListData';
-import { gulfwayBlue } from 'layout/colors/Colors';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { useDispatch, connect } from 'react-redux';
+import { getRestaurantDetails } from 'actions/restaurant';
+import VendorListData from 'data/VendorListData';
+import { gulfwayBlue } from 'layout/colors/Colors';
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -25,7 +27,11 @@ const rowSelection = {
     name: record.name,
   }),
 };
-const GroceryList = () => {
+const GroceryList = (props) => {
+  const { userId } = useParams();
+  const { restaurant, error, isAuthenticated, loading } = props;
+  const dispatch = useDispatch();
+
   const title = 'Grocery List';
   const description = 'Ecommerce Customer List Page';
   const [selectionType, setSelectionType] = useState('checkbox');
@@ -34,18 +40,28 @@ const GroceryList = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState('Total Orders');
-  const [filteredData, setFilteredData] = useState(VendorListData);
+  // const [restaurant, setrestaurant] = useState(restaurant);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
+  // 1 step 🩸
+  /*
+  useEffect(() => {
+    dispatch(getGroceryDetails({}));
+    console.log(restaurant);
+    // setrestaurant(restaurant);
+  }, []);
+  */
+
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   const checkItem = (item) => {
     if (selectedItems.includes(item)) {
       setSelectedItems(selectedItems.filter((x) => x !== item));
     } else {
       setSelectedItems([...selectedItems, item]);
     }
-  };
-
-  const tableHeaderStyle = {
-    color: 'grey',fontSize:'10px'
   };
   const toggleCheckAll = (allSelect) => {
     if (allSelect) {
@@ -59,12 +75,13 @@ const GroceryList = () => {
 
     // Filter data by status
     const filteredItems = VendorListData.filter((item) => item.status === status);
-    setFilteredData(filteredItems);
+    // setrestaurant(filteredItems);
   };
 
+  // 2 step 🩸
 
   const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length )) {
+    if (VendorListData && currentPage < Math.ceil(VendorListData.length / itemsPerPage)) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -149,6 +166,15 @@ const GroceryList = () => {
 
     doc.save('RefundList.pdf');
   };
+  const [searchValue, setSearchValue] = useState('');
+
+
+// Search functionality
+  const filteredData = VendorListData.filter((record) =>
+    Object.values(record).some((value) =>
+      value.toString().toLowerCase().includes(searchValue.toLowerCase())
+    )
+  );
   const handleView = (id) => {
     console.log(`View Item ID ${id}`);
   };
@@ -163,99 +189,116 @@ const GroceryList = () => {
   };
 
   const columns = [
+    // 3 step 🩸
     {
       title: <span style={tableHeaderStyle}>ID</span>,
       dataIndex: 'id',
       key: 'id',
-      responsive: ['xs','md','lg','sm','xl'],
-      // render: (text, record) => <NavLink to={`/vendors/SuperMarket/detail/${text}`}>{text}</NavLink>,
-      render: (text, record) => <NavLink to="/vendors/Grocery/detail">{text}</NavLink>,
-
+      // render: (text, record) => <NavLink to={`/vendors/Grocery/detail/${text}`}>{text}</NavLink>,
+      render: (text, record) => <NavLink to={`/vendors/Grocery/detail/${record?.VendorListData?.customId}`}>{record?.VendorListData?.customId}</NavLink>,
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
     },
+
+    // 4 step
     {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text) => (
-        <div style={{ wordBreak: ' break-all' }}>{text}</div>
-      ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      // render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.VendorListData?.name}</div>,
+      render: (text, record) => <div style={{ wordBreak: ' break-all' }}>{record?.name}</div>,
     },
+
+    // 5  step
     {
       title: <span style={tableHeaderStyle}>LOCATION</span>,
       dataIndex: 'location',
       key: 'location',
-      responsive: ['xs','md','lg','sm','xl'],
-        render: (text) => (
-    <div style={{ wordBreak: ' break-all' }}>{text}</div>
-  ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => (
+        <div style={{ wordBreak: ' break-all' }}>
+          {record?.restaurant?.zone}, {record?.restaurant?.city}
+        </div>
+      ),
     },
     {
       title: <span style={tableHeaderStyle}>EARNING</span>,
       dataIndex: 'earnings',
       key: 'earnings',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text) => (
-        <div style={{ wordBreak: ' break-all' }}>{text}</div>
-      ),
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => <div>{record?.amount}</div>,
     },
     {
       title: <span style={tableHeaderStyle}>LAST ORDER</span>,
       dataIndex: 'lastOrder',
       key: 'lastOrder',
-      responsive: ['xs','md','lg','sm','xl'],
-      
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+
+      // last step 🩸
+      // render: (text, record) => <div>{record?.order[0]?.customId}</div>,
     },
+
+    // 6 step 🩸
     {
       title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
       key: 'status',
-      responsive: ['xs','md','lg','sm','xl'],
-      render: (text) => {
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      render: (text, record) => {
         let color = 'default';
 
-        if (text === 'Pending') {
+        if (record?.restaurant?.status === 'pending') {
           color = 'warning';
-        } else if (text === 'Approved') {
+        } else if (record?.restaurant?.status === 'approved') {
           color = 'success';
-        } else if (text === 'Declined') {
+        } else if (record?.restaurant?.status === 'declined') {
           color = 'error';
         }
 
-        return <Tag color={color}>{text}</Tag>;
+        return <Tag color={color}>{record?.VendorListData?.status}</Tag>;
       },
     },
-
+    // 7 step 🩸
     {
-      title:  <span style={tableHeaderStyle}>ACTION</span>,
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
+          <NavLink to={{ pathname: `/vendors/Grocery/detail/${record.id}`, state: { record } }}>
+            <div
+              // onClick={() => handleView(record?.restaurant?.customId)}
+              onClick={() => handleView(record.id)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+            >
+              <CsLineIcons icon="eye" />
+            </div>
+          </NavLink>
+
+          <NavLink to={{ pathname: `/vendors/Grocery/edit/${record.id}`, state: { record } }}>
+            <div
+              // onClick={() => handleEdit(record?.restaurant?.customId)}
+              onClick={() => handleEdit(record.id)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+            >
+              <CsLineIcons icon="pen" />
+            </div>
+          </NavLink>
           <div
-            onClick={() => handleView(record.id)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+            onClick={() => handleDelete(record?.VendorListData?.customId)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}
           >
-            <CsLineIcons icon="eye" />
-          </div>
-          <div
-            onClick={() => handleEdit(record.id)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
-          >
-            <CsLineIcons icon="pen" />
-          </div>
-          <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
             <CsLineIcons icon="bin" />
           </div>
         </span>
       ),
     },
   ];
+
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
   };
   const handleDeleteConfirmed = () => {
-    
     setIsDeleteDialogOpen(false);
   };
   return (
@@ -273,49 +316,28 @@ const GroceryList = () => {
               {title}
             </h1>
           </Col>
-          {/* Title End */}
-
-          {/* Top Buttons Start */}
-          <Col xs="auto" className="d-flex align-items-end justify-content-end mb-2 mb-sm-0 order-sm-3">
-            <Button variant="outline-primary" className="btn-icon btn-icon-only ms-1 d-inline-block d-lg-none">
-              <CsLineIcons icon="sort" />
-            </Button>
-            <div className="btn-group ms-1 check-all-container">
-              <CheckAll
-                allItems={allItems}
-                selectedItems={selectedItems}
-                onToggle={toggleCheckAll}
-                inputClassName="form-check"
-                className="btn btn-outline-primary btn-custom-control py-0"
-              />
-              <Dropdown align="end">
-                <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-                <Dropdown.Menu>
-                  <Dropdown.Item>Move</Dropdown.Item>
-                  <Dropdown.Item>Archive</Dropdown.Item>
-                  <Dropdown.Item>Delete</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </Col>
-          {/* Top Buttons End */}
         </Row>
       </div>
 
       <Row className="mb-3">
-        <Col md="5" lg="3" xxl="2" className="mb-1">
-          {/* Search Start */}
-          <div className="d-inline-block float-md-start me-1 mb-1 search-input-container w-100 shadow bg-foreground">
-            <Form.Control type="text" placeholder="Search" />
-            <span className="search-magnifier-icon">
-              <CsLineIcons icon="search" />
-            </span>
-            <span className="search-delete-icon d-none">
-              <CsLineIcons icon="close" />
-            </span>
-          </div>
-          {/* Search End */}
-        </Col>
+      <Col md="5" lg="3" xxl="2" className="mb-1">
+      {/* Search Start */}
+      <div className="d-inline-block float-md-start me-1 mb-1 search-input-container w-100 shadow bg-foreground">
+        <Form.Control
+          type="text"
+          placeholder="Search"
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <span className="search-magnifier-icon">
+          <CsLineIcons icon="search" />
+        </span>
+        <span className="search-delete-icon d-none">
+          <CsLineIcons icon="close" />
+        </span>
+      </div>
+      {/* Search End */}
+    </Col>
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
           <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
@@ -341,18 +363,7 @@ const GroceryList = () => {
           {/* Export Dropdown End */}
 
           {/* Length Start */}
-          {/* <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                10 Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown> */}
+
           {/* Length End */}
         </Col>
       </Row>
@@ -364,29 +375,11 @@ const GroceryList = () => {
             ...rowSelection,
           }}
           columns={columns}
-          dataSource={VendorListData}
-          // pagination={false}
+          dataSource={filteredData}
         />
       </div>
 
-      {/* Pagination Start */}
-      {/* <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div> */}
-      {/* Pagination End */}
-
+      {/* 8 step 🩸 */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
@@ -406,4 +399,12 @@ const GroceryList = () => {
   );
 };
 
-export default GroceryList  ;
+function mapStateToProps(state) {
+  console.log(state.restaurant);
+  return {
+    error: state.auth.error,
+    isAuthenticated: state.auth.isAuthenticated,
+    restaurant: state?.restaurant?.restaurant,
+  };
+}
+export default connect(mapStateToProps)(GroceryList);

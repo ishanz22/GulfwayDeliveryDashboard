@@ -2,7 +2,7 @@ const VendorListData = [
   {
     key: '1',
     id: 256534343,
-    name: 'Vendor ',
+    name: 'car ',
     location: 'Leipzig, DE Leipzig, DE Leipzig,  ',
     earnings: '321.75',
     lastOrder: '5323',
@@ -39,7 +39,7 @@ const VendorListData = [
   {
     key: '3',
     id: 25658,
-    name: 'Vendor 3',
+    name: 'van 3',
     location: 'Los Angeles, USA',
     earnings: '543.21',
     latitude :1292,

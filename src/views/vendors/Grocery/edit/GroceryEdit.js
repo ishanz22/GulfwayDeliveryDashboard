@@ -2,7 +2,7 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable jsx-a11y/no-onchange */
 import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { Row, Col, Button, Dropdown, Form, Card, Pagination, Tooltip, OverlayTrigger, Badge, Modal } from 'react-bootstrap';
@@ -17,15 +17,15 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
+import { Table, Tag, Space } from 'antd';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { gulfwayBlue } from 'layout/colors/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import { newRestaurant } from 'actions/restaurant';
-import { getCities, getGroceryCategories } from 'actions/admin';
+import { getCities, getRestaurantCategories } from 'actions/admin';
 
 const AddItemOption = { value: 'AddCategory', label: 'Add Category' };
 
@@ -45,7 +45,16 @@ const initialCity = [
 ];
 
 const AddNewGrocery = ({ google }) => {
-  const title = 'Add New Grocery';
+  const location = useLocation();
+  const { record } = location.state;
+
+  if (!record) {
+    return <p>Vendor not found</p>;
+  }
+  console.log('record Details:', record);
+
+
+  const title = 'Edit Grocery';
   const description = 'Ecommerce Customer List Page';
   const [showModal, setShowModal] = useState(false);
   const [optionsCity, setOptionsCity] = useState(initialOptionsCity);
@@ -62,46 +71,51 @@ const AddNewGrocery = ({ google }) => {
   const [showDeleteSuccessToast, setShowDeleteSuccessToast] = useState(false);
   const [showAddedItem, setShowAddedItem] = useState(false);
   const [showErrorFieldsToast, setShowErrorFieldsToast] = useState(false);
-  // const [toast, setToast] = useState('');
-  
+  const defaultImageURL = 'https://example.com/default-image.jpg';
+
   const [selectedItemIndex, setSelectedItemIndex] = useState('');
   const [selectedEmiratesID, setSelectedEmiratesID] = useState('');
- const [selectedEmiratesIDBack, setSelectedEmiratesIDBack] = useState('')
+  const [selectedEmiratesIDBack, setSelectedEmiratesIDBack] = useState('');
+
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedItemImage, setSelectedItemImage] = useState('');
   const [selectedCoverImage, setSelectedCoverImage] = useState('');
   const [selectedLicensedImage, setSelectedLicensedImage] = useState('');
   const [selectedLicensedImageBack, setselectedLicensedImageBack] = useState('');
+
   const [ItemList, setItemList] = useState([]);
   const [selectedPassport, setSelectedPassport] = useState('');
   const [selectedPassportBack, setSelectedPassportBack] = useState('')
 
+  const [selectedZone, setSelectedZone] = useState([]);
   const [savedDataArray, setSavedDataArray] = useState([]);
-  const [savedMenuData, setSavedMenuData] = useState([])
+
+  const [menuImage, setMenuImage] = useState('');
+
   const [formData, setFormData] = useState({
-    GroceryName: '',
-    GroceryAddress: '',
-    phone: '',
-    email: '',
-    vatTax: '',
-    estimatedDeliveryTime: '',
-    openTime: '',
-    closeTime: '',
-    minimumOrderAmount: '',
+    GroceryName: 'test Rest',
+    GroceryAddress: 'Grocery Address',
+    phone: ' Grocery phone',
+    email: 'test@gmail.com',
+    vatTax: '112222',
+    estimatedDeliveryTime: '1111111',
+    openTime: '1111',
+    closeTime: '111112',
+    minimumOrderAmount: '22232323',
 
-    city: '',
-    zone: '',
-    latitude: '',
-    longitude: '',
+    city: 'dubai mall',
+    zone: 'deiar',
+    latitude: '222122',
+    longitude: '321111',
 
-    firstName: '',
-    lastName: '',
-    ownerPhone: '',
+    firstName: 'Mohomed',
+    lastName: 'Ahsan',
+    ownerPhone: '0878665477',
 
-    bankName: '',
-    accountNumber: '',
-    IBAN: '',
-    accountName: '',
+    bankName: 'Mashreq',
+    accountNumber: '87654356789',
+    IBAN: '23456765432q',
+    accountName: 'Saving Account',
   });
 
   const [buttonText, setButtonText] = useState('Add Item');
@@ -113,13 +127,13 @@ const AddNewGrocery = ({ google }) => {
 
   useEffect(() => {
     dispatch(getCities({}));
-    dispatch(getGroceryCategories({}));
+    dispatch(getRestaurantCategories({}));
 
     if (error) {
-      // Show a toast message with the error message
+     
       toast.error(error, {
-        position: 'top-right', // You can change the position
-        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+        position: 'top-right',
+        autoClose: 3000, 
       });
     }
     // console.log(restaurantCategories);
@@ -152,11 +166,14 @@ const AddNewGrocery = ({ google }) => {
     width: '200px',
     borderRadius: '10px',
   };
-
+  const tableHeaderStyle = {
+    color: 'grey',
+    fontSize: '10px',
+  };
   function handleSuccess() {
     setIsValid(false);
 
-    const dataArray = [formData, selectedEmiratesID,selectedEmiratesIDBack, selectedLicensedImage,selectedLicensedImageBack, selectedPassport,selectedPassportBack, selectedImage, selectedCoverImage];
+    const dataArray = [formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage];
 
     setSavedDataArray((prevDataArray) => [...prevDataArray, ...dataArray]);
 
@@ -166,12 +183,12 @@ const AddNewGrocery = ({ google }) => {
   function handleNexPage() {
     const isEmptyField = Object.values(formData).some((value) => value === '');
 
-    const isEmptyImage = !selectedEmiratesID || !selectedLicensedImage || !selectedPassport || !selectedImage || !selectedCoverImage || !selectedEmiratesIDBack || !selectedLicensedImageBack || !selectedPassportBack;
+    // const isEmptyImage = !selectedEmiratesID || !selectedLicensedImage || !selectedPassport || !selectedImage || !selectedCoverImage;
 
-    if (isEmptyField || isEmptyImage) {
+    if (isEmptyField) {
       toast.error('Please fill in all the required fields.', {
-        position: 'top-right', // You can change the position
-        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
+        position: 'top-right', 
+        autoClose: 3000, 
       });
       // setShowErrorFieldsToast(true);
       return;
@@ -199,13 +216,10 @@ const AddNewGrocery = ({ google }) => {
       !selectedLicensedImage ||
       !selectedPassport ||
       !selectedImage ||
-      !selectedCoverImage ||
-      !selectedLicensedImageBack ||
-      !selectedEmiratesIDBack ||
-      !selectedPassport
+      !selectedCoverImage
     ) {
       setIsValid(false); // Form is invalid
-     
+      // setToast('Please fill in all the required fields.');
       setShowErrorFieldsToast(true);
     } else if (ItemList.length === 0) {
       setIsValid(false); // Form is invalid
@@ -217,14 +231,13 @@ const AddNewGrocery = ({ google }) => {
     } else {
       setIsValid(true); // Form is valid
       console.log('Saved Data Array:', savedDataArray);
-      console.log('Saved Data Array:', savedMenuData);
-
-      const data = [selectedImage, selectedCoverImage, selectedEmiratesID, selectedLicensedImage, selectedPassport,selectedLicensedImageBack,selectedPassportBack,selectedEmiratesIDBack];
+      // console.log('Form Data:', { ...formData, selectedEmiratesID, selectedLicensedImage, selectedPassport, selectedImage, selectedCoverImage, ItemList });
+      const data = [selectedImage, selectedCoverImage, selectedEmiratesID, selectedLicensedImage, selectedPassport];
       for (let index = 0; index < ItemList.length; index++) {
         data.push(ItemList[index]?.selectedItemImage);
       }
       const formdata = new FormData();
-   
+      // Append each image to the FormData object
       data.forEach((image) => {
         formdata.append('images', image);
       });
@@ -272,42 +285,39 @@ const AddNewGrocery = ({ google }) => {
       });
       // setShowAddedItem(true);
 
-      setFormData({
-        GroceryName: '',
-        GroceryAddress: '',
-        phone: '',
-        email: '',
-        vatTax: '',
-        estimatedDeliveryTime: '',
-        openTime: '',
-        closeTime: '',
-        minimumOrderAmount: '',
+      // setFormData({
+      //   GroceryName: '',
+      //   GroceryAddress: '',
+      //   phone: '',
+      //   email: '',
+      //   vatTax: '',
+      //   estimatedDeliveryTime: '',
+      //   openTime: '',
+      //   closeTime: '',
+      //   minimumOrderAmount: '',
 
-        city: '',
-        zone: '',
-        latitude: '',
-        longitude: '',
+      //   city: '',
+      //   zone: '',
+      //   latitude: '',
+      //   longitude: '',
 
-        firstName: '',
-        lastName: '',
-        ownerPhone: '',
+      //   firstName: '',
+      //   lastName: '',
+      //   ownerPhone: '',
 
-        bankName: '',
-        accountNumber: '',
-        IBAN: '',
-        accountName: '',
-      });
-      setSelectValueCity('');
-      setSelectedEmiratesID('');
-      setSelectedEmiratesIDBack('');
-      setSelectedImage('');
-      setSelectedImage('');
-      setSelectedCoverImage('');
-      setSelectedLicensedImage('');
-      setselectedLicensedImageBack('');
-      setSelectedPassport('');
-      setSelectedPassportBack('');
-      setItemList([]);
+      //   bankName: '',
+      //   accountNumber: '',
+      //   IBAN: '',
+      //   accountName: '',
+      // });
+      // setSelectValueCity('');
+      // setSelectedEmiratesID('');
+      // setSelectedImage('');
+      // setSelectedImage('');
+      // setSelectedCoverImage('');
+      // setSelectedLicensedImage('');
+      // setSelectedPassport('');
+      // setItemList([]);
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -315,22 +325,35 @@ const AddNewGrocery = ({ google }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedImage(file);
-  
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
   const handleImageItem = (e) => {
     const file = e.target.files[0];
     setSelectedItemImage(file);
-
-  };
-  const handleLicenseUploadBack = (e) => {
-    const file = e.target.files[0];
-    setselectedLicensedImageBack(file);
-
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedItemImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     setSelectedCoverImage(file);
-
+    // if (file) {
+    //   const reader = new FileReader();
+    //   reader.onload = () => {
+    //     setSelectedCoverImage(reader.result);
+    //   };
+    //   reader.readAsDataURL(file);
+    // }
   };
 
   // 🩸
@@ -350,6 +373,13 @@ const AddNewGrocery = ({ google }) => {
     console.log(file);
     setSelectedLicensedImage(file);
   };
+
+  const handleLicenseUploadBack = (e) => {
+    const file = e.target.files[0];
+    console.log(file);
+    setselectedLicensedImageBack(file);
+  };
+
 
   const handleEmiratesIdUpload = (e) => {
     const file = e.target.files[0];
@@ -464,6 +494,7 @@ const AddNewGrocery = ({ google }) => {
   const handleAddItem = () => {
     console.log(selectValueCity);
     console.log(selectedItemImage);
+    setMenuImage('');
     // Create an object to store the values
     const ItemObject = {
       name: formData.name,
@@ -476,7 +507,7 @@ const AddNewGrocery = ({ google }) => {
     };
     console.log(ItemObject);
 
-    setSavedMenuData((prevDataArray) => [...prevDataArray, ItemObject]);
+    setSavedDataArray((prevDataArray) => [...prevDataArray, ItemObject]);
 
     // Check if the Item already exists in the list
     const existingIndex = ItemList.findIndex((Item) => Item.name === formData.name);
@@ -488,8 +519,8 @@ const AddNewGrocery = ({ google }) => {
       setItemList(updatedList);
 
       toast.success('Item updated successfully', {
-        position: 'top-right', 
-        autoClose: 3000, 
+        position: 'top-right', // You can change the position
+        autoClose: 3000, // Close the toast after 3 seconds (adjust as needed)
       });
       setButtonText('Add Item');
     } else {
@@ -514,7 +545,7 @@ const AddNewGrocery = ({ google }) => {
   };
   const handleDeleteItem = (indexToDelete) => {
     setSelectedItemIndex(indexToDelete);
-
+    console.log('hshs');
     setIsDeleteDialogOpen(true);
   };
 
@@ -534,6 +565,7 @@ const AddNewGrocery = ({ google }) => {
     setSelectValueCity(null);
     setIsFormEmpty(true);
     setSelectedItemImage(null);
+    setMenuImage(null);
   };
 
   const handleDeleteConfirmed = () => {
@@ -564,13 +596,46 @@ const AddNewGrocery = ({ google }) => {
     setSelectedItemIndex(null);
     setSelectedItemImage('');
   };
+  const generateDummyData = () => {
+    const dummyData = [
+      {
+        id: 1,
+        name: 'Product 1',
+        price: 19.99,
+        description: 'Description 1',
+        discount: 0.1,
+        category: 'Category A',
+        image: 'https://www.topgear.com/sites/default/files/2022/07/13.jpg',
+      },
+      {
+        id: 2,
+        name: 'Product 2',
+        price: 29.99,
+        description: 'Description 2',
+        discount: 0.2,
+        category: 'Category B',
+        image: 'https://cdn.images.express.co.uk/img/dynamic/1/590x/uk-passport-1196535.jpg?r=1572255773482',
+      },
+    ];
 
+    setItemList(dummyData);
+  };
+
+  useEffect(() => {
+    generateDummyData();
+  }, []);
   const checkItem = (Item) => {
     setSelectedItems([Item.name]);
 
     console.log('Selected Item:', Item);
     console.log('Selected Dropdown Value:', Item.selectedDropdownValue);
-    setSelectValueCity({ label: Item.selectedDropdownValue, value: Item.selectedDropdownValue });
+    setSelectValueCity({
+      label: Item.selectedDropdownValue ? Item.selectedDropdownValue : Item.category,
+      value: Item.selectedDropdownValue ? Item.selectedDropdownValue : Item.category,
+    });
+
+    setMenuImage(Item.image);
+
     if (selectedItem === Item) {
       setSelectedItem(null);
       setButtonText('Add Item');
@@ -582,10 +647,11 @@ const AddNewGrocery = ({ google }) => {
       name: Item.name,
       price: Item.price,
       description: Item.description,
-      category: Item.selectedDropdownValue,
+      category: Item.selectedDropdownValue ? Item.selectedDropdownValue : Item.category,
       discount: Item.discount,
-      selectedItemImage: Item.selectedItemImage,
+      selectedItemImage: Item.selectedItemImage ? Item.selectedItemImage : Item.image,
     });
+    console.log(formData);
     setIsFormEmpty(false);
 
     setSelectedItemImage(Item.selectedItemImage);
@@ -617,6 +683,77 @@ const AddNewGrocery = ({ google }) => {
     setFormData({ ...formData, zone: selectedOption ? selectedOption.value : '' });
   };
 
+  const columns = [
+    {
+      title: <span style={tableHeaderStyle}>NAME</span>,
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: <span style={tableHeaderStyle}>Price</span>,
+      dataIndex: 'price',
+      key: 'price',
+    },
+    {
+      title: <span style={tableHeaderStyle}>Description</span>,
+      dataIndex: 'description',
+      key: 'description',
+    },
+    {
+      title: <span style={tableHeaderStyle}>Discount</span>,
+      dataIndex: 'discount',
+      key: 'discount',
+    },
+    {
+      title: <span style={tableHeaderStyle}>Category</span>,
+      dataIndex: 'category',
+      key: 'category',
+      render: (text, records) => (records.selectedDropdownValue ? records.selectedDropdownValue : text),
+    },
+    {
+      title: <span style={tableHeaderStyle}>Image</span>,
+      dataIndex: 'image',
+      key: 'image',
+      render: (text, records) =>
+        records.image || records.selectedItemImage ? (
+          <img
+            style={{ width: 35, height: 20, borderRadius: '4px' }}
+            src={records.image || URL.createObjectURL(records.selectedItemImage)}
+            alt={records.selectedItemImage}
+          />
+        ) : (
+          <span>No image</span>
+        ),
+    },
+    {
+      title: <span style={tableHeaderStyle}>Action</span>,
+      key: 'action',
+      render: (text, records, index) => (
+        <Space size="middle">
+          <span className="text-muted text-small d-md-none">Select</span>
+
+          <div
+            onClick={() => {
+              checkItem(records);
+              console.log('/////////', records);
+            }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          >
+            <CsLineIcons icon="pen" />
+          </div>
+          <div
+            onClick={() => {
+              console.log('Clicked index:', index);
+              handleDeleteItem(index);
+            }}
+          >
+            <CsLineIcons icon="bin" className="text-danger cursor-pointer" style={{ fontSize: '14px' }} />
+          </div>
+        </Space>
+      ),
+    },
+  ];
+
   return (
     <>
       <HtmlHead title={title} description={description} />
@@ -624,9 +761,9 @@ const AddNewGrocery = ({ google }) => {
         <Row className="g-0">
           {/* Title Start */}
           <Col className="col-auto mb-3 mb-sm-0 me-auto">
-            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/">
+            <NavLink className="muted-link pb-1 d-inline-block hidden breadcrumb-back" to="/vendors/Grocery/list/">
               <CsLineIcons icon="chevron-left" size="13" />
-              <span className="align-middle text-small ms-1">Home</span>
+              <span className="align-middle text-small ms-1">Groceries</span>
             </NavLink>
             <h1 className="mb-0 pb-0 display-4" id="title">
               {title}
@@ -711,20 +848,7 @@ const AddNewGrocery = ({ google }) => {
                                     style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                                   />
                                 ) : (
-                                  <div
-                                    style={{
-                                      display: 'flex',
-                                      flexDirection: 'column',
-                                      justifyContent: 'center',
-                                      alignItems: 'center',
-                                      width: '100%',
-                                      height: '100%',
-                                      color: '#ced4da',
-                                    }}
-                                  >
-                                    <CsLineIcons icon="cloud-upload" size={30} />
-                                    <div style={{ textAlign: 'center' }}>Upload Image</div>
-                                  </div>
+                                  <img src={record.logo} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                                 )}
                               </div>
                             </label>
@@ -765,20 +889,7 @@ const AddNewGrocery = ({ google }) => {
                                 style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                               />
                             ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <CsLineIcons icon="cloud-upload" size={30} />
-                                <div style={{ textAlign: 'center' }}>Upload Cover Image</div>
-                              </div>
+                              <img src={record.coverPhoto} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             )}
                           </div>
                         </label>
@@ -828,7 +939,7 @@ const AddNewGrocery = ({ google }) => {
                     <Col lg="6">
                       <Form.Label>Open Time</Form.Label>
                       <Form.Control
-                        type="time"
+                    type="time"
                         name="openTime"
                         value={formData.openTime}
                         className={`mb-3 ${!formData.openTime && !isValid ? 'is-invalid' : ''}`}
@@ -1021,15 +1132,11 @@ const AddNewGrocery = ({ google }) => {
                       />
                     </Col>
 
-                    <Col lg="4" >
-
-                    <Form.Label>license Front</Form.Label>
-                      <div >
-
-
-                
+                    <Col lg="4">
+                      <Form.Label>license</Form.Label>
                       <div>
-              
+
+                      <div>
                         <label htmlFor="liecenceImage">
                           <div
                             style={{
@@ -1044,20 +1151,7 @@ const AddNewGrocery = ({ google }) => {
                                 style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                               />
                             ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Front</div>
-                              </div>
+                              <img src={record.license} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             )}
                           </div>
                         </label>
@@ -1071,10 +1165,8 @@ const AddNewGrocery = ({ google }) => {
                           onChange={handleLicenseUpload}
                         />
                       </div>
-
-                  &nbsp;
+                      &nbsp;
                       <div>
-                    
                         <label htmlFor="liecenceImageBack">
                           <div
                             style={{
@@ -1089,19 +1181,7 @@ const AddNewGrocery = ({ google }) => {
                                 style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                               />
                             ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div style={{ textAlign: 'center' }}>Upload Back</div>
-                              </div>
+                              <img src={record.licenseBack} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             )}
                           </div>
                         </label>
@@ -1114,106 +1194,79 @@ const AddNewGrocery = ({ google }) => {
                           style={{ display: 'none' }}
                           onChange={handleLicenseUploadBack}
                         />
+                      </div> 
+
                       </div>
-                      </div>
+                   
                     </Col>
 
-
-
-               
-                
                     <Col lg="4">
                       <Form.Label>Emirates ID</Form.Label>
+
                       <div>
-                        <label htmlFor="emiratesIdInput">
-                          <div
-                            style={{
-                              ...OwnerInfoImages,
-                              borderColor: !selectedEmiratesID && !isValid ? '#dc3545' : OwnerInfoImages.border,
-                            }}
-                          >
-                            {selectedEmiratesID ? (
-                              <img
-                                src={URL.createObjectURL(selectedEmiratesID)}
-                                alt="Selected"
-                                style={{ width: '100%', height: '100%', borderRadius: '10px' }}
-                              />
-                            ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Front</div>
-                              </div>
-                            )}
-                          </div>
-                        </label>
-                        <input
-                          type="file"
-                          id="emiratesIdInput"
-                          accept="image/*"
-                          className="form-control-file"
-                          style={{ display: 'none' }}
-                          onChange={handleEmiratesIdUpload}
-                        />
-                      </div>
-
-
-
-&nbsp;
-                      <div>
-                        <label htmlFor="emiratesIdInputBack">
-                          <div
-                            style={{
-                              ...OwnerInfoImages,
-                              borderColor: !selectedEmiratesIDBack && !isValid ? '#dc3545' : OwnerInfoImages.border,
-                            }}
-                          >
-                            {selectedEmiratesIDBack ? (
-                              <img
-                                src={URL.createObjectURL(selectedEmiratesIDBack)}
-                                alt="Selected"
-                                style={{ width: '100%', height: '100%', borderRadius: '10px' }}
-                              />
-                            ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Back</div>
-                              </div>
-                            )}
-                          </div>
-                        </label>
-                        <input
-                          type="file"
-                          id="emiratesIdInputBack"
-                          accept="image/*"
-                          className="form-control-file"
-                          style={{ display: 'none' }}
-                          onChange={handleEmiratesIdUploadBack}
-                        />
+                        <div>
+                          <label htmlFor="emiratesIdInput">
+                            <div
+                              style={{
+                                ...OwnerInfoImages,
+                                borderColor: !selectedEmiratesID && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                              }}
+                            >
+                              {selectedEmiratesID ? (
+                                <img
+                                  src={URL.createObjectURL(selectedEmiratesID)}
+                                  alt="Selected"
+                                  style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+                                />
+                              ) : (
+                                <img src={record.emiratesID} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
+                              )}
+                            </div>
+                          </label>
+                          <input
+                            type="file"
+                            id="emiratesIdInput"
+                            accept="image/*"
+                            className="form-control-file"
+                            style={{ display: 'none' }}
+                            onChange={handleEmiratesIdUpload}
+                          />
+                        </div>
+                        &nbsp;
+                        <div>
+                          <label htmlFor="emiratesIdInputBack">
+                            <div
+                              style={{
+                                ...OwnerInfoImages,
+                                borderColor: !selectedEmiratesIDBack && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                              }}
+                            >
+                              {selectedEmiratesIDBack ? (
+                                <img
+                                  src={URL.createObjectURL(selectedEmiratesIDBack)}
+                                  alt="Selected"
+                                  style={{ width: '100%', height: '100%', borderRadius: '10px' }}
+                                />
+                              ) : (
+                                <img src={record.emiratesIdBack} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
+                              )}
+                            </div>
+                          </label>
+                          <input
+                            type="file"
+                            id="emiratesIdInputBack"
+                            accept="image/*"
+                            className="form-control-file"
+                            style={{ display: 'none' }}
+                            onChange={handleEmiratesIdUploadBack}
+                          />
+                        </div>
                       </div>
                     </Col>
 
                     <Col lg="4">
                       <Form.Label>Passport</Form.Label>
+                      <div>
                       <div>
                         <label htmlFor="passportInput">
                           <div
@@ -1225,20 +1278,7 @@ const AddNewGrocery = ({ google }) => {
                             {selectedPassport ? (
                               <img src={URL.createObjectURL(selectedPassport)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Front</div>
-                              </div>
+                              <img src={record.PassportBack} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             )}
                           </div>
                         </label>
@@ -1251,35 +1291,19 @@ const AddNewGrocery = ({ google }) => {
                           onChange={handlePassportUpload}
                         />
                       </div>
-
-
-&nbsp;
-
+                      &nbsp;
                       <div>
                         <label htmlFor="passportInputBack">
                           <div
                             style={{
                               ...OwnerInfoImages,
-                              borderColor: !selectedPassport && !isValid ? '#dc3545' : OwnerInfoImages.border,
+                              borderColor: !selectedPassportBack && !isValid ? '#dc3545' : OwnerInfoImages.border,
                             }}
                           >
                             {selectedPassportBack ? (
                               <img src={URL.createObjectURL(selectedPassportBack)} alt="Selected" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             ) : (
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  justifyContent: 'center',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  height: '100%',
-                                  color: '#ced4da',
-                                }}
-                              >
-                                <div>{/* Icon or text for upload */}</div>
-                                <div style={{ textAlign: 'center' }}>Upload Back</div>
-                              </div>
+                              <img src={record.Passport} alt="Default" style={{ width: '100%', height: '100%', borderRadius: '10px' }} />
                             )}
                           </div>
                         </label>
@@ -1292,6 +1316,8 @@ const AddNewGrocery = ({ google }) => {
                           onChange={handlePassportUploadBack}
                         />
                       </div>
+                      </div>
+                  
                     </Col>
                   </Row>
                 </Form>
@@ -1464,12 +1490,13 @@ const AddNewGrocery = ({ google }) => {
                             <div
                               style={{
                                 ...coverImageStyle,
-                                borderColor: !selectedImage && !isValid ? '#dc3545' : coverImageStyle.border,
+                                // borderColor: !selectedImage && !isValid ? '#dc3545' : coverImageStyle.border,
                               }}
                             >
-                              {selectedItemImage ? (
+                              {menuImage || selectedItemImage ? (
                                 <img
-                                  src={URL.createObjectURL(selectedItemImage)}
+                                  // src={URL.createObjectURL(menuImage)}
+                                  src={menuImage || URL.createObjectURL(selectedItemImage)}
                                   alt="Selected"
                                   style={{ width: '100%', height: '100%', borderRadius: '10px' }}
                                 />
@@ -1529,84 +1556,7 @@ const AddNewGrocery = ({ google }) => {
               </Form>
 
               <div>
-                {ItemList.length > 0 && (
-                  <Row className="g-1 p-3">
-                    <Col lg="1">
-                      <div className="text-muted text-small d-lg-none">Name</div>
-                      <div className="text-muted text-small cursor-pointer sort">NAME</div>
-                    </Col>
-                    <Col lg="2">
-                      <div className="text-muted text-small d-lg-none">Price</div>
-                      <div className="text-muted text-small cursor-pointer sort">PRICE</div>
-                    </Col>
-                    <Col lg="2">
-                      <div className="text-muted text-small d-lg-none">Description</div>
-                      <div className="text-muted text-small cursor-pointer sort">DESCRIPTION</div>
-                    </Col>
-                    <Col lg="2">
-                      <div className="text-muted text-small d-lg-none">Discount</div>
-                      <div className="text-muted text-small cursor-pointer sort">DISCOUNT</div>
-                    </Col>
-                    <Col lg="2">
-                      <div className="text-muted text-small d-lg-none">Category</div>
-                      <div className="text-muted text-small cursor-pointer sort">CATEGORY</div>
-                    </Col>
-                    <Col lg="1">
-                      <div className="text-muted text-small d-lg-none">Image</div>
-                      <div className="text-muted text-small cursor-pointer sort">IMAGE</div>
-                    </Col>
-                    <Col lg="2">
-                      <div className="text-muted text-small d-md-none">Actions</div>
-                    </Col>
-                  </Row>
-                )}
-
-                {ItemList.map((Item, index) => (
-                  <>
-                    <Card key={index} className={`mb-2 ${Item === selectedItem ? 'selected' : ''}`}>
-                      <Card.Body style={{ borderRadius: '10px' }} className="p-3">
-                        <Row className="g-1" onClick={() => checkItem(Item)}>
-                          <Col lg="1">
-                            <div className="text-muted text-small d-lg-none">Name</div>
-                            <div className="text-alternate">{Item.name}</div>
-                          </Col>
-
-                          <Col lg="2">
-                            <div className="text-muted text-small d-lg-none">Price</div>
-                            <div className="text-alternate">{Item.price}</div>
-                          </Col>
-                          <Col lg="2">
-                            <div className="text-muted text-small d-lg-none">Description</div>
-                            <div className="text-alternate">{Item.description}</div>
-                          </Col>
-                          <Col lg="2">
-                            <div className="text-muted text-small d-lg-none">Description</div>
-                            <div className="text-alternate">{Item.discount}</div>
-                          </Col>
-                          <Col lg="2">
-                            <div className="text-muted text-small d-lg-none">Category</div>
-                            <div className="text-alternate">{Item.selectedDropdownValue}</div>
-                          </Col>
-                          <Col lg="1">
-                            <img
-                              style={{ width: 35, height: 20, borderRadius: '4px' }}
-                              src={URL.createObjectURL(Item.selectedItemImage)}
-                              alt={Item.selectedItemImage}
-                            />
-                          </Col>
-                          <Col lg="2">
-                            <Col className="d-flex flex-column justify-content-center mb-lg-0 align-items-md-end">
-                              <div className="text-muted text-small d-md-none">Select</div>
-                              <div onClick={() => handleDeleteItem(index)}>
-                                <CsLineIcons icon="bin" className="text-danger cursor-pointer" style={{ fontSize: '14px' }} />
-                              </div>
-                            </Col>
-                          </Col>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </>
-                ))}
+                <Table dataSource={ItemList} columns={columns} rowKey={(index) => index} />
               </div>
             </Card.Body>
           </Card>
@@ -1622,7 +1572,7 @@ const AddNewGrocery = ({ google }) => {
               className="btn btn-icon btn-icon-start btn-primary"
               onClick={handleAddGrocery}
             >
-              Add Grocery
+              Update Grocery
             </button>
           </div>
         </div>
