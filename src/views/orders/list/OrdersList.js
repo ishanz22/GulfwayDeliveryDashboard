@@ -71,21 +71,10 @@ const OrdersList = () => {
     }
   };
 
-  const nextPage = () => {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
 
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedData = filteredData.slice(startIndex, endIndex);
+  // const startIndex = (currentPage - 1) * itemsPerPage;
+  // const endIndex = startIndex + itemsPerPage;
+  const displayedData = filteredData.slice();
 
   // Rest of your code remains unchanged
   const filterDataByStatus = (status) => {
@@ -268,7 +257,7 @@ const OrdersList = () => {
       render: (text, record) => (
         <NavLink
           to={{
-            pathname: `/orders/detail/${record.id}`,
+            pathname: `/orders/edit/${record.id}`,
             state: { user: record },
           }}
         >
@@ -277,7 +266,7 @@ const OrdersList = () => {
       ),
     },
     {
-      title: <span style={tableHeaderStyle}>NAME</span>,
+      title: <span style={tableHeaderStyle}>USER</span>,
       dataIndex: 'name',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
@@ -312,6 +301,28 @@ const OrdersList = () => {
 
     },
     {
+      title: <span style={tableHeaderStyle}>VENDOR</span>,
+      dataIndex: 'vendor',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+
+    },
+    {
+      title: <span style={tableHeaderStyle}>Rider</span>,
+      dataIndex: 'name',
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
+      // render: (text, record) => (
+      //   <div className="d-flex">
+      //     <div className="round-image">
+      //       <img style={smallImageStyle} src={record.riderImage} alt={record.profileName} />
+      //     </div>
+      //     <div>
+      //       <div className="ms-2">{record.profileName}</div>
+      //       <div className="text-alternate ms-2 text-medium">{record.riderEmail}</div>
+      //     </div>
+      //   </div>
+      // ),
+    },
+    {
       title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
@@ -337,7 +348,7 @@ const OrdersList = () => {
       responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
-       <NavLink
+       {/* <NavLink
             to={{
               pathname: `/orders/detail/${record.id}`,
               state: { user: record },
@@ -354,14 +365,26 @@ const OrdersList = () => {
             >
               <CsLineIcons icon="eye" />
             </div>
-          </NavLink>
+          </NavLink> */}
 
-          <div
-            onClick={() => handleEdit(record)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', paddingRight: '10px', color: gulfwayBlue }}
+          <NavLink
+            to={{
+              pathname: `/orders/edit/${record.id}`,
+              state: { user: record },
+            }}
           >
-            <CsLineIcons icon="pen" />
-          </div>
+            <div
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                paddingRight: '10px',
+                color: gulfwayBlue,
+              }}
+            >
+              <CsLineIcons icon="pen" />
+            </div>
+          </NavLink>
           <div onClick={() => handleDelete(record.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4f' }}>
             <CsLineIcons icon="bin" />
           </div>
@@ -621,21 +644,9 @@ const OrdersList = () => {
           </Dropdown>
           {/* Export Dropdown End */}
 
-          {/* Length Start */}
-          <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-                {itemsPerPage} Items
-              </Dropdown.Toggle>
-            </OverlayTrigger>
-            <Dropdown.Menu className="shadow dropdown-menu-end">
-              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+         
 
-          <div className="btn-group ms-1 check-all-container">
+          {/* <div className="btn-group ms-1 check-all-container">
             <CheckAll
               allItems={allItems}
               selectedItems={selectedItems}
@@ -651,7 +662,7 @@ const OrdersList = () => {
                 <Dropdown.Item>Delete</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </div>
+          </div> */}
           {/* Length End */}
         </Col>
       </Row>
@@ -664,28 +675,11 @@ const OrdersList = () => {
           type: selectionType,
           ...rowSelection,
         }}
-        pagination={false}
+   
       />
 
       {/* List Items End */}
 
-      {/* Pagination Start */}
-      <div className="d-flex justify-content-center mt-5">
-        <Pagination>
-          <Pagination.Prev className="shadow" onClick={prevPage} disabled={currentPage === 1}>
-            <CsLineIcons icon="chevron-left" />
-          </Pagination.Prev>
-          {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }, (_, i) => (
-            <Pagination.Item key={i} className={`shadow ${currentPage === i + 1 ? 'active' : ''}`} onClick={() => setCurrentPage(i + 1)}>
-              {i + 1}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next className="shadow" onClick={nextPage} disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}>
-            <CsLineIcons icon="chevron-right" />
-          </Pagination.Next>
-        </Pagination>
-      </div>
-      {/* Pagination End */}
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>

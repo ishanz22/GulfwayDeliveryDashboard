@@ -15,6 +15,7 @@ const orders = {
   detail: lazy(() => import('views/orders/detail/OrdersDetail')),
   status: lazy(() => import('views/orders/status/StatusManagement')),
   analytics: lazy(() => import('views/orders/analytics/Analytics')),
+  edit:  lazy(() => import('views/orders/edit/OrderEdit'))
 };
 const users = {
   list: lazy(() => import('views/users/list/UsersList')),
@@ -216,8 +217,9 @@ const routesAndMenuItems = {
       subs: [
         { path: '/list', label: 'List', component: orders.list },
         { path: '/detail', component: orders.detail },
-        { path: '/status', label: 'Status', component: orders.status },
+        // { path: '/status', label: 'Status', component: orders.status },
         { path: '/analytics', label: 'Analytics', component: orders.analytics },
+        { path: '/edit', component: orders.edit },
       ],
     },
 

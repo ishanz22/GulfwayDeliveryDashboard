@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Row, Col, Button, Dropdown, Form, Card, Badge,Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
+import { Row, Col, Button, Dropdown, Form, Card, Badge, Pagination, Tooltip, OverlayTrigger, Modal } from 'react-bootstrap';
 import JsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { utils, write } from 'xlsx';
@@ -16,11 +16,10 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
-import { Table,Tag,Image,Checkbox } from 'antd';
+import { Table, Tag, Image, Checkbox } from 'antd';
 import { gulfwayBlue } from 'layout/colors/Colors';
 import OrderDetailsData from 'data/OrderDetailsData';
 import RiderListData from '../../../data/RiderListData';
-
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -72,13 +71,13 @@ const RiderDetail = ({ google }) => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
 
- // Track the selected section
+  // Track the selected section
 
   const smallImageStyle = {
-    width: '40px', 
-    height: '40px', 
-    borderRadius: '50%', 
-    overflow: 'hidden',   
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    overflow: 'hidden',
   };
 
   const tableHeaderStyle = {
@@ -188,7 +187,6 @@ const RiderDetail = ({ google }) => {
     doc.save('RiderListData.pdf');
   };
 
-
   const handleView = (id) => {
     console.log(`View Item ID ${id}`);
   };
@@ -212,9 +210,9 @@ const RiderDetail = ({ google }) => {
       title: <span style={tableHeaderStyle}>NAME</span>,
       dataIndex: 'name',
       key: 'name',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
-        <div className='d-flex'>
+        <div className="d-flex">
           <div className="round-image">
             <img style={smallImageStyle} src={record.image} alt={record.name} />
           </div>
@@ -231,16 +229,16 @@ const RiderDetail = ({ google }) => {
       key: 'phone',
     },
     {
-      title:  <span style={tableHeaderStyle}>ASSIGNED ORDERS</span>,
+      title: <span style={tableHeaderStyle}>ASSIGNED ORDERS</span>,
       dataIndex: 'assignedOrders',
       key: 'assignedOrders',
       sorter: (a, b) => a.assignedOrders - b.assignedOrders,
     },
     {
-      title:  <span style={tableHeaderStyle}>STATUS</span>,
+      title: <span style={tableHeaderStyle}>STATUS</span>,
       dataIndex: 'status',
       key: 'status',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text) => {
         let color = 'default';
 
@@ -250,11 +248,11 @@ const RiderDetail = ({ google }) => {
           color = 'success';
         } else if (text === 'NOT-AVAILABLE') {
           color = 'error';
-        }else if (text === 'ON-TRAVEL') {
+        } else if (text === 'ON-TRAVEL') {
           color = 'blue';
-        }else if (text === 'CANCELED') {
+        } else if (text === 'CANCELED') {
           color = 'orange';
-        }else if (text === 'DELIVERED') {
+        } else if (text === 'DELIVERED') {
           color = 'pink';
         }
 
@@ -262,9 +260,9 @@ const RiderDetail = ({ google }) => {
       },
     },
     {
-      title: <span style={tableHeaderStyle}>ACTION</span> ,
+      title: <span style={tableHeaderStyle}>ACTION</span>,
       key: 'action',
-      responsive: ['xs','md','lg','sm','xl'],
+      responsive: ['xs', 'md', 'lg', 'sm', 'xl'],
       render: (text, record) => (
         <span className="d-flex">
           <div
@@ -289,8 +287,8 @@ const RiderDetail = ({ google }) => {
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
   };
-  const data = displayedData.map((item) => ({ ...item, key: item.id }));  
-  const handleDeleteConfirmed = () => {    
+  const data = displayedData.map((item) => ({ ...item, key: item.id }));
+  const handleDeleteConfirmed = () => {
     setIsDeleteDialogOpen(false);
   };
   return (
@@ -404,10 +402,7 @@ const RiderDetail = ({ google }) => {
 
                 {/* Badge in top right corner */}
                 <div className="position-relative">
-                <Tag  color="blue">
-  ON-TRAVEL
-</Tag>
-
+                  <Tag color="blue">ON-TRAVEL</Tag>
                 </div>
               </div>
 
@@ -424,16 +419,16 @@ const RiderDetail = ({ google }) => {
           <Card className="mb-5">
             <Card.Body>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Number</div>
-                <div className=' text-alternate'>CA-5A32353</div>
+                <div>Number</div>
+                <div className=" text-alternate">CA-5A32353</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Type</div>
-                <div className=' text-alternate'>auto</div>
+                <div>Type</div>
+                <div className=" text-alternate">auto</div>
               </div>
               <div className="mb-n0 p-2 d-flex justify-content-between">
-                <div >Lorem</div>
-                <div className=' text-alternate'>ipsum</div>
+                <div>Lorem</div>
+                <div className=" text-alternate">ipsum</div>
               </div>
             </Card.Body>
           </Card>
@@ -511,30 +506,31 @@ const RiderDetail = ({ google }) => {
 
       <Row className="row-cols-1 row-cols-md-2 g-2">
         <Col>
-          <Card style={{height:'400px'}} >
-          <Card.Body>
+          <Card style={{ height: '400px' }}>
+            <Card.Body>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours of Service</div>
-                <div className='text-alternate'>2 hr 15 min</div>
+                <div>Hours of Service</div>
+                <div className="text-alternate">2 hr 15 min</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours of Break</div>
-                <div className='text-alternate'>1 hr 15 min</div>
+                <div>Hours of Break</div>
+                <div className="text-alternate">1 hr 15 min</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Lorem ipsum</div>
-                <div className='text-alternate'>lorem ipsum</div>
+                <div>Lorem ipsum</div>
+                <div className="text-alternate">lorem ipsum</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Hours Available Today</div>
-                <div className='text-alternate'>CA-5A32353</div>
-              </div>    <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Lorem</div>
-                <div className='text-alternate'>Ipsum</div>
+                <div>Hours Available Today</div>
+                <div className="text-alternate">CA-5A32353</div>
+              </div>{' '}
+              <div className="mb-n0 p-3 d-flex justify-content-between">
+                <div>Lorem</div>
+                <div className="text-alternate">Ipsum</div>
               </div>
               <div className="mb-n0 p-3 d-flex justify-content-between">
-                <div >Total Lorem</div>
-                <div  className='text-alternate'> 2 hr 15 min</div>
+                <div>Total Lorem</div>
+                <div className="text-alternate"> 2 hr 15 min</div>
               </div>
             </Card.Body>
           </Card>
@@ -578,7 +574,7 @@ const RiderDetail = ({ google }) => {
           </div>
           {/* Search End */}
         </Col>
-        
+
         <Col md="7" lg="9" xxl="10" className="mb-1 text-end">
           {/* Print Button Start */}
           {/* <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Print</Tooltip>}>
@@ -587,7 +583,6 @@ const RiderDetail = ({ google }) => {
             </Button>
           </OverlayTrigger> */}
           {/* Print Button End */}
-          
 
           {/* Export Dropdown Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
@@ -606,35 +601,35 @@ const RiderDetail = ({ google }) => {
 
           {/* Length Start */}
           <Dropdown align={{ xs: 'end' }} className="d-inline-block ms-1">
-  <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
-    <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
-      {itemsPerPage} Items
-    </Dropdown.Toggle>
-  </OverlayTrigger>
-  <Dropdown.Menu className="shadow dropdown-menu-end">
-    <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
-    <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
-  </Dropdown.Menu>
-</Dropdown>
+            <OverlayTrigger delay={{ show: 1000, hide: 0 }} placement="top" overlay={<Tooltip id="tooltip-top">Item Count</Tooltip>}>
+              <Dropdown.Toggle variant="foreground-alternate" className="shadow sw-13">
+                {itemsPerPage} Items
+              </Dropdown.Toggle>
+            </OverlayTrigger>
+            <Dropdown.Menu className="shadow dropdown-menu-end">
+              <Dropdown.Item onClick={() => setItemsPerPage(5)}>5 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(10)}>10 Items</Dropdown.Item>
+              <Dropdown.Item onClick={() => setItemsPerPage(20)}>20 Items</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
 
-<div className="btn-group ms-1 check-all-container">
-      <CheckAll
-        allItems={allItems}
-        selectedItems={selectedItems}
-        onToggle={toggleCheckAll}
-        inputClassName="form-check"
-        className="btn btn-outline-primary btn-custom-control py-0"
-      />
-      <Dropdown align="end">
-        <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
-        <Dropdown.Menu>
-          <Dropdown.Item>Move</Dropdown.Item>
-          <Dropdown.Item>Archive</Dropdown.Item>
-          <Dropdown.Item>Delete</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    </div>
+          <div className="btn-group ms-1 check-all-container">
+            <CheckAll
+              allItems={allItems}
+              selectedItems={selectedItems}
+              onToggle={toggleCheckAll}
+              inputClassName="form-check"
+              className="btn btn-outline-primary btn-custom-control py-0"
+            />
+            <Dropdown align="end">
+              <Dropdown.Toggle className="dropdown-toggle dropdown-toggle-split" variant="outline-primary" />
+              <Dropdown.Menu>
+                <Dropdown.Item>Move</Dropdown.Item>
+                <Dropdown.Item>Archive</Dropdown.Item>
+                <Dropdown.Item>Delete</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
           {/* Length End */}
         </Col>
       </Row>
@@ -658,8 +653,8 @@ const RiderDetail = ({ google }) => {
         </Col>
         
       </Row> */}
-     
-     <Table
+
+      <Table
         columns={columns}
         dataSource={data}
         rowSelection={rowSelection}
@@ -686,7 +681,6 @@ const RiderDetail = ({ google }) => {
           </Pagination.Next>
         </Pagination>
       </div>
-
 
       <Dialog open={isDeleteDialogOpen} onClose={handleDelete} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
         <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>

@@ -18,6 +18,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Driving License',
       identityNumber: '978076486',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 2,
@@ -38,6 +42,10 @@ const AllRidersDataMap = [
       badge: 'OFF-DUTY',
       identityType: 'National ID',
       identityNumber: '1234567890',
+      orderCreated:"2023-11-17",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 3,
@@ -58,6 +66,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Driving License',
       identityNumber: '1298076486',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 4,
@@ -78,6 +90,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Passport',
       identityNumber: 'A3456789',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
 
     },
     {
@@ -99,6 +115,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Driving License',
       identityNumber: 'D1234567',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 6,
@@ -119,6 +139,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Passport',
       identityNumber: 'P9876543',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 7,
@@ -139,6 +163,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Driving License',
       identityNumber: 'D7654321',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     },
     {
       id: 8,
@@ -159,6 +187,10 @@ const AllRidersDataMap = [
       badge: 'ON-TRAVEL',
       identityType: 'Passport',
       identityNumber: 'P1234567',
+      orderCreated:"2023-11-16",
+      orderTime:"12:34:56",
+      subTotal:375,
+      deliveryFee:0.00
     }
   ];
   export default AllRidersDataMap;

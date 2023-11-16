@@ -14,7 +14,7 @@ import AllRidersDataMap from 'data/AllRidersDataMap';
 import RiderList from 'views/riders/list/RiderList';
 import { Table } from 'antd';
 
-const OrdersDetail = ({ google }) => {
+const OrderEdit = ({ google }) => {
   const location = useLocation();
   const { user } = location.state;
   console.log(user);
@@ -186,11 +186,74 @@ const OrdersDetail = ({ google }) => {
                                   </div>
 
                                   {/* Badge in top right corner */}
-                                  <div className="position-relative " style={{ marginTop: '5px' }}>
-                                    <Badge bg="outline-primary" className="position-absolute top-0 end-0">
-                                      {selectedRider.badge}
-                                    </Badge>
-                                  </div>
+                                  <div>
+                    <div
+                      style={{
+                        padding: 5,
+                        borderRadius: 5,
+
+                        backgroundColor: (() => {
+                          switch (user.status) {
+                            case 'PAID':
+                              return '#f6ffed';
+                            case 'PENDING':
+                              return '#fffbe6';
+                    
+                            case 'REFUNDED':
+                              return '#e6f7ff';
+                              case 'CANCELED':
+                                return '#fff2f0';
+                            default:
+                              return '';
+                          }
+                        })(),
+
+                        color: (() => {
+                          switch (user.status) {
+                            case 'PAID':
+                              return '#52c41a';
+                            case 'ON-TRAVEL':
+                              return '#388F6D';
+                            case 'PENDING':
+                              return '#faad14';
+                            case 'DECLINED':
+                              return '#FF4D4F';
+                            case 'REFUNDED':
+                              return '#096dd9';
+                              case 'CANCELED':
+                                return '#ff4d4f';
+                       
+                            default:
+                              return '';
+                          }
+                        })(),
+                        borderColor: (() => {
+                          switch (user.status) {
+                            case 'PAID':
+                              return '#b7eb8f';
+                            case 'ON-TRAVEL':
+                              return '#388F6D';
+                            case 'PENDING':
+                              return '#ffe58f';
+                           
+                            case 'REFUNDED':
+                              return '#91d5ff';
+                              case 'CANCELED':
+                                return '#ffccc7';
+                      
+                            default:
+                              return '';
+                          }
+                        })(),
+                        borderWidth: 1, // You can adjust the border width as needed
+                        borderStyle: 'solid',
+                      }}
+                      className="text-small"
+                    >
+                      {' '}
+                      {user.status}
+                    </div>
+                  </div>
                                 </div>
 
                                 <div style={{ height: '20px' }} />
@@ -540,4 +603,4 @@ const OrdersDetail = ({ google }) => {
 
 export default GoogleApiWrapper({
   apiKey: 'AIzaSyDrI53GlC5-ymZmPKzJq11U36dheMGfeLU',
-})(OrdersDetail);
+})(OrderEdit);
